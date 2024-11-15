@@ -1,0 +1,10 @@
+name = "TypeTheoryUFMG"
+version = "0.1.0"
+defaultTargets = ["typetheoryufmg"]
+
+[[lean_lib]]
+name = "TypeTheoryUFMG"
+
+[[lean_exe]]
+name = "typetheoryufmg"
+root = "Main"

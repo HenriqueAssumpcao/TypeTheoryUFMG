@@ -29,6 +29,8 @@ end c7ex1
 
 namespace c7ex8
 
+variable (A B :Prop)
+
 theorem sol_a :
   (A ∨ B) -> (B ∨ A) := by
 
@@ -37,22 +39,21 @@ theorem sol_a :
   let f2 : (B -> B ∨ A) := λ (b:B) => Or.inl b
   exact Or.elim P f1 f2
 
-end c7ex8
-
 theorem sol_b:
   ¬ (A ∨ B) -> (¬ A ∧ ¬ B) := by
 
   sorry
-
-namespace c7ex9
 
 theorem sol_c:
   (¬ A ∧ ¬ B) -> ¬(A ∨ B) := by
 
   sorry
 
-variable (S:Prop) (P Q R : S -> Prop)
+end c7ex8
 
+namespace c7ex9
+
+variable (S:Prop) (P Q R : S -> Prop)
 
 theorem sol_a :
   (x:S) -> (¬ P x -> ((P x) -> (Q x) ∧ (R x))) := by

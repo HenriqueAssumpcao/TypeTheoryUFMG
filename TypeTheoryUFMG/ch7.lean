@@ -17,12 +17,18 @@ theorem sol_b :
 theorem sol_c :
   (A -> ¬ B) -> ((A -> B) -> ¬ A) := by
 
-  sorry
+  intro ainb aib a
+  let P := And.imp ainb aib (And.intro a a)
+  let b := And.left P
+  let nb := And.right P
+  exact b nb
 
 theorem sol_d:
   ¬(A -> B) -> ¬ B := by
 
-  sorry
+  intro naib b
+  let aib := sol_a A B b
+  exact naib aib
 
 end c7ex1
 
@@ -40,14 +46,18 @@ theorem sol_a :
   exact Or.elim P f1 f2
 
 theorem sol_b:
-  ¬ (A ∨ B) -> (¬ A ∧ ¬ B) := by
+  ¬(A ∨ B) -> (¬ A ∧ ¬ B) := by
 
   sorry
 
 theorem sol_c:
-  (¬ A ∧ ¬ B) -> ¬(A ∨ B) := by
+  (¬ A ∧ ¬ B) -> ¬(A∨B) := by
 
-  sorry
+  intro P Q
+  let na := And.left P
+  let nb := And.right P
+  let b := Or.resolve_left Q na
+  exact nb b
 
 end c7ex8
 

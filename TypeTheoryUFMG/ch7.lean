@@ -1,5 +1,58 @@
 -- Chapter 7
 
+-- Section examples
+
+namespace c7sec3
+
+variable (A B :Prop)
+
+theorem sol_lambdaC :
+  ((C:Prop) -> ((A -> C) -> (B -> C) -> C)) -> (A -> False) -> B := by
+
+  intro x y
+  let xb := x B
+  let f : (A -> B) := λ (u:A) => False.elim (y u)
+  let g : (B -> B) := λ (v : B) => v
+  exact xb f g
+
+theorem sol_logic :
+  (A ∨ B) -> (¬ A -> B) := by
+
+  intro aorb na
+  exact Or.resolve_left aorb na
+
+end c7sec3
+
+namespace c7sec4
+
+theorem sol :
+  ((α:Prop) -> ((C:Prop) -> (α -> C) -> (¬α -> C) -> C)) -> ((β:Prop) -> ¬¬β -> β) := by
+
+  intro i b x
+  let f : (b -> b) := id
+  let g : (¬ b -> b) := λ (z:¬ b) => False.elim (x z)
+  exact i b b f g
+
+end c7sec4
+
+namespace c7sec6
+
+variable (S:Prop) (P:S -> Prop)
+
+
+theorem sol :
+  ¬(∃ x:S, P x) -> (∀ x:S, ¬ (P x)) := by
+
+  intro nex x px
+
+  let ex := Exists.intro x px
+  exact nex ex
+
+end c7sec6
+
+
+-- Exercises
+
 namespace c7ex1
 
 variable (A B :Prop)
@@ -100,3 +153,21 @@ theorem sol :
   -- Same as λ (z:S) => λ (a: P z) => And.intro (A z a) (B z a)
 
 end c7ex10
+
+
+namespace c7ex13
+
+variable (S:Prop) (P Q:S -> Prop)
+
+theorem sol :
+  (∃ x:S, P x) -> (∀ y:S,(P y -> Q y)) -> (∃ z : S, Q z) := by
+
+  intro exx fay
+
+  let x := exx.choose
+  let px := exx.choose_spec
+  let f := fay x
+  exact Exists.intro x (f px)
+
+
+end c7ex13

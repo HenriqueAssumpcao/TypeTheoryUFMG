@@ -145,12 +145,52 @@ theorem three_is_prime : prime 3 := by
   constructor
   exact Nat.succ_succ_ne_one 1
   intro d ⟨k,hk⟩
-  obtain _|d := d <;>
-  obtain _|k := k <;>
-  simp [mul_add,add_mul] at hk ⊢
-  obtain _|k := k <;>
-  simp [mul_add,add_mul] at hk <;>
-  omega
+  obtain _|d := d <;> obtain _|_|k := k <;>   --  <---  note the further cases split: "`k=0|k=1|k+2`"
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+theorem four_is_not_prime : ¬prime 4 := by
+  unfold prime
+  simp
+  use 2
+  constructor
+  . use 2
+  . omega
+
+theorem five_is_prime : prime 5 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 4)
+  constructor
+  exact Nat.succ_succ_ne_one 3
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|_|k := k <;>
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+theorem six_is_not_prime : ¬prime 6 := by
+  unfold prime
+  simp
+  use 2
+  constructor
+  . use 3
+  . omega
+
+theorem seven_is_prime : prime 7 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 6)
+  constructor
+  exact Nat.succ_succ_ne_one 5
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|_|_|k := k <;>
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+theorem eleven_is_prime : prime 11 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one (10))
+  constructor
+  exact Nat.succ_succ_ne_one 9
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|_|_|_|_|k := k <;>
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
 
 
 def infinitely_many_primes : Prop := ∀ k : Nat, ∃ p : Nat, prime p ∧ p > k

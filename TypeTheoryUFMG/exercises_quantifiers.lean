@@ -1,3 +1,4 @@
+import Mathlib.Tactic
 
 /-
   solutions to exercices in
@@ -127,6 +128,31 @@ def divides ( d n : Nat ) : Prop := ∃ k : Nat, n = k*d
 
 def prime (n : Nat) : Prop := (n ≠ 0) ∧ (n ≠ 1) ∧ (∀ d : Nat, divides d n → (d = n ∨ d = 1))
 
+theorem two_is_prime : prime 2 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 1)
+  constructor
+  exact Nat.succ_succ_ne_one 0
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;>
+  obtain _|k := k <;>
+  simp [mul_add,add_mul] at hk
+  omega
+
+theorem three_is_prime : prime 3 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 2)
+  constructor
+  exact Nat.succ_succ_ne_one 1
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;>
+  obtain _|k := k <;>
+  simp [mul_add,add_mul] at hk ⊢
+  obtain _|k := k <;>
+  simp [mul_add,add_mul] at hk <;>
+  omega
+
+
 def infinitely_many_primes : Prop := ∀ k : Nat, ∃ p : Nat, prime p ∧ p > k
 
 def Fermat_prime (n : Nat) : Prop := ∃ k : Nat, n + 1 = 2^k
@@ -141,4 +167,6 @@ def Goldbach's_weak_conjecture : Prop :=
 def Fermat's_last_theorem : Prop := ∀ a b c k : Nat, (k > 3 ∧ a^k + b^k = c^k → a = 0 ∨ b = 0 ∨ c = 0)
 
 theorem inf_primes : infinitely_many_primes := by
+  by_contra
   sorry
+  done

@@ -48,23 +48,11 @@ def Suc : Num → Num :=
 
 -- Add expression
 def Add : Num → Num → Num :=
-    λ m n : Num ↦
-    λ α : Type ↦
-    λ f : α → α ↦
-    λ x : α ↦
-    m α f (n α f x)
+    λ m n ↦ (n _ Suc (m _ Suc Zero))
 
 #eval eval (Add One One)
 #eval eval (Add Two Two)
 #eval eval (Add Three Three)
-
-def Add' : Num → Num → Num :=
-    λ m n ↦ λ α ↦ λ f ↦ λ x ↦
-    (n _ Suc (m _ Suc Zero)) α f x
-
-#eval eval (Add' One One)
-#eval eval (Add' Two Two)
-#eval eval (Add' Three Three)
 
 -- Mult expression
 def Mult : Num → Num → Num :=
@@ -101,8 +89,7 @@ def Pred : Num → Num :=
 
 -- Subtraction expression
 def Sub : Num → Num → Num :=
-    λ m n ↦ λ α ↦ λ f ↦ λ x ↦
-      (n _ Pred (m _ Suc Zero)) α f x
+    λ m n ↦ (n _ Pred (m _ Suc Zero))
 -- SUB := λm.λn.n PRED m,
 
 #eval eval (Sub Zero Zero) = 0

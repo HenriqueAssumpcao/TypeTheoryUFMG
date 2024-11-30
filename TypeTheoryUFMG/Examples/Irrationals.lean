@@ -26,9 +26,13 @@ theorem exists_irr_pow_rat
     . exact hi
     . exact irrational_sqrt_two
     . clear hi
-      rw [←Real.rpow_mul sqrt_two_ge_zero]
-      rw [Real.mul_self_sqrt zero_le_two]
-      rw [Real.rpow_two √2, Real.sq_sqrt zero_le_two]
+      have : (√2 ^ √2) ^ √2 = 2 :=
+        calc _ = (√2 ^ √2) ^ √2 := rfl
+             _ = √2 ^ (√2 * √2) := Real.rpow_mul sqrt_two_ge_zero √2 √2 |>.symm
+             _ = √2 ^ (2:ℝ)     := congrArg _ <| Real.mul_self_sqrt zero_le_two
+             _ = √2 ^ 2         := Real.rpow_two √2
+             _ = 2              := Real.sq_sqrt zero_le_two
+      rw [this]
       exact not_irrational_two
   . use √2
     use √2

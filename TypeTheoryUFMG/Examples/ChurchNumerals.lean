@@ -58,6 +58,14 @@ def Add : Num → Num → Num :=
 #eval eval (Add Two Two)
 #eval eval (Add Three Three)
 
+def Add' : Num → Num → Num :=
+    λ m n ↦ λ α ↦ λ f ↦ λ x ↦
+    (n _ Suc (m _ Suc Zero)) α f x
+
+#eval eval (Add' One One)
+#eval eval (Add' Two Two)
+#eval eval (Add' Three Three)
+
 -- Mult expression
 def Mult : Num → Num → Num :=
     λ m n : Num ↦
@@ -93,25 +101,20 @@ def Pred : Num → Num :=
 
 -- Subtraction expression
 def Sub : Num → Num → Num :=
-    λ m : Num ↦
-    λ n : Num ↦
-    λ α : Type ↦
-        n ((α → α) → α → α)
-        (
-            λ p => -- : (α → α) → α → α ↦
-            λ f' => --: α → α  ↦
-            λ x' => --: α ↦
-                -- sorry
-                p f' x'
-        )
-        (m α)
+    λ m n ↦ λ α ↦ λ f ↦ λ x ↦
+      (n _ Pred (m _ Suc Zero)) α f x
 -- SUB := λm.λn.n PRED m,
 
-#eval eval (Sub One One)
-#eval eval (Sub One Zero)
-#eval eval (Sub Two Zero)
-#eval eval (Sub Two One)
-#eval eval (Sub Two Two)
+#eval eval (Sub Zero Zero) = 0
+#eval eval (Sub One One) = 0
+#eval eval (Sub One Zero) = 1
+#eval eval (Sub Two Zero) = 2
+#eval eval (Sub Two One) = 1
+#eval eval (Sub Two Two) = 0
+#eval eval (Sub Three Zero) = 3
+#eval eval (Sub Three One) = 2
+#eval eval (Sub Three Two) = 1
+#eval eval (Sub Three Three) = 0
 
 -- Define church booleans (Bool already defined in Lean)
 def Bol := (α : Type) → α → α → α

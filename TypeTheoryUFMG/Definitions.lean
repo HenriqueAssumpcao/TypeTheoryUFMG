@@ -5,13 +5,13 @@ namespace TypeTheoryUFMG
 
 -- # 8.1 The nature of definitions
 -- **Examples 8.1.1**
--- (1) A rectangle is a quadrilateral with four right angles.
+-- (1) A `rectangle` is a quadrilateral with four right angles.
 -- ?
 
--- (2) A function f from R to R is called increasing if, for all x, y ∈ R, x < y implies f (x) < f (y)
+-- (2) A function f from R to R is called `increasing` if, for all x, y ∈ R, x < y implies f (x) < f (y)
 def Increasing (f : ℝ → ℝ) := ∀ x y : ℝ, x < y → f x < f y
 
--- (3) ‘We say that a relation R on a set S is total , if for every two elements x and y of S, either x is related to y, or y to x, or both.
+-- (3) ‘We say that a relation R on a set S is `total` , if for every two elements x and y of S, either x is related to y, or y to x, or both.
 #check Total
 -- Total r = ∀ (x y : α), r x y ∨ r y x
 
@@ -63,7 +63,7 @@ example (h : c^2 = c + 1) : c^3 = 2*c + 1
 example : Increasing (λ x : ℝ ↦ x^3) := sorry
 -- One says: ‘f has been instantiated with λx : R . x3 ’
 
--- For example, let’s take for S the set R of the reals, and for R the relation ‘≤’
+-- For example, let’s take for S the set R of the reals, and for R the relation `≤`
 -- on that set R. Then we obtain the correct instantiation
 -- total (R, ≤) .
 #check @Total ℝ (·≤·)
@@ -77,6 +77,21 @@ example : Increasing (λ x : ℝ ↦ x^3) := sorry
 -- As an instantiation, this is correct, again. (Which has got nothing to do with
 -- the fact that, as a proposition, it is false: for example, neither 3|5, nor 5|3.)
 
+-- # 8.5 A formal format for definitions
+-- As an example, we have listed a series of definitions regarding a set S and a relation R on S in Figure 8.2.
+-- The notions `reflexive`, `antisymmetric` and `transitive` have been formally expressed here
+#check Reflexive
+-- ∀ (a : α), r a a
+#check AntiSymmetric
+-- ∀ (a b : α), r a b → r b a → a = b
+#check Transitive
+-- ∀ (a b c : α), r a b → r b c → r a c
 
+-- by means of defined constants, and so is their conjunction: `partially-ordered`
+
+#check PartialOrder
+
+
+-- All four definitions depend on the same context, and therefore we suffice with one initial pair of context flags.  Since each of the four defined notions is a proposition, they all have type ∗
 
 end TypeTheoryUFMG

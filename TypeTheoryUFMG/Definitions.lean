@@ -94,4 +94,22 @@ example : Increasing (λ x : ℝ ↦ x^3) := sorry
 
 -- All four definitions depend on the same context, and therefore we suffice with one initial pair of context flags.  Since each of the four defined notions is a proposition, they all have type ∗
 
+-- # 8.6 Definitions depending on assumptions
+-- ‘Let S be a set, partially ordered by a relation R. An element m of S is
+-- called a minimal element with respect to R, if R(x, m) implies that x = m.’
+#check IsLeast
+-- `a` is a least element of a set `s`; for a partial order, it is unique if exists
+
+example : IsLeast (Set.univ : Set ℕ) 0 := by
+  split_ands
+  . trivial
+  . intro a an
+    exact Nat.zero_le a
+
+example : IsLeast (Set.univ : Set ℕ) 0 :=
+  ⟨Set.mem_univ 0
+  , λ a _ => Nat.zero_le a ⟩
+
+
+
 end TypeTheoryUFMG

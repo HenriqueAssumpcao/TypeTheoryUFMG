@@ -110,6 +110,14 @@ example : IsLeast (Set.univ : Set ℕ) 0 :=
   ⟨Set.mem_univ 0
   , λ a _ => Nat.zero_le a ⟩
 
+-- # 8.7 Giving names to proofs
+
+-- * Theorem. Let m and n be positive natural numbers and assume that they are `coprime`.
+-- Then there are integers x and y such that mx + ny = 1.’
+
+#check Nat.gcd_eq_gcd_ab
+-- Bézout's lemma: given x y : ℕ, gcd x y = x * a + y * b, where a = gcd_a x y and b = gcd_b x y are computed by the extended Euclidean algorithm
+
 
 
 end TypeTheoryUFMG

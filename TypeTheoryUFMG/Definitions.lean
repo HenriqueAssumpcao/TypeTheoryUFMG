@@ -51,7 +51,8 @@ def D (n : ℕ+) := Nat.divisors n
 -- ‘D4 ∪ D6 = {1, 2, 3, 4, 6}’,
 #eval D 4 ∪ D 6
 -- or: ‘if k is a divisor of l, then Dk ⊆ Dl’
-example : k ∣ l → D k ⊆ D l := sorry
+example : k ∣ l → D k ⊆ D l :=
+  λ dvd => Nat.divisors_subset_of_dvd (PNat.ne_zero l) (PNat.dvd_iff.mp dvd)
 
 
 -- # 8.4 Instantiations of definitions

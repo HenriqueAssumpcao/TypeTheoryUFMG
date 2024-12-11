@@ -1,3 +1,4 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Real.Irrational
 
@@ -23,7 +24,18 @@ noncomputable def c : ℝ := (1 + √5) / 2
 -- the object: after this definition, one may use the name c instead of the longer
 -- expression (1+√5) / 2.
 -- Hence it is now appropriate to say: ‘It is easy to verify that c^2 − c = 1.’
-example : c ^ 2 - c = 1 := sorry
+example : c ^ 2 - c = 1 := calc
+  _ = c ^ 2 - c                       := rfl
+  _ = c ^ (2:ℝ) - c                   := by rw[Real.rpow_two c |>.symm]
+  _ = (1 + √5)^(2:ℝ) / 2^(2:ℝ) - c    := by have : c ^ (2:ℝ) = (1 + √5)^(2:ℝ) / 2^(2:ℝ) := Real.div_rpow
+                                                (add_nonneg (zero_le_one' ℝ) (Real.sqrt_nonneg 5))
+                                                (zero_le_two) (2:ℝ); rw [this]
+  _ = (1 + √5)^2 / 2^(2:ℝ) - c        := by rw[Real.rpow_two]
+  _ = (1 + 2*√5 + √5^2) / 4 - c       := by linarith
+  _ = (1 + 2*√5 + 5) / 4 - c          := by rw [Real.sq_sqrt (Nat.ofNat_nonneg' 5)]
+  _ = (6 + 2*√5) / 4 - c              := by linarith
+  _ = (6 + 2*√5) / 4 - (1 + √5) / 2   := by rfl
+  _ = 1                               := by linarith
 
 -- (5) ‘Let n be a natural number > 0. Then Dn is defined as the set of all positive integer divisors of n.’
 def D (n : ℕ+) := Nat.divisors n

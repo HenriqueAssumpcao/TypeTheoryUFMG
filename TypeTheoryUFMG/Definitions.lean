@@ -24,7 +24,7 @@ noncomputable def c : ℝ := (1 + √5) / 2
 -- the object: after this definition, one may use the name c instead of the longer
 -- expression (1+√5) / 2.
 -- Hence it is now appropriate to say: ‘It is easy to verify that c^2 − c = 1.’
-example : c ^ 2 - c = 1 := calc
+theorem c_sq_sub_c_eq_one : c ^ 2 - c = 1 := calc
   _ = c ^ 2 - c                       := rfl
   _ = c ^ (2:ℝ) - c                   := by rw[Real.rpow_two c |>.symm]
   _ = (1 + √5)^(2:ℝ) / 2^(2:ℝ) - c    := by have : c ^ (2:ℝ) = (1 + √5)^(2:ℝ) / 2^(2:ℝ) := Real.div_rpow
@@ -36,6 +36,10 @@ example : c ^ 2 - c = 1 := calc
   _ = (6 + 2*√5) / 4 - c              := by linarith
   _ = (6 + 2*√5) / 4 - (1 + √5) / 2   := by rfl
   _ = 1                               := by linarith
+
+lemma c_sq_is_succ_c : c ^ 2 = c + 1 := by
+  have : c ^ 2 - c = 1 := c_sq_sub_c_eq_one
+  linarith
 
 -- (5) ‘Let n be a natural number > 0. Then Dn is defined as the set of all positive integer divisors of n.’
 def D (n : ℕ+) := Nat.divisors n
@@ -62,12 +66,9 @@ example : k ∣ l → D k ⊆ D l :=
 -- (1+√5) / 2)^2 − (1+√5)/2 = 1 .
 -- Moreover, the same c may be used over and over again, for example in the following calculation:
 -- ‘Since c2 = c + 1, we have that c^3 = c^2 + c = c + 1 + c = 2c + 1 ’,
-example (h : c^2 = c + 1) : c^3 = 2*c + 1
-  := by calc
-    _ = c ^ 3      := rfl
-    _ = c^2 + c    := sorry
-    _ = c + 1 + c  := congrFun (congrArg HAdd.hAdd h) c
-    _ = 2*c + 1    := sorry
+example (h : c^2 = c + 1) : c^3 = 2*c + 1 := by calc
+    _ = c^2 * c := by linarith
+    _ = 2*c + 1 := by simp[c_sq_is_succ_c]; linarith
 
 -- or in establishing that
 -- ‘The n-th Fibonacci number fn satisfies the equation fn = (c^n−(1−c)^n)/√5 .’

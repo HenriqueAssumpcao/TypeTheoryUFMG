@@ -72,9 +72,47 @@ example (h : c^2 = c + 1) : c^3 = 2*c + 1 := by calc
 
 -- or in establishing that
 -- ‘The n-th Fibonacci number fn satisfies the equation fn = (c^n−(1−c)^n)/√5 .’
+#check @Nat.odd_iff 3 |>.mpr
+example : Odd 3 := @Nat.odd_iff 3 |>.mpr rfl
+#check Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl)
+--  (Nat.odd_iff  |>.mpr rfl)
 
 -- ‘The function sending a real number to its third power, is increasing.’
-example : Increasing (λ x : ℝ ↦ x^3) := sorry
+example : Increasing (λ x : ℝ ↦ x^3) := by
+  intro x y x_lt_y
+  simp
+  by_cases hxz : x = 0
+  . simp [hxz] at *
+    exact pow_pos x_lt_y 3
+  apply lt_or_gt_of_ne at hxz
+  obtain ⟨r,hr0,hr⟩ := exists_pos_add_of_lt' x_lt_y
+  cases' hxz with hxlt0 hxgt0
+  .
+    by_cases hhh : r < |x|
+    .
+      rw [←hr]
+      have : (x+r)^3 = x^3 + (3*x^2*r + 3*x*r^2 + r^3) := by linarith
+      rw [this]
+      -- idk
+      sorry
+
+    have oracle : 0 ≤ y := sorry -- from r ≥ |x|
+    have y_cb_nneg : 0 ≤ y ^ 3 := pow_nonneg oracle 3
+
+    have x_cb_ltz : x ^ 3 < 0 := Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl) hxlt0
+
+    exact gt_of_ge_of_gt y_cb_nneg x_cb_ltz
+
+  rw [←hr]
+  have : (x+r)^3 = x^3 + (3*x^2*r + 3*x*r^2 + r^3) := by linarith
+  rw [this]
+  nth_rewrite 1 [AddMonoid.add_zero (x^3) |>.symm]
+  apply (Real.add_lt_add_iff_left (x^3)).mpr
+  have x_sq_3_r_pos : 0 < 3 * x ^ 2 * r := mul_pos (mul_pos three_pos <| pow_two_pos_of_ne_zero <| ne_of_lt hxgt0 |>.symm) hr0
+  have r_cb_pos : 0 < r ^ 3 := pow_pos hr0 3
+  have t2 : 0 < 3 * x * r ^ 2 := mul_pos (mul_pos three_pos hxgt0) <|sq_pos_of_pos hr0
+  exact add_pos' (add_pos' x_sq_3_r_pos t2) r_cb_pos
+
 -- One says: ‘f has been instantiated with λx : R . x3 ’
 
 -- For example, let’s take for S the set R of the reals, and for R the relation `≤`

@@ -1,3 +1,6 @@
+import Mathlib.Tactic
+import Mathlib.Data.Nat.Prime.Basic
+import Mathlib.Data.Nat.Prime.Defs
 
 /-
   solutions to exercices in
@@ -127,6 +130,71 @@ def divides ( d n : Nat ) : Prop := ∃ k : Nat, n = k*d
 
 def prime (n : Nat) : Prop := (n ≠ 0) ∧ (n ≠ 1) ∧ (∀ d : Nat, divides d n → (d = n ∨ d = 1))
 
+theorem two_is_prime : prime 2 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 1)
+  constructor
+  exact Nat.succ_succ_ne_one 0
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;>
+  obtain _|k := k <;>
+  simp [mul_add,add_mul] at hk
+  omega
+
+theorem three_is_prime : prime 3 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 2)
+  constructor
+  exact Nat.succ_succ_ne_one 1
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|k := k <;>   --  <---  note the further cases split: "`k=0|k=1|k+2`"
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+theorem four_is_not_prime : ¬prime 4 := by
+  unfold prime
+  simp
+  use 2
+  constructor
+  . use 2
+  . omega
+
+theorem five_is_prime : prime 5 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 4)
+  constructor
+  exact Nat.succ_succ_ne_one 3
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|_|k := k <;>
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+theorem six_is_not_prime : ¬prime 6 := by
+  unfold prime
+  simp
+  use 2
+  constructor
+  . use 3
+  . omega
+
+theorem seven_is_prime : prime 7 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one 6)
+  constructor
+  exact Nat.succ_succ_ne_one 5
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|_|_|k := k <;>
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+theorem eleven_is_prime : prime 11 := by
+  constructor
+  exact Ne.symm (Nat.zero_ne_add_one (10))
+  constructor
+  exact Nat.succ_succ_ne_one 9
+  intro d ⟨k,hk⟩
+  obtain _|d := d <;> obtain _|_|_|_|_|_|k := k <;>
+    simp [mul_add,add_mul] at hk ⊢ <;> omega
+
+
+
 def infinitely_many_primes : Prop := ∀ k : Nat, ∃ p : Nat, prime p ∧ p > k
 
 def Fermat_prime (n : Nat) : Prop := ∃ k : Nat, n + 1 = 2^k
@@ -140,5 +208,123 @@ def Goldbach's_weak_conjecture : Prop :=
 
 def Fermat's_last_theorem : Prop := ∀ a b c k : Nat, (k > 3 ∧ a^k + b^k = c^k → a = 0 ∨ b = 0 ∨ c = 0)
 
+theorem two_le {m : ℕ} (h0 : m ≠ 0) (h1 : m ≠ 1) : 2 ≤ m := by
+  cases m; contradiction
+  case succ m =>
+    cases m; contradiction
+    repeat apply Nat.succ_le_succ
+    apply zero_le
+
+theorem exists_prime_factor {n : Nat} (h : 2 ≤ n) : ∃ p : Nat, p.Prime ∧ p ∣ n := by
+  by_cases np : n.Prime
+  · use n, np
+  induction' n using Nat.strong_induction_on with n ih
+  rw [Nat.prime_def_lt] at np
+  push_neg at np
+  rcases np h with ⟨m, mltn, mdvdn, mne1⟩
+  have : m ≠ 0 := by
+    intro mz
+    rw [mz, zero_dvd_iff] at mdvdn
+    linarith
+  have mgt2 : 2 ≤ m := two_le this mne1
+  by_cases mp : m.Prime
+  · use m, mp
+  · rcases ih m mltn mgt2 mp with ⟨p, pp, pdvd⟩
+    use p, pp
+    apply pdvd.trans mdvdn
+
+theorem primes_infinite' : ∀ s : Finset Nat, ∃ p, Nat.Prime p ∧ p ∉ s := by
+  intro s
+  by_contra h
+  push_neg at h
+  set s' := s.filter Nat.Prime with s'_def
+  have mem_s' : ∀ {n : ℕ}, n ∈ s' ↔ n.Prime := by
+    intro n
+    simp [s'_def]
+    apply h
+  have : 2 ≤ (∏ i in s', i) + 1 := by
+    apply Nat.succ_le_succ
+    apply Nat.succ_le_of_lt
+    apply Finset.prod_pos
+    intro n ns'
+    apply (mem_s'.mp ns').pos
+  rcases exists_prime_factor this with ⟨p, pp, pdvd⟩
+  have : p ∣ ∏ i in s', i := by
+    apply Finset.dvd_prod_of_mem
+    rw [mem_s']
+    apply pp
+  have : p ∣ 1 := by
+    convert Nat.dvd_sub' pdvd this
+    simp
+  show False
+  have := Nat.le_of_dvd zero_lt_one this
+  linarith [pp.two_le]
+
+lemma contrapos_mem_range {n m : ℕ}
+  : m ∉ Finset.range n ↔ m ≥ n := by
+  constructor
+  . by_contra hn
+    push_neg at hn
+    obtain ⟨hn,hmn⟩ := hn
+    rw [←Finset.mem_range] at hmn
+    contradiction
+  . by_contra hn
+    push_neg at hn
+    obtain ⟨hn,hmn⟩ := hn
+    rw [Finset.mem_range] at hmn
+    rw [ge_iff_le,←Nat.not_gt_eq] at hn
+    contradiction
+
+
+lemma natprime_to_prime
+  {p : Nat}
+  (h : Nat.Prime p)
+  : prime p := by
+  constructor
+  . exact Nat.Prime.ne_zero h
+  constructor
+  . exact Nat.Prime.ne_one h
+  intro d dvddp ;
+  obtain ⟨k,hk⟩ := dvddp
+  have : k = 1 ∨ k = p := (Nat.dvd_prime h).mp (by use d)
+  cases' this with k1 kp
+  . left
+    simp [k1] at hk
+    exact hk.symm
+  . right
+    simp [kp] at hk
+    nth_rewrite 1 [←Nat.mul_one p] at hk
+    apply @Nat.mul_left_cancel p at hk
+    . exact hk.symm
+    . exact Nat.Prime.pos h
+
 theorem inf_primes : infinitely_many_primes := by
-  sorry
+  unfold infinitely_many_primes
+  intro k
+  obtain ⟨p,hp,hr⟩:= primes_infinite' (Finset.range (k+1))
+  use p
+  constructor
+  . exact natprime_to_prime hp
+  . rw [contrapos_mem_range] at hr
+    assumption
+
+
+  -- Euclid's proof
+  -- Consider any finite list of prime numbers p1, p2, ..., pn.
+  -- It will be shown that there exists at least one additional prime number not included in this list.
+  -- Let P be the product of all the prime numbers in the list: P = p1p2...pn. Let q = P + 1.
+  -- Then q is either prime or not:
+  --     If q is prime,
+  --        then there is at least one more prime that is not in the list, namely, q itself.
+  --     If q is not prime,
+  --        then some prime factor p divides q.
+  --        If this factor p were in our list,
+  --        then it would divide P (since P is the product of every number in the list);
+  --        but p also divides P + 1 = q, as just stated.
+  --        If p divides P and also q, then p must also divide the difference[3] of the two numbers,
+  --        which is (P + 1) − P or just 1.
+  --        Since no prime number divides 1, p cannot be in the list.
+  --        This means that at least one more prime number exists beyond those in the list.
+  -- This proves that for every finite list of prime numbers there is a prime number not in the list.[4]
+  -- In the original work, Euclid denoted the arbitrary finite set of prime numbers as A, B, Γ.
+  -- If taken literally, that would mean just three prime numbers

@@ -72,14 +72,6 @@ example (h : c^2 = c + 1) : c^3 = 2*c + 1 := by calc
 
 -- or in establishing that
 -- ‘The n-th Fibonacci number fn satisfies the equation fn = (c^n−(1−c)^n)/√5 .’
-#check @Nat.odd_iff 3 |>.mpr
-example : Odd 3 := @Nat.odd_iff 3 |>.mpr rfl
-#check Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl)
---  (Nat.odd_iff  |>.mpr rfl)
-
-#check mul_lt_mul_left
-#check div_lt_div_right
-#check mul_lt_mul
 
 -- ‘The function sending a real number to its third power, is increasing.’
 example : Increasing (λ x : ℝ ↦ x^3) := by
@@ -100,10 +92,10 @@ example : Increasing (λ x : ℝ ↦ x^3) := by
       have minus_x_pos : 0 < (-x) := Left.neg_pos_iff.mpr hxlt0
       apply mul_lt_mul hrx (Preorder.le_refl (-x)) minus_x_pos <| le_of_lt minus_x_pos
 
-    have oracle : 0 ≤ y := sorry -- by exact? -- from r ≥ -x
-    have y_cb_nneg : 0 ≤ y ^ 3 := pow_nonneg oracle 3
-    have x_cb_ltz : x ^ 3 < 0 := Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl) hxlt0
-    exact gt_of_ge_of_gt y_cb_nneg x_cb_ltz
+    . simp at hrx -- -x ≤ r
+      apply (λyn↦gt_of_ge_of_gt (pow_nonneg yn 3) (Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl) hxlt0) : 0≤y → x^3 < y^3)
+      rw [←hr]
+      exact neg_le_iff_add_nonneg'.mp hrx
 
   . rw [←hr] -- x > 0
     suffices 0 < r * (3 * x ^ 2 + 3 * x * r + r ^ 2) by linarith

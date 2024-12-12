@@ -64,4 +64,3 @@ example (x : ∀D : Prop, (A → D) → (B → D) → D) (y : A → C) (z : B �
 
 example (x : ∀D : Prop, (A → D) → (B → D) → D) (y : A → C) (z : B → C) : C := by
   exact x C y z
-

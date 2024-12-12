@@ -100,21 +100,17 @@ example : Increasing (λ x : ℝ ↦ x^3) := by
       have minus_x_pos : 0 < (-x) := Left.neg_pos_iff.mpr hxlt0
       apply mul_lt_mul hrx (Preorder.le_refl (-x)) minus_x_pos <| le_of_lt minus_x_pos
 
-
     have oracle : 0 ≤ y := sorry -- by exact? -- from r ≥ -x
     have y_cb_nneg : 0 ≤ y ^ 3 := pow_nonneg oracle 3
     have x_cb_ltz : x ^ 3 < 0 := Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl) hxlt0
     exact gt_of_ge_of_gt y_cb_nneg x_cb_ltz
 
-  rw [←hr]
-  have : (x+r)^3 = x^3 + (3*x^2*r + 3*x*r^2 + r^3) := by linarith
-  rw [this]
-  nth_rewrite 1 [AddMonoid.add_zero (x^3) |>.symm]
-  apply (Real.add_lt_add_iff_left (x^3)).mpr
-  have x_sq_3_r_pos : 0 < 3 * x ^ 2 * r := mul_pos (mul_pos three_pos <| pow_two_pos_of_ne_zero <| ne_of_lt hxgt0 |>.symm) hr0
-  have r_cb_pos : 0 < r ^ 3 := pow_pos hr0 3
-  have t2 : 0 < 3 * x * r ^ 2 := mul_pos (mul_pos three_pos hxgt0) <|sq_pos_of_pos hr0
-  exact add_pos' (add_pos' x_sq_3_r_pos t2) r_cb_pos
+  . rw [←hr] -- x > 0
+    suffices 0 < r * (3 * x ^ 2 + 3 * x * r + r ^ 2) by linarith
+    suffices 0 < 3 * x ^ 2 + 3 * x * r + r ^ 2 by exact mul_pos hr0 this
+    suffices 0 < 3 * x ^ 2 + 3 * x * r by exact add_pos' this (sq_pos_of_pos hr0)
+    suffices 0 < r*x + x^2 by linarith
+    exact add_pos' (mul_pos hr0 hxgt0) <| sq_pos_of_pos hxgt0
 
 -- One says: ‘f has been instantiated with λx : R . x3 ’
 

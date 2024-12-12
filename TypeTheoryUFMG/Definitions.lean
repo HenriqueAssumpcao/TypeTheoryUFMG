@@ -79,6 +79,7 @@ example : Odd 3 := @Nat.odd_iff 3 |>.mpr rfl
 
 #check mul_lt_mul_left
 #check div_lt_div_right
+#check mul_lt_mul
 
 -- ‘The function sending a real number to its third power, is increasing.’
 example : Increasing (λ x : ℝ ↦ x^3) := by
@@ -90,14 +91,15 @@ example : Increasing (λ x : ℝ ↦ x^3) := by
   apply lt_or_gt_of_ne at hxz
   obtain ⟨r,hr0,hr⟩ := exists_pos_add_of_lt' x_lt_y
   cases' hxz with hxlt0 hxgt0
-  .
-    by_cases hrx : r < -x
+  . by_cases hrx : r < -x
     . rw [←hr,(by linarith : (x+r)^3 = x^3 + (3*x^2*r + 3*x*r^2 + r^3))]
       suffices 0 < r * (3 * x ^ 2 + 3 * x * r + r ^ 2) by linarith
       suffices 0 < 3 * x ^ 2 + 3 * x * r + r ^ 2 by exact mul_pos hr0 this
       suffices 0 < 3 * x ^ 2 + 3 * x * r by exact add_pos' this (sq_pos_of_pos hr0)
-      suffices 0 < x ^ 2 + x * r by linarith
-      sorry
+      suffices r*(-x) < (-x)*(-x) by linarith
+      have minus_x_pos : 0 < (-x) := Left.neg_pos_iff.mpr hxlt0
+      apply mul_lt_mul hrx (Preorder.le_refl (-x)) minus_x_pos <| le_of_lt minus_x_pos
+
 
     have oracle : 0 ≤ y := sorry -- by exact? -- from r ≥ -x
     have y_cb_nneg : 0 ≤ y ^ 3 := pow_nonneg oracle 3

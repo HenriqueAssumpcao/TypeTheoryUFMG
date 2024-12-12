@@ -91,29 +91,17 @@ example : Increasing (λ x : ℝ ↦ x^3) := by
   obtain ⟨r,hr0,hr⟩ := exists_pos_add_of_lt' x_lt_y
   cases' hxz with hxlt0 hxgt0
   .
-    by_cases hrx : r < |x|
-    .
-      rw [←hr,(by linarith : (x+r)^3 = x^3 + (3*x^2*r + 3*x*r^2 + r^3))]
-      nth_rewrite 1 [AddMonoid.add_zero (x^3) |>.symm]
-      apply (Real.add_lt_add_iff_left (x^3)).mpr
-      rw [(by linarith : 3*x^2*r + 3*x*r^2 + r^3 = r*(3*x^2 + 3*x*r + r^2))]
-      apply div_lt_div_iff_of_pos_right hr0 |>.mp
-      simp only [zero_div]
-      have : r * (3 * x ^ 2 + 3 * x * r + r ^ 2) / r = 3 * x ^ 2 + 3 * x * r + r ^ 2 := by sorry
-      rw [this]
+    by_cases hrx : r < -x
+    . rw [←hr,(by linarith : (x+r)^3 = x^3 + (3*x^2*r + 3*x*r^2 + r^3))]
+      suffices 0 < r * (3 * x ^ 2 + 3 * x * r + r ^ 2) by linarith
+      suffices 0 < 3 * x ^ 2 + 3 * x * r + r ^ 2 by exact mul_pos hr0 this
+      suffices 0 < 3 * x ^ 2 + 3 * x * r by exact add_pos' this (sq_pos_of_pos hr0)
+      suffices 0 < x ^ 2 + x * r by linarith
+      sorry
 
-      have good : x * r < x ^ 2 := sorry
-      have r_sq_pos : 0 < r ^ 2 := by exact sq_pos_of_pos hr0
-      calc
-        _ = 0                             := rfl
-        _ < x ^ 2 + x * r                 := sorry
-        _ < 3 * x ^ 2 + 3 * x * r         := sorry
-        _ < 3 * x ^ 2 + 3 * x * r + r ^ 2 := lt_add_of_pos_right _ <| sq_pos_of_pos hr0
-
-    have oracle : 0 ≤ y := sorry -- from r ≥ |x|
+    have oracle : 0 ≤ y := sorry -- by exact? -- from r ≥ -x
     have y_cb_nneg : 0 ≤ y ^ 3 := pow_nonneg oracle 3
     have x_cb_ltz : x ^ 3 < 0 := Odd.pow_neg (@Nat.odd_iff 3 |>.mpr rfl) hxlt0
-
     exact gt_of_ge_of_gt y_cb_nneg x_cb_ltz
 
   rw [←hr]

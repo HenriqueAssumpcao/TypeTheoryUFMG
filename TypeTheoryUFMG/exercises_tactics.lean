@@ -386,3 +386,5 @@ example : (p → q) → (¬q → ¬p) :=
     fun hq : ¬q => show ¬p from
       fun hp : p => show False from
        hq  (h hp)
+
+

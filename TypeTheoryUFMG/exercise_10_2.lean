@@ -2,7 +2,6 @@
   Exercise 10.2 of Nederpelt and Geuvers.
 
   A ‘contradiction’ is formalised in λD as being an inhabitant of ⊥.
-
 -/
 
 variable (A B : Prop)
@@ -13,8 +12,6 @@ variable (A B : Prop)
 
   A, B : *ₚ ▸ k(A, B) := ⫫ : (A ⇒ B) ⇒ A.
 -/
-
-
 
 -- we define a term k(A,B) : (A → B) → A
 axiom k : (A → B) → A
@@ -33,7 +30,6 @@ example : False := by
     ∅ ▸ ιDN := ⫫ : ∀A : ∗ₚ. (¬¬A ⇒ A)
     ∅ ▸ neg-imp := ⫫ : ∀A : ∗ₚ. (A ⇒ ¬A)
 -/
-
 
 /-
   (c) Show that the following deﬁnition, resembling the induction axiom,

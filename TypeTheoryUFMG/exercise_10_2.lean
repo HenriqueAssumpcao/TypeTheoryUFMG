@@ -19,7 +19,7 @@ axiom k : (A → B) → A
 #check k
 
 -- now we prove False using k
-example : False := by
+theorem FalseIsTrue : False := by
   have h : (False → False) → False := k False False
   have h1 : (False → False) := False.elim
   exact h h1

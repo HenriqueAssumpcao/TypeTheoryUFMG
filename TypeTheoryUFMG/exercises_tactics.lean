@@ -197,13 +197,6 @@ example : (p ∨ q) ∨ r ↔  p ∨ (q ∨ r) := by
       · apply Or.inr
 
 
-
-
-
-
-
-
-
 -- distributivity
 example : p ∧ (q ∨ r) ↔ (p ∧ q) ∨ (p ∧ r) :=
   Iff.intro

@@ -29,13 +29,71 @@ theorem FalseIsTrue : False := by
     ∅ ▸ neg-imp := ⫫ : ∀A : ∗ₚ. (A ⇒ ¬A)
 -/
 
-axiom ιDN : ¬¬A → A
-axiom neg_imp : A → ¬A
+/-
+  Let us define False (⊥) and negation as on page 138 of
+  [NG].
+-/
+
+def myFalse : Prop := ∀A : Prop, A
+def myNeg (A : Prop) := A → myFalse
+
+-- In these terms the axioms look like this:
+axiom ιDN : (myNeg (myNeg A)) → A
+-- ((A → ⊥) → ⊥) → A
+
+axiom neg_imp : A → myNeg A
+-- A → (A → ⊥)
+
+-- The ιDN axiom implies ιET
+theorem _ιET (A: Prop) : ∀C : Prop, (A → C) → (myNeg A → C) → C := by
+
+  intro C
+  intro ac
+  intro nac
+  apply ιDN
+  intro nC
+  have t1 : myNeg (A → C) → myFalse := by
+    intro q
+    apply q
+    intro r
+    apply ιDN
+    intro s
+    apply s
+    exact ac r
+
+
+  have t2 : (myNeg (myNeg A → C) → C) → myFalse := by
+    intro z 
+    apply ιDN
+    intro q
+    apply q 
+    intro r 
+    apply ιDN 
+    intro s 
+    apply s 
+      
+
+  exact nC (t2 (fun a => a nac C) C)
+
+
+theorem ιET (A : Prop) : A ∨ myNeg A := by
+  apply _ιET
+  exact Or.intro_left (myNeg A)
+  exact Or.intro_right A
 
 /-
   We prove False from these axioms.
 -/
 
+theorem myFalseIsTrue : myFalse := by
+  intro A
+  have  t : A ∨ myNeg A := ιET A
+  cases t with
+  | inl a => exact a
+  | inr na => exact ιDN A (neg_imp (myNeg A) na)
+
+
+/-
 theorem FalseIsTrue2 : False := by
   have ht : True := trivial
   have h : True → ¬True := neg_imp True
@@ -45,7 +103,6 @@ theorem FalseIsTrue2 : False := by
     exact h.2 h.1
   exact hh ⟨ht, nt⟩
 
-/-
   Problem: this solution does not explicitly use the ιDN axiom. I think it is implicit in
   the proposition that True ∧ ¬True → False.
 -/

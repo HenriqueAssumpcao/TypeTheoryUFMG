@@ -1,20 +1,19 @@
 /-
   Exercise 10.2 of Nederpelt and Geuvers.
-
-  A ‘contradiction’ is formalised in λD as being an inhabitant of ⊥.
+  Code by Csaba.
 -/
 
-variable (A B : Prop)
-
 /-
-  (a) Show that the following primitive deﬁnition causes inconsistency,
+  A ‘contradiction’ is formalised in λD as being an inhabitant of ⊥.
+
+  (a) Show that the following primitive definition causes inconsistency,
   because it enables the derivation of a contradiction in λD:
 
   A, B : *ₚ ▸ k(A, B) := ⫫ : (A ⇒ B) ⇒ A.
 -/
 
 -- we define a term k(A,B) : (A → B) → A
-axiom k : (A → B) → A
+axiom k (A B : Prop): (A → B) → A
 
 -- now we prove False using k
 theorem FalseIsTrue : False := by
@@ -23,13 +22,18 @@ theorem FalseIsTrue : False := by
   exact h h1
 
 /-
-  (b) Show that the following pair of primitive deﬁnitions causes
+  (b) Show that the following pair of primitive definitions causes
   inconsistency:
     ∅ ▸ ιDN := ⫫ : ∀A : ∗ₚ. (¬¬A ⇒ A)
     ∅ ▸ neg-imp := ⫫ : ∀A : ∗ₚ. (A ⇒ ¬A)
 -/
 
+
 /-
+  To solve this exercise, I'll recreate constructive logic from scratch so that
+  I can be sure that the solution does not accidentally use the principle of the
+  excluded middle.
+
   Let us define False (⊥) and negation as on page 138 of
   [NG].
 -/
@@ -37,49 +41,49 @@ theorem FalseIsTrue : False := by
 def myFalse : Prop := ∀A : Prop, A
 def myNeg (A : Prop) := A → myFalse
 
+
+-- Let us define myOr and its introduction rules
+def myOr (A B : Prop) : Prop := ∀C : Prop, (A → C) → (B → C) → C
+
+theorem myOr_intro_left (A : Prop) (B : Prop) (At : A) : myOr A B := by
+  intro C AC BC
+  exact AC At
+
+theorem myOr_intro_right (A : Prop) (B : Prop) (Bt : B) : myOr A B := by
+  intro C AC BC
+  exact BC Bt
+
+
 -- In these terms the axioms look like this:
-axiom ιDN : (myNeg (myNeg A)) → A
+axiom ιDN (A : Prop): (myNeg (myNeg A)) → A
 -- ((A → ⊥) → ⊥) → A
 
-axiom neg_imp : A → myNeg A
+axiom neg_imp (A : Prop) : A → myNeg A
 -- A → (A → ⊥)
 
--- The ιDN axiom implies ιET
-theorem _ιET (A: Prop) : ∀C : Prop, (A → C) → (myNeg A → C) → C := by
+-- We'll need the contrapositive of neg_imp
+theorem neg_imp_rev (A : Prop) : myNeg A → A := by
+  intro nA
+  apply ιDN A
+  apply neg_imp
+  exact nA
 
-  intro C
-  intro ac
-  intro nac
-  apply ιDN
-  intro nC
-  have t1 : myNeg (A → C) → myFalse := by
-    intro q
-    apply q
-    intro r
-    apply ιDN
-    intro s
-    apply s
-    exact ac r
+/-
+  The ιDN axiom implies ιET (excluded third or excluded middle)
+  This was surprisingly hard to prove, I used ideas from
+  https://proofassistants.stackexchange.com/q/1856
+-/
 
+theorem ιET (A: Prop) : myOr A (myNeg A) := by
+  have h1 : myNeg (myOr A (myNeg A)) →  myNeg A  := by
+    intro h
+    exact fun (hA : A) => h (myOr_intro_left A  (myNeg A) (hA))
 
-  have t2 : (myNeg (myNeg A → C) → C) → myFalse := by
-    intro z 
-    apply ιDN
-    intro q
-    apply q 
-    intro r 
-    apply ιDN 
-    intro s 
-    apply s 
-      
+  have h2 : myNeg (myOr A (myNeg A)) → myFalse := by
+    intro h
+    exact h (myOr_intro_right A (myNeg A) (h1 h))
 
-  exact nC (t2 (fun a => a nac C) C)
-
-
-theorem ιET (A : Prop) : A ∨ myNeg A := by
-  apply _ιET
-  exact Or.intro_left (myNeg A)
-  exact Or.intro_right A
+  exact ιDN (myOr A (myNeg A)) h2
 
 /-
   We prove False from these axioms.
@@ -87,28 +91,13 @@ theorem ιET (A : Prop) : A ∨ myNeg A := by
 
 theorem myFalseIsTrue : myFalse := by
   intro A
-  have  t : A ∨ myNeg A := ιET A
-  cases t with
-  | inl a => exact a
-  | inr na => exact ιDN A (neg_imp (myNeg A) na)
 
-
-/-
-theorem FalseIsTrue2 : False := by
-  have ht : True := trivial
-  have h : True → ¬True := neg_imp True
-  have nt : ¬True := h ht
-  have hh : True ∧ ¬True → False := by
-    intro h
-    exact h.2 h.1
-  exact hh ⟨ht, nt⟩
-
-  Problem: this solution does not explicitly use the ιDN axiom. I think it is implicit in
-  the proposition that True ∧ ¬True → False.
--/
+  apply ιET A
+  exact fun x => x
+  exact neg_imp_rev A
 
 /-
-  (c) Show that the following deﬁnition, resembling the induction axiom,
+  (c) Show that the following definition, resembling the induction axiom,
   causes inconsistency:
   P : ℕ → ∗ₚ ▸ ind-s(P) := ∀n : ℕ. (P n ⇒ P (s n)) ⇒ ∀n : ℕ. P n.
 -/
@@ -119,7 +108,7 @@ axiom ind_s (P : Nat → Prop) : ∀n : Nat, (P n → P (Nat.succ n)) → ∀n :
   The problem with this axiom is that there is no starting point for the induction. One must also
   assume that the proposition P is true for 0 in order to state that P is true for all n : Nat.
 
-  We use this errounous axiom to show that all natural numbers are greated than one.
+  We use this erroneous axiom to show that all natural numbers are greater than one.
 -/
 
 def bigger_than_one (a : Nat) := a > 1
@@ -137,3 +126,14 @@ theorem all_naturals_are_bigger_than_one : ∀a : Nat, bigger_than_one a := by
 
   intro a
   exact ind_s bigger_than_one a (h a) a
+
+-- second solution suggested by https://wsinrpn.win.tue.nl/CUP-C-Selected-exercises.pdf
+
+theorem NaturalsImplyFalse : ∀a : Nat, False := by
+  apply ind_s
+  trivial
+  exact 0
+
+theorem FalseIsTrue2 : False := by
+  apply NaturalsImplyFalse
+  exact 0

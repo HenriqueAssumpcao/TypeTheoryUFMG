@@ -129,7 +129,7 @@ theorem all_naturals_are_bigger_than_one : ∀a : Nat, bigger_than_one a := by
 
 -- second solution suggested by https://wsinrpn.win.tue.nl/CUP-C-Selected-exercises.pdf
 
-theorem NaturalsImplyFalse : ∀a : Nat, False := by
+theorem NaturalsImplyFalse : ∀_ : Nat, False := by
   apply ind_s
   trivial
   exact 0

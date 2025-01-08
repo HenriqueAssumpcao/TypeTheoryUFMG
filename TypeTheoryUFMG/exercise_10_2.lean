@@ -12,7 +12,7 @@
   A, B : *ₚ ▸ k(A, B) := ⫫ : (A ⇒ B) ⇒ A.
 -/
 
--- we define a term k(A,B) : (A → B) → A
+-- we define a term k(A, B) : (A → B) → A
 axiom k (A B : Prop): (A → B) → A
 
 -- now we prove False using k
@@ -34,8 +34,7 @@ theorem FalseIsTrue : False := by
   I can be sure that the solution does not accidentally use the principle of the
   excluded middle.
 
-  Let us define False (⊥) and negation as on page 138 of
-  [NG].
+  Let us define False (⊥) and negation as on page 138 of [NG].
 -/
 
 def myFalse : Prop := ∀A : Prop, A
@@ -45,12 +44,14 @@ def myNeg (A : Prop) := A → myFalse
 -- Let us define myOr and its introduction rules
 def myOr (A B : Prop) : Prop := ∀C : Prop, (A → C) → (B → C) → C
 
-theorem myOr_intro_left (A : Prop) (B : Prop) (At : A) : myOr A B := by
+theorem myOr_intro_left (A B : Prop) (At : A) : myOr A B := by
   intro C AC BC
+  -- C : Prop, AC : A → C, BC : B → C
   exact AC At
 
-theorem myOr_intro_right (A : Prop) (B : Prop) (Bt : B) : myOr A B := by
+theorem myOr_intro_right (A B : Prop) (Bt : B) : myOr A B := by
   intro C AC BC
+  -- C : Prop, AC : A → C, BC : B → C
   exact BC Bt
 
 
@@ -63,9 +64,12 @@ axiom neg_imp (A : Prop) : A → myNeg A
 
 -- We'll need the contrapositive of neg_imp
 theorem neg_imp_rev (A : Prop) : myNeg A → A := by
-  intro nA
+  intro nA        -- nA : myNeg A ≅ A → myFalse
+  -- target is: A
   apply ιDN A
+  -- target is myNeg (myNeg A)
   apply neg_imp
+  -- target is myNeg A
   exact nA
 
 /-
@@ -75,15 +79,28 @@ theorem neg_imp_rev (A : Prop) : myNeg A → A := by
 -/
 
 theorem ιET (A: Prop) : myOr A (myNeg A) := by
+
+  -- first a statement similar to de Morgan
   have h1 : myNeg (myOr A (myNeg A)) →  myNeg A  := by
     intro h
-    exact fun (hA : A) => h (myOr_intro_left A  (myNeg A) (hA))
+    -- h : myNeg (myOr A (myNeg A)) ≡ (myOr A (myNeg A)) → myFalse
+    -- need to prove myNeg A ≡ A → myFalse
+    -- this will be done in the following function
+    exact fun (hA : A) => h (myOr_intro_left A  (myNeg A) hA)
+      -- myOr_intro_left A (myNeg A) hA : myOr A myNeg A
+      -- h applied to this is gives myFalse
 
   have h2 : myNeg (myOr A (myNeg A)) → myFalse := by
     intro h
+    -- h : myNeg (myOr A (myNeg A))
     exact h (myOr_intro_right A (myNeg A) (h1 h))
+    -- h1 h : myNeg A
+    -- myOr_intro_right A (myNeg A) (h1 h) : myOr A (myNeg A)
+    -- h applied to this: myFalse
 
   exact ιDN (myOr A (myNeg A)) h2
+  -- ιDN (myOr A (myNeg A)) : (((myOr A (myNeg A)) → myFalse) → myFalse) → myOr A (myNeg A)
+  -- this is the same as : myNeg ((myOr A (myNeg A)) → myFalse) → myOr A (myNeg A)
 
 /-
   We prove False from these axioms.
@@ -91,9 +108,13 @@ theorem ιET (A: Prop) : myOr A (myNeg A) := by
 
 theorem myFalseIsTrue : myFalse := by
   intro A
-
+  -- A : Prop
+  -- target is A
   apply ιET A
+  -- now need to prove that A → A and myNeg A → A
+  -- the first is an identity function
   exact fun x => x
+  -- the second is neg_imp_rev
   exact neg_imp_rev A
 
 /-
@@ -103,6 +124,7 @@ theorem myFalseIsTrue : myFalse := by
 -/
 
 axiom ind_s (P : Nat → Prop) : ∀n : Nat, (P n → P (Nat.succ n)) → ∀n : Nat, P n
+-- ind_s (P : Nat → Prop) (n : Nat) : (P n → P n.succ) → ∀ (n✝ : Nat), P n✝
 
 /-
   The problem with this axiom is that there is no starting point for the induction. One must also
@@ -111,27 +133,40 @@ axiom ind_s (P : Nat → Prop) : ∀n : Nat, (P n → P (Nat.succ n)) → ∀n :
   We use this erroneous axiom to show that all natural numbers are greater than one.
 -/
 
-def bigger_than_one (a : Nat) := a > 1
+def bigger_than_one (a : Nat) : Prop := a > 1
 
 /-
-  Theorem: If a is a natural, than a > 1.
+  Theorem: If a is a natural, then a > 1.
 -/
 
 theorem all_naturals_are_bigger_than_one : ∀a : Nat, bigger_than_one a := by
+
+  -- aux statement to show that if n is bigger than one, then succ n is also
   have h : ∀n : Nat, bigger_than_one n → bigger_than_one (Nat.succ n) := by
     intro n hn
-    unfold bigger_than_one at *
+    -- n : Nat, hn : bigger_than_one n
+    -- target is bigger_than_one n.succ
+    unfold bigger_than_one
+    -- target is now n.succ > 1
     apply Nat.lt_trans hn
+    -- target now is n < n.succ
     exact Nat.lt_succ_self n
 
   intro a
+  -- a : Nat
+  -- target now: bigger_than_one a
   exact ind_s bigger_than_one a (h a) a
 
 -- second solution suggested by https://wsinrpn.win.tue.nl/CUP-C-Selected-exercises.pdf
 
 theorem NaturalsImplyFalse : ∀_ : Nat, False := by
   apply ind_s
-  trivial
+  -- target now: False → False and Nat
+  -- First target: False → False
+  intro F
+  -- F : False
+  exact F
+  -- second target
   exact 0
 
 theorem FalseIsTrue2 : False := by

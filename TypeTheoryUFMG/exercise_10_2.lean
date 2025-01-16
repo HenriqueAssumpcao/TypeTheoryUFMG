@@ -74,9 +74,23 @@ theorem neg_imp_rev (A : Prop) : myNeg A → A := by
 
 /-
   The ιDN axiom implies ιET (excluded third or excluded middle)
-  This was surprisingly hard to prove, I used ideas from
-  https://proofassistants.stackexchange.com/q/1856
+  This was surprisingly hard to prove, First, I used ideas from
+  https://proofassistants.stackexchange.com/q/1856. Then, in the seminar,
+  Bernardo realized that ¬¬(P ∨ ¬P) is true also in constructive logic.
+  This approach gives a more elegant solution.
 -/
+
+theorem not_not_p_or_not_p : ∀P : Prop, myNeg (myNeg (myOr P  (myNeg P))) := by
+  intro P X
+  have Y : myNeg P := λ hp : P => X (myOr_intro_left P (myNeg P) hp)
+  have Z : myOr P (myNeg P) := myOr_intro_right P (myNeg P) Y
+  exact X Z
+
+theorem p_or_not_p : ∀P : Prop, myOr P (myNeg P) := by
+  intro P
+  apply ιDN
+  exact not_not_p_or_not_p P
+
 
 theorem ιET (A: Prop) : myOr A (myNeg A) := by
 
@@ -123,7 +137,7 @@ theorem myFalseIsTrue : myFalse := by
   P : ℕ → ∗ₚ ▸ ind-s(P) := ∀n : ℕ. (P n ⇒ P (s n)) ⇒ ∀n : ℕ. P n.
 -/
 
-axiom ind_s (P : Nat → Prop) : ∀n : Nat, (P n → P (Nat.succ n)) → ∀n : Nat, P n
+axiom ind_s (P : Nat → Prop) : (∀n : Nat, (P n → P (Nat.succ n))) → ∀n : Nat, P n
 -- ind_s (P : Nat → Prop) (n : Nat) : (P n → P n.succ) → ∀ (n✝ : Nat), P n✝
 
 /-
@@ -155,7 +169,7 @@ theorem all_naturals_are_bigger_than_one : ∀a : Nat, bigger_than_one a := by
   intro a
   -- a : Nat
   -- target now: bigger_than_one a
-  exact ind_s bigger_than_one a (h a) a
+  exact ind_s bigger_than_one h a
 
 -- second solution suggested by https://wsinrpn.win.tue.nl/CUP-C-Selected-exercises.pdf
 
@@ -163,11 +177,9 @@ theorem NaturalsImplyFalse : ∀_ : Nat, False := by
   apply ind_s
   -- target now: False → False and Nat
   -- First target: False → False
-  intro F
+  intro a F
   -- F : False
   exact F
-  -- second target
-  exact 0
 
 theorem FalseIsTrue2 : False := by
   apply NaturalsImplyFalse

@@ -119,11 +119,7 @@ theorem myFalseIsTrue : myFalse := by
   P : ℕ → ∗ₚ ▸ ind-s(P) := ∀n : ℕ. (P n ⇒ P (s n)) ⇒ ∀n : ℕ. P n.
 -/
 
-<<<<<<< HEAD
 axiom ind_s (P : Nat → Prop) : (∀n : Nat, (P n → P (Nat.succ n))) → (∀n : Nat, P n)
-=======
-axiom ind_s (P : Nat → Prop) : (∀n : Nat, (P n → P (Nat.succ n))) → ∀n : Nat, P n
->>>>>>> e4dc83cc645dbcddc245555912b4f274f064a493
 -- ind_s (P : Nat → Prop) (n : Nat) : (P n → P n.succ) → ∀ (n✝ : Nat), P n✝
 
 /-

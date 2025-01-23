@@ -344,7 +344,6 @@ example : ¬p → (p → q) :=
     fun hp : p => show q from
        False.elim (h hp)
 
-#check False.elim
 
 example : (¬p ∨ q) → (p → q) :=
   fun h : ¬p ∨ q => show p → q from

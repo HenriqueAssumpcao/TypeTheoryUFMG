@@ -50,3 +50,5 @@ def refl_eqv (k l m :Int) (u: greater m 0) := eqv k l m u -> eqv l k m u
 def iff_eqv (k l m :Int) (u: greater m 0) := eqv k l m u ↔ ∃x:Int,k = l + x*m
 
 end c8ex6
+
+

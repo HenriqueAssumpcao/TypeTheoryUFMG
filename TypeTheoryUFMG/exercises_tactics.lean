@@ -38,6 +38,7 @@ example : p ∧ q ↔ q ∧ p := by
 
 
 example : p ∧ q ↔ q ∧ p := by
+
   apply Iff.intro
   · intro h
     apply And.intro h.right h.left
@@ -379,5 +380,3 @@ example : (p → q) → (¬q → ¬p) :=
     fun hq : ¬q => show ¬p from
       fun hp : p => show False from
        hq  (h hp)
-
-

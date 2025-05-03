@@ -38,11 +38,12 @@ theorem FalseIsTrue : False := by
 -/
 
 def myFalse : Prop := ∀A : Prop, A
+
 def myNeg (A : Prop) := A → myFalse
 
 
 -- Let us define myOr and its introduction rules
-def myOr (A B : Prop) : Prop := ∀C : Prop, (A → C) → (B → C) → C
+def myOr (A B : Prop) : Prop := ∀C : Prop, (A → C) → ((B → C) → C)
 
 theorem myOr_intro_left (A B : Prop) (At : A) : myOr A B := by
   intro C AC BC
@@ -86,36 +87,10 @@ theorem not_not_p_or_not_p : ∀P : Prop, myNeg (myNeg (myOr P  (myNeg P))) := b
   have Z : myOr P (myNeg P) := myOr_intro_right P (myNeg P) Y
   exact X Z
 
-theorem ιET : ∀P : Prop, myOr P (myNeg P) := by
-  intro P
-  apply ιDN
-  exact not_not_p_or_not_p P
-
-/- 
 theorem ιET (A: Prop) : myOr A (myNeg A) := by
+  apply ιDN
+  exact not_not_p_or_not_p A
 
-  -- first a statement similar to de Morgan
-  have h1 : myNeg (myOr A (myNeg A)) →  myNeg A  := by
-    intro h
-    -- h : myNeg (myOr A (myNeg A)) ≡ (myOr A (myNeg A)) → myFalse
-    -- need to prove myNeg A ≡ A → myFalse
-    -- this will be done in the following function
-    exact fun (hA : A) => h (myOr_intro_left A  (myNeg A) hA)
-      -- myOr_intro_left A (myNeg A) hA : myOr A myNeg A
-      -- h applied to this is gives myFalse
-
-  have h2 : myNeg (myOr A (myNeg A)) → myFalse := by
-    intro h
-    -- h : myNeg (myOr A (myNeg A))
-    exact h (myOr_intro_right A (myNeg A) (h1 h))
-    -- h1 h : myNeg A
-    -- myOr_intro_right A (myNeg A) (h1 h) : myOr A (myNeg A)
-    -- h applied to this: myFalse
-
-  exact ιDN (myOr A (myNeg A)) h2
-  -- ιDN (myOr A (myNeg A)) : (((myOr A (myNeg A)) → myFalse) → myFalse) → myOr A (myNeg A)
-  -- this is the same as : myNeg ((myOr A (myNeg A)) → myFalse) → myOr A (myNeg A)
--/
 
 /-
   We prove False from these axioms.
@@ -138,7 +113,7 @@ theorem myFalseIsTrue : myFalse := by
   P : ℕ → ∗ₚ ▸ ind-s(P) := ∀n : ℕ. (P n ⇒ P (s n)) ⇒ ∀n : ℕ. P n.
 -/
 
-axiom ind_s (P : Nat → Prop) : (∀n : Nat, (P n → P (Nat.succ n))) → ∀n : Nat, P n
+axiom ind_s (P : Nat → Prop) : (∀n : Nat, (P n → P (Nat.succ n))) → (∀n : Nat, P n)
 -- ind_s (P : Nat → Prop) (n : Nat) : (P n → P n.succ) → ∀ (n✝ : Nat), P n✝
 
 /-
@@ -166,15 +141,13 @@ theorem all_naturals_are_bigger_than_one : ∀a : Nat, bigger_than_one a := by
     apply Nat.lt_trans hn
     -- target now is n < n.succ
     exact Nat.lt_succ_self n
-
-  intro a
-  -- a : Nat
-  -- target now: bigger_than_one a
-  exact ind_s bigger_than_one h a
+  apply ind_s
+  exact h
 
 -- second solution suggested by https://wsinrpn.win.tue.nl/CUP-C-Selected-exercises.pdf
 
 theorem NaturalsImplyFalse : ∀_ : Nat, False := by
+
   apply ind_s
   -- target now: False → False and Nat
   -- First target: False → False

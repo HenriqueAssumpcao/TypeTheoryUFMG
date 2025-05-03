@@ -86,12 +86,12 @@ theorem not_not_p_or_not_p : ∀P : Prop, myNeg (myNeg (myOr P  (myNeg P))) := b
   have Z : myOr P (myNeg P) := myOr_intro_right P (myNeg P) Y
   exact X Z
 
-theorem p_or_not_p : ∀P : Prop, myOr P (myNeg P) := by
+theorem ιET : ∀P : Prop, myOr P (myNeg P) := by
   intro P
   apply ιDN
   exact not_not_p_or_not_p P
 
-
+/- 
 theorem ιET (A: Prop) : myOr A (myNeg A) := by
 
   -- first a statement similar to de Morgan
@@ -115,6 +115,7 @@ theorem ιET (A: Prop) : myOr A (myNeg A) := by
   exact ιDN (myOr A (myNeg A)) h2
   -- ιDN (myOr A (myNeg A)) : (((myOr A (myNeg A)) → myFalse) → myFalse) → myOr A (myNeg A)
   -- this is the same as : myNeg ((myOr A (myNeg A)) → myFalse) → myOr A (myNeg A)
+-/
 
 /-
   We prove False from these axioms.

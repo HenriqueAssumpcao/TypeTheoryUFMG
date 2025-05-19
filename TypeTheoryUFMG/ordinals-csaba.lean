@@ -104,20 +104,19 @@ instance inhabited : Inhabited Ordinal :=
   Inhabited.mk 0
 
 lemma one_is_well_order : IsWellOrder PUnit (@EmptyRelation PUnit):=
-  sorry
-
-#check PUnit
+  inferInstance
 
 def one_ordinal : Ordinal :=
   Quotient.mk Ordinal.isEquivalent
     (WellOrder.mk  PUnit (@EmptyRelation PUnit) one_is_well_order)
 
 instance one : One Ordinal :=
-  One.mk (Quotient.mk Ordunal.isEquivalent ⟨type <| @EmptyRelation PUnit⟩
+  One.mk one_ordinal
 
 
-theorem type_eq {α β} {r : α → α → Prop} {s : β → β → Prop} [IsWellOrder α r] [IsWellOrder β s] :
-    type r = type s ↔ Nonempty (r ≃r s) :=
+theorem type_eq {α β} {r : α → α → Prop} {s : β → β → Prop}
+                      [IsWellOrder α r] [IsWellOrder β s] :
+                      type r = type s ↔ Nonempty (r ≃r s) :=
   Quotient.eq'
 
 theorem _root_.RelIso.ordinal_type_eq {α β} {r : α → α → Prop} {s : β → β → Prop} [IsWellOrder α r]
@@ -126,4 +125,3 @@ theorem _root_.RelIso.ordinal_type_eq {α β} {r : α → α → Prop} {s : β �
 
 theorem type_eq_zero_of_empty (r) [IsWellOrder α r] [IsEmpty α] : type r = 0 :=
   (RelIso.relIsoOfIsEmpty r _).ordinal_type_eq
--/

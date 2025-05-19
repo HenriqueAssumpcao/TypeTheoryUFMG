@@ -13,6 +13,7 @@ initial segment (or, equivalently, in any way). This total order is well founded
 
 assert_not_exists Module
 assert_not_exists Field
+noncomputable section
 
 universe u v w
 
@@ -30,27 +31,15 @@ structure WellOrder : Type (u + 1) where              --estrutura que vive no un
   wo : IsWellOrder α r                          -- A propriedade de que a relação é uma ordem total
 
 
---attribute [instance] WellOrder.wo
---Isso registra o campo wo como uma instância typeclass.
---Isso significa que sempre que Lean precisar encontrar uma prova de IsWellOrder α r
---para um WellOrder específico ele saberá onde procurar.
-
-
 lemma emptyiswellorder : IsWellOrder PEmpty EmptyRelation :=
    inferInstance
+
 
 instance : Inhabited WellOrder where
   default := WellOrder.mk
              PEmpty EmptyRelation
              emptyiswellorder
 
-
-
-#check Setoid WellOrder
-#check Nonempty
-#check RelIso.symm
-
-#check Nonempty ℕ
 
 def emptywellorder : WellOrder :=
   WellOrder.mk PEmpty EmptyRelation emptyiswellorder
@@ -62,14 +51,79 @@ instance Ordinal.isEquivalent : Setoid WellOrder where
   r := fun WO1 WO2 => Nonempty (RelIso WO1.r WO2.r)
   -- iseqv := Equivalence.mk (fun (WellOrder α r wo) => RelIso.refl r) (sorry) (sorry)
   iseqv :=  Equivalence.mk
-     (fun WO =>  ⟨RelIso.refl WO.r⟩)
-     (fun ⟨e⟩ =>  ⟨RelIso.symm  e⟩)
-     (fun ⟨e₁⟩ ⟨e₂⟩ => ⟨RelIso.trans e₁ e₂⟩)
-
-#check Nonempty (RelIso.refl emptywellorder.r)
+    (fun (wo : WellOrder) => Nonempty.intro (RelIso.refl wo.r))
+    (fun {wo₁ wo₂ : WellOrder} (h: Nonempty (wo₁.r ≃r wo₂.r)) =>
+        h.map RelIso.symm)
+        -- h.map :  (α → β) →  (Nonempty α → Nonempty β)
+        -- RelIso.symm :  (r ≃r s) →  s ≃r r
+    (fun {wo₁ wo₂ wo₃: WellOrder}
+         (h₁ : Nonempty (wo₁.r ≃r wo₂.r))
+         (h₂  : Nonempty (wo₂.r ≃r wo₃.r)) =>
+        Nonempty.elim h₁ (fun (e₁ : wo₁.r ≃r wo₂.r) =>
+          h₂.map (fun (e₂ : wo₂.r ≃r wo₃.r) =>
+          RelIso.trans e₁ e₂)))
+       -- Nonempty.elim (Nonempty α) → (α → p) → p
+       -- RelIso.trans (r ≃r s) → (s ≃r t) →  (r ≃r t)
+       -- function in argument : (wo₁.r ≃r wo₂.r) → (wo₂.r ≃r wo₃.r) →  (wo₁.r ≃r wo₃.r)
+       -- h₂.map :  (α → β) →  (Nonempty α → Nonempty β)
 
 
 /-- `Ordinal.{u}` is the type of well orders in `Type u`, up to order isomorphism. -/
-@[pp_with_univ]
+
 def Ordinal : Type (u + 1) :=
-  Quotient Ordinal.isEquivalent
+  Quotient  Ordinal.isEquivalent
+
+-- Use this over `Iio o` only when it is paramount to have a `Type u` rather than a `Type (u + 1)`. -/
+
+def Ordinal.toType (o : Ordinal.{u}) : Type u :=
+  -- Choose an element of the equivalence class using the axiom of choice.
+  -- Sound but noncomputable.
+  -- return the type of the chosen element
+  o.out.α
+
+instance hasWellFounded_toType (o : Ordinal) : WellFoundedRelation o.toType :=
+  WellFoundedRelation.mk o.out.r o.out.wo.wf
+
+namespace Ordinal
+/-- The ordinal corresponding to a given well order. -/
+
+def ofWellOrder (wo : WellOrder) : Ordinal :=
+  Quotient.mk Ordinal.isEquivalent wo
+/-! ### Basic properties of the order type -/
+
+/-- The order type of a well order is an ordinal. -/
+def type {α : Type u} (r : α → α → Prop) [wo : IsWellOrder α r] : Ordinal :=
+  Quotient.mk Ordinal.isEquivalent (WellOrder.mk α r wo)
+
+instance zero : Zero Ordinal :=
+  Zero.mk (Quotient.mk Ordinal.isEquivalent emptywellorder)
+
+#check (0 : Ordinal)
+
+instance inhabited : Inhabited Ordinal :=
+  Inhabited.mk 0
+
+lemma one_is_well_order : IsWellOrder PUnit (@EmptyRelation PUnit):=
+  sorry
+
+#check PUnit
+
+def one_ordinal : Ordinal :=
+  Quotient.mk Ordinal.isEquivalent
+    (WellOrder.mk  PUnit (@EmptyRelation PUnit) one_is_well_order)
+
+instance one : One Ordinal :=
+  One.mk (Quotient.mk Ordunal.isEquivalent ⟨type <| @EmptyRelation PUnit⟩
+
+
+theorem type_eq {α β} {r : α → α → Prop} {s : β → β → Prop} [IsWellOrder α r] [IsWellOrder β s] :
+    type r = type s ↔ Nonempty (r ≃r s) :=
+  Quotient.eq'
+
+theorem _root_.RelIso.ordinal_type_eq {α β} {r : α → α → Prop} {s : β → β → Prop} [IsWellOrder α r]
+    [IsWellOrder β s] (h : r ≃r s) : type r = type s :=
+  type_eq.2 ⟨h⟩
+
+theorem type_eq_zero_of_empty (r) [IsWellOrder α r] [IsEmpty α] : type r = 0 :=
+  (RelIso.relIsoOfIsEmpty r _).ordinal_type_eq
+-/

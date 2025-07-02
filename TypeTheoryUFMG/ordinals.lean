@@ -66,10 +66,9 @@ instance Ordinal.isEquivalent : Setoid WellOrder where
      (fun ⟨e⟩ =>  ⟨RelIso.symm  e⟩)
      (fun ⟨e₁⟩ ⟨e₂⟩ => ⟨RelIso.trans e₁ e₂⟩)
 
-#check Nonempty (RelIso.refl emptywellorder.r)
-
 
 /-- `Ordinal.{u}` is the type of well orders in `Type u`, up to order isomorphism. -/
-@[pp_with_univ]
+
 def Ordinal : Type (u + 1) :=
   Quotient Ordinal.isEquivalent
+

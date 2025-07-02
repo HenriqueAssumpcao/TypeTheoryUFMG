@@ -113,7 +113,6 @@ def one_ordinal : Ordinal :=
 instance one : One Ordinal :=
   One.mk one_ordinal
 
-
 theorem type_eq {α β} {r : α → α → Prop} {s : β → β → Prop}
                       [IsWellOrder α r] [IsWellOrder β s] :
                       type r = type s ↔ Nonempty (r ≃r s) :=
@@ -125,3 +124,7 @@ theorem _root_.RelIso.ordinal_type_eq {α β} {r : α → α → Prop} {s : β �
 
 theorem type_eq_zero_of_empty (r) [IsWellOrder α r] [IsEmpty α] : type r = 0 :=
   (RelIso.relIsoOfIsEmpty r _).ordinal_type_eq
+
+#check {PEmpty,{PEmpty,{PEmpty}}} 
+
+

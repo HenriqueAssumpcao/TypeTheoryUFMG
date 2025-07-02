@@ -16,15 +16,13 @@ The second argument is a lambda function that takes a proof `h : q ∧ p` and re
 
 example : p ∧ q ↔ q ∧ p :=
   Iff.intro
-    (fun h : p ∧ q => show q ∧ p from And.intro (And.right h) (And.left h))
-
-    (fun h : q ∧ p => show p ∧ q from And.intro (And.right h) (And.left h))
+    (fun h : p ∧ q => And.intro h.right h.left)
+    (fun h : q ∧ p => And.intro h.right h.left)
 
 
 example : p ∧ q ↔ q ∧ p  :=
   Iff.intro
     (λ h : p ∧ q => ⟨h.right, h.left⟩)
-
     (λ h : q ∧ p => ⟨h.right, h.left⟩)
     -- the same type of lambda function
 
@@ -38,7 +36,6 @@ example : p ∧ q ↔ q ∧ p := by
 
 
 example : p ∧ q ↔ q ∧ p := by
-
   apply Iff.intro
   · intro h
     apply And.intro h.right h.left
@@ -196,6 +193,13 @@ example : (p ∨ q) ∨ r ↔  p ∨ (q ∨ r) := by
         have h3 : p ∨ q := Or.intro_right p h2
         apply Or.inl h3
       · apply Or.inr
+
+
+
+
+
+
+
 
 
 -- distributivity

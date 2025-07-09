@@ -38,7 +38,7 @@ example : ((α → β) → α) → ((α → (α → β)) → α) :=
 
 -- second solution for (a) as a theorem
 
-theorem lem1 {α β : Prop} : ((α → β) → α) → ((α → (α → β)) → α) := by
+theorem part_a {α β : Prop} : ((α → β) → α) → ((α → (α → β)) → α) := by
   intro h
   intro g
 
@@ -48,11 +48,9 @@ theorem lem1 {α β : Prop} : ((α → β) → α) → ((α → (α → β)) →
 
   exact h t
 
-#check lem1
-
 -- solution for (b) using (a)
 
 example : ((α → β) → α) → (α → α → β) → β := by
    intro h
    intro g
-   exact g (lem1 h g) (lem1 h g)
+   exact g (part_a h g) (part_a h g)

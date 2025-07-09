@@ -5,6 +5,36 @@ variable (α β γ: Prop)
    Rob Nederpelt, Herman Geuvers, and Fredrik de Vries.
 -/
 
+/- Exercise 2.1
+   Investigate for each of the following λ-terms whether they can be typed
+   with a simple type. If so, give a type for the term and the corresponding
+   types for x and y. If not, explain why.
+   (a) x x y,
+   (b) x y y,
+   (c) x y x,
+   (d) x(x y),
+   (e) x(y x)
+-/
+
+-- solution for (a)
+-- The term in item (a) cannot be typed with a simple type since it
+-- contains an application of x to itself.
+
+-- solution for (b)
+example (x : α → (α → β)) (y : α) : β :=
+  (x y) y -- this is well-typed, with x of type α → β and y of type α
+
+-- solution for (c)
+-- ???
+
+-- solution for (d)
+-- no solution for (d) since it contains an application y y
+
+-- solution for (e)
+example (x : α → β) (y : (α → β) → α) : β :=
+  x (y x) -- this is well-typed, with x of type α → β and y of type (α → β) → α
+
+-- ##################################
 
 /-
    Exercise 2.11. Find inhabitants of the following types in the empty context, by giving

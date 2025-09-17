@@ -128,7 +128,6 @@ example : ∀ (δ : Type), ((α → γ) → δ) → (α → β) → (β → γ) 
 -- solution for (c)
 def c (α β γ : Type) (f : α → (β → α) → γ) (x : α) := (f x) (λ _ : β => x)
 example : ∀ (α β γ : Type), (α → (β → α) → γ) → α → γ := c
-
 end ex_36
 
 /-
@@ -267,13 +266,17 @@ def Nat := ∀ (α : Type), (α → α) → α → α
 def Zero (α : Type) (_ : α → α) (x : α) := x
 def One (α : Type) (f : α → α) (x : α) := f x
 def Two (α : Type) (f : α → α) (x : α) := f (f x)
-def Suc (n : Nat) (β : Type) (f : β → β) (x : β) := f (n β f x)
+def Suc (n : Nat) : Nat :=
+  λ(β : Type) (f : β → β) (x : β) => f (n β f x)
+
 
 theorem T1 : Suc Zero = One := by
   rfl
 
 theorem T2 : Suc One = Two := by
   rfl
+
+
 
 end ex_312
 
@@ -286,17 +289,45 @@ See the previous exercise.
   (b) Find a λ2-term Mult that simulates multiplication on Nat.
 -/
 
+
+namespace ex_313_
+def Nat := ∀ (α : Prop), (α → α) → α → α
+def Zero (α : Prop) (_ : α → α) (x : α) := x
+def One (α : Prop) (f : α → α) (x : α) := f x
+
+#check Zero
+#check One
+
+-- Porque temos Zero = One???
+
+theorem T : Zero = One := by
+  rfl
+
+end ex_313_
+
 namespace ex_313
-def Nat := ex_312.Nat
-def One := ex_312.One
-def Two := ex_312.Two
+def Nat := ∀ (α : Type), (α → α) → α → α
+def One (α : Type) (f : α → α) (x : α) := f x
+def Two (α : Type) (f : α → α) (x : α) := f (f x)
 
 -- solution for (a)
-def Add (m n : Nat) (α : Type) (f : α → α) (x : α) := m α f (n α f x)
+def Add (m n : Nat) : Nat  :=
+  λ(α : Type) (f : α → α) (x : α) => m α f (n α f x)
+
+
 
 theorem T : Add One One = Two := by
   rfl
 
+-- Multiplicação???
+
 -- solution for (b)
 
+-- #eval Add One One
+
 end ex_313
+
+
+namespace ex_315
+
+end ex_315

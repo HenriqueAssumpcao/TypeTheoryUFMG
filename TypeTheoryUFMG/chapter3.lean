@@ -146,7 +146,7 @@ variable (α β : Prop) (x : α → ex_35.Q) (f : (α → α) → α)
 example : α := f (λ y : α => y)
 
 -- inhabitant of β
-def a := f (λy : α => y)
+def a := f (fun (y : α) => y)
 example : β := x (a α f) β
 
 end
@@ -289,6 +289,23 @@ See the previous exercise.
   (b) Find a λ2-term Mult that simulates multiplication on Nat.
 -/
 
+namespace ex_313
+def Nat := ∀ (α : Type), (α → α) → α → α
+def Zero (α : Type) (_ : α → α) (x : α) := x
+def One (α : Type) (f : α → α) (x : α) := f x
+def Two (α : Type) (f : α → α) (x : α) := f (f x)
+
+-- solution for (a)
+def Add (m n : Nat) : Nat  :=
+  λ(α : Type) (f : α → α) (x : α) => m α f (n α f x)
+
+theorem One_plus_One_is_Two : Add One One = Two := by
+  rfl
+
+-- solution for (b)
+def Mult (m n : Nat) : Nat :=
+  λ(α : Type) (f : α → α) (x : α) => m α (n α f) x
+
 
 namespace ex_313_
 def Nat := ∀ (α : Prop), (α → α) → α → α
@@ -298,36 +315,100 @@ def One (α : Prop) (f : α → α) (x : α) := f x
 #check Zero
 #check One
 
--- Porque temos Zero = One???
+-- Why we have Zero = One???
 
 theorem T : Zero = One := by
   rfl
 
 end ex_313_
 
-namespace ex_313
-def Nat := ∀ (α : Type), (α → α) → α → α
-def One (α : Type) (f : α → α) (x : α) := f x
-def Two (α : Type) (f : α → α) (x : α) := f (f x)
 
--- solution for (a)
-def Add (m n : Nat) : Nat  :=
-  λ(α : Type) (f : α → α) (x : α) => m α f (n α f x)
+/-
+Exercise 3.14
+We may also introduce the polymorphic booleans in λ2:
+Bool ≡ Πα : ∗ . α → α → α,
+True ≡ λα : ∗ . λx,y : α. x,
+False ≡ λα : ∗ . λx,y : α. y.
+Construct a λ2-term Neg : Bool → Bool such that Neg True =β False
+and Neg False =β True. Prove the correctness of your answer.
+-/
 
+-- solution
+def Bool := ∀(α : Type), α → α → α
+def True := λ(α : Type) (x _ : α) => x
+def False := λ(α : Type) (_ y : α) => y
 
+def Neg (b : Bool) : Bool :=
+  λ(α : Type) (x y : α) => b α y x
 
-theorem T : Add One One = Two := by
+theorem Neg1 : Neg True = False := by
   rfl
 
--- Multiplicação???
+theorem Neg2 : Neg False = True := by
+  rfl
 
--- solution for (b)
 
--- #eval Add One One
+/-
+Exercise 3.15
+See Exercise 3.14. Define M by
+M ≡ λu,v : Bool. λβ : ∗ . λx,y : β. uβ(vβxy)(vβyy).
+  (a) Reduce the following terms to β-normal form:
+    M True True, M True False, M False True, M False False.
+  (b) Which logical operator is represented by M?
+-/
+
+-- Solution for (a)
+def M := λ(u v : Bool) (β : Type) (x y : β) => u β (v β x y) (v β y y)
+
+theorem TT : M True True = True := by
+  rfl
+
+theorem TF : M True False = False := by
+  rfl
+
+theorem FT : M False True = False := by
+  rfl
+
+theorem FF : M False False = False := by
+  rfl
+
+-- Solution for (b)
+-- M represents the operator 'And'
+
+
+/-
+Exercise 3.16
+See the previous exercises. Find λ2-terms that represent the logical operators
+‘inclusive or’, ‘exclusive or’ and ‘implication’.
+-/
+
+-- Solution
+def Or (u v : Bool) : Bool :=
+  λ(β : Type) (x y : β) => u β (v β x x) (v β x y)
+
+def Xor (u v : Bool) : Bool :=
+  λ(β : Type) (x y : β) => u β (v β y x) (v β x y)
+
+def Implies (u v : Bool) : Bool :=
+  λ(β : Type) (x y : β) => u β (v β x y) (v β x x)
+
+
+/-
+Exercise 3.17
+See the previous exercises. Find a λ2-term Iszero that represents the
+test-for-zero. That is, define a λ2-term such that Iszero Zero =β True
+and Iszero n =β False for all polymorphic Church numerals n except
+Zero.
+-/
+
+-- Solution
+def Iszero (n : Nat) : Bool :=
+  λ(α : Type) (x y : α) => (n α) (λ_ : α => y) x
+
+theorem zero_is_zero : Iszero Zero = True := by
+  rfl
+
+theorem one_isnot_zero : Iszero One = False := by
+  rfl
 
 end ex_313
-
-
-namespace ex_315
-
-end ex_315

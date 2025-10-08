@@ -412,37 +412,42 @@ theorem one_isnot_zero : Iszero One = False := by
   rfl
 
 /-
+Exercise 3.18
 See Exercise 3.14. We define the type Tree, representing the set of binary
 trees with boolean-labelled nodes and leaves, by
 Tree ≡ Πα : ∗ . (Bool → α) → (Bool → α → α → α) → α.
-Then λα : ∗ . λu : Bool → α . λv : Bool → α → α → α . M has type Tree,
+Then λα : ∗ . λu : Bool → α. λv : Bool → α → α → α. M has type Tree,
 for every λ2-term M of type α.
+  (a) Sketch the three trees that are represented if we take for M, respectively:
+    u False,
+    v True(u False)(u True),
+    v True(u True)(v False(u True)(u False)).
+  (b) Give a λ2-term which, on input a polymorphic boolean p and two
+    trees s and t, delivers the combined tree with p on top, left subtree s
+    and right subtree t.
 -/
 
 def TreeType := ∀(α : Type), (Bool → α) → (Bool → α → α → α) → α
 
+-- Solution for (a)
 
-def tree_1_T := λ(α : Type) (u : Bool → α) (v : Bool → α → α → α) =>  u True
-def tree_1_F := λ(α : Type) (u : Bool → α) (v : Bool → α → α → α) =>  u False
-
-
+def tree1 := λ(α : Type) (u : Bool → α) (_ : Bool → α → α → α) =>  u False
 def tree2 := λ(α : Type) (u : Bool → α) (v : Bool → α → α → α) =>  (v True) (u False) (u True)
 def tree3 := λ(α : Type) (u : Bool → α) (v : Bool → α → α → α) =>  (v True) (u True)  ((v False) (u True) (u False))
 
 
-def Tree (b: Bool) (l r : TreeType) : TreeType :=
-  λ(α : Type) (u : Bool → α) (v : Bool → α → α → α) => v b (l α u v) (r α u v)
+-- Solution for (b)
 
-def tree2_l := tree_1_F
-def tree2_r := tree_1_T
-def tree2_alt := Tree True tree2_l tree2_r
+def Tree (p: Bool) (s t : TreeType) : TreeType :=
+  λ(α : Type) (u : Bool → α) (v : Bool → α → α → α) => v p (s α u v) (t α u v)
 
-def tree3_alt := Tree True (tree_1_T) (Tree False tree_1_T tree_1_F)
+-- We can use the followin two trees to get every combined tree with "Tree" function.
+def tree_T := λ(α : Type) (u : Bool → α) (_ : Bool → α → α → α) =>  u True
+def tree_F := λ(α : Type) (u : Bool → α) (_ : Bool → α → α → α) =>  u False
 
--- #check Tree False tree1 tree2
-
-#check (tree3 : TreeType)
-
+def tree3_alt := Tree True tree_T (Tree False tree_T tree_F)
+theorem tree2_eq : tree3 = tree3_alt := by
+  rfl
 
 
 end ex_313

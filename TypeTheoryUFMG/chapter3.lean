@@ -437,10 +437,9 @@ def tree2_l := tree_1_F
 def tree2_r := tree_1_T
 def tree2_alt := Tree True tree2_l tree2_r
 
+def tree3_alt := Tree True (tree_1_T) (Tree False tree_1_T tree_1_F)
 
-
-
-#check Tree False tree1 tree2
+-- #check Tree False tree1 tree2
 
 #check (tree3 : TreeType)
 

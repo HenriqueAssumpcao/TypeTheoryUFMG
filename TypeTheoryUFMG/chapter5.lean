@@ -118,3 +118,102 @@ theorem T (A B C : Prop) : (A → (B → C)) → ((A → B) → (A → C)) := by
   exact c
 
 end ex_57c
+
+
+/-
+Exercise 5.8
+  (a) Let Γ ≡ S: ∗, P: S → ∗, Q: S → ∗. Find an inhabitant of
+Πx : S. Px → Qx → Px with respect to Γ, and give a corresponding
+(shortened) derivation.
+  (b) Give a natural deduction proof of the corresponding logical expression.
+-/
+
+-- Solution for (a)
+section
+namespace ex_58a
+
+variable (S : Type) (P : S → Type) (Q : S → Type)
+
+example : ∀x : S, P x → Q x → P x :=
+  λ x : S => λy : P x => λ_ : Q x => y
+
+end ex_58a
+end
+
+-- Solution for (b)
+section
+namespace ex_58b
+
+variable (S : Type) (P Q : S → Prop)
+
+theorem T : ∀x : S, P x → Q x → P x := by
+  intro h
+  intro h1
+  intro h2
+  exact h1
+
+-- This is not excatly what the problem asked, but it's fine.
+
+end ex_58b
+end
+
+
+/-
+Exercise 5.9
+Give proofs that the following propositions are tautologies, (first) in natural
+deduction and (second) by means of a shortened λP-derivation.
+  (a) ∀x ∈ S (Q(x)) ⇒ ∀y ∈ S (P(y) ⇒ Q(y)),
+  (b) ∀x ∈ S (P(x) ⇒ Q(x)) ⇒ (∀y ∈ S (P(y)) ⇒ ∀z ∈ S (Q(z))).
+-/
+
+section
+namespace ex_59
+variable (S : Type) (Q P : S → Prop)
+
+-- Solution for (a)
+
+theorem A : (∀x : S, Q x) → (∀y : S, (P y → Q y)) := by
+  intro h
+  intro h1
+  intro h2
+  exact h h1
+
+-- Solution for (b)
+
+theorem B : (∀x : S, (P x → Q x)) → ((∀y : S, P y) → (∀z : S, Q z)) := by
+  intro h
+  intro h1
+  intro h2
+  have Py := h1 h2
+  have P_Q := h h2
+  exact P_Q Py
+
+end ex_59
+end
+
+
+/-
+Exercise 5.10
+Consider the following context:
+Γ ≡ S : ∗, P : S → ∗, f : S → S, g : S → S,
+  u : Πx : S. (P(fx) → P(gx)), v: Πx,y : S. ((Px → Py) → P(fx))
+Let M ≡ λx : S. v(fx)(gx)(ux).
+  (a) Make a guess at which type N may satisfy Γ ⊢ M : N
+  (b) Demonstrate that the proof object M does indeed code a proof of the
+proposition N you have guessed, by elaborating the λP-derivation
+corresponding to M.
+-/
+
+-- Solution for (a)
+-- Πx : S. P(f(fx))
+
+-- Solution for (b)
+section
+namespace ex_510b
+
+variable (S : Type) (P : S → Prop) (f g : S → S) (u : ∀x : S, (P (f x) → P (g x))) (v : ∀x y : S, ((P x → P y) → P (f x)))
+
+def M (x : S) := v (f x) (g x) (u x)
+
+example: ∀x : S, P (f (f x)) := M S P f g u v
+example: ∀x : S, P (f (f x)) := λx : S => v (f x) (g x) (u x)

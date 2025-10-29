@@ -20,7 +20,6 @@ variable (S : Type)
 
 end
 
-
 /-
 Exercise 5.3
 Extend the flag derivation of Exercise 5.2(b) to a complete derivation of

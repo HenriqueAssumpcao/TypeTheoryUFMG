@@ -217,3 +217,24 @@ def M (x : S) := v (f x) (g x) (u x)
 
 example: ∀x : S, P (f (f x)) := M S P f g u v
 example: ∀x : S, P (f (f x)) := λx : S => v (f x) (g x) (u x)
+
+
+namespace ex_511b
+variable (S: Type) (Q R : S → S → Prop) (f g : S → S)
+
+variable( t : ∀ x y: S, Q x (f y) → Q (g x) y )
+axiom t' : ∀ x y: S, Q x (f x) → Q (g x) y
+
+variable( s : ∀ x y: S, Q x (f y) → R x y )
+axiom s' : ∀ x y: S, Q x (f x) → Q (g x) y
+
+variable( u : ∀ x: S, Q x (f (f x)))
+axiom u' : ∀ x y: S, Q x (f x) → Q (g x) y
+
+#check t
+
+example : ∀ x: S, R (g (g x)) (g x) := by
+  intro x
+  have q : Q (g x) (f (f (g x))) := u (g x)
+  have q1 : Q (g (g x)) (f (g x)) := t (g x) (f (g x)) q
+  exact  s (g (g x)) (g x) q1

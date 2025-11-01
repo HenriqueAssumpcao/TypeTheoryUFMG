@@ -241,18 +241,18 @@ Give the corresponding (shortened) λP-derivation.
 section
 namespace ex_511
 
-variable (S: Type) (Q R : S → S → Prop) (f g : S → S)
+variable {S: Type} {Q R : S → S → Prop} {f g : S → S}
 
 variable( t : ∀ x y: S, Q x (f y) → Q (g x) y )
-axiom t' : ∀ x y: S, Q x (f x) → Q (g x) y
+axiom t' : ∀ x y: S, Q x (f y) → Q (g x) y
 
 variable( s : ∀ x y: S, Q x (f y) → R x y )
-axiom s' : ∀ x y: S, Q x (f x) → Q (g x) y
+axiom s' : ∀ x y: S, Q x (f y) → R x y
 
 variable( u : ∀ x: S, Q x (f (f x)))
-axiom u' : ∀ x y: S, Q x (f x) → Q (g x) y
+axiom u' : ∀ x: S, Q x (f (f x))
 
-#check t
+#check u'
 
 example : ∀ x: S, R (g (g x)) (g x) := by
   intro x
@@ -260,5 +260,48 @@ example : ∀ x: S, R (g (g x)) (g x) := by
   have q1 : Q (g (g x)) (f (g x)) := t (g x) (f (g x)) q
   exact  s (g (g x)) (g x) q1
 
+example : ∀ x: S, R (g (g x)) (g x) := by
+  intro x
+  have q : Q (g x) (f (f (g x))) := u' (g x)
+  have q1 : Q (g (g x)) (f (g x)) := t' (g x) (f (g x)) q
+  exact  s' (g (g x)) (g x) q1
+
 end ex_511
+end
+
+
+/-
+Exercise 5.12
+In λP, consider the context
+Γ ≡ S: ∗, R: S → S → ∗, u: Πx,y: S. Rxy → Ryx,
+v : Πx,y,z : S. Rxy → Rxz → Ryz.
+  (a) Show that R is ‘reflexive on its domain’, by constructing an inhabitant
+    of the type Πx,y : S. Rxy → Rxx in context Γ; give a corresponding
+    (shortened) derivation.
+  (b) Show that R is transitive by constructing an inhabitant of the type
+    Πx,y,z : S. Rxy → Ryz → Rxz in context Γ; give acorresponding
+    (shortened) derivation.
+-/
+
+section
+variable {S : Type} {R : S → S → Prop} {u : ∀x y : S, R x y → R y x} {v : ∀x y z : S,  R x y → R x z → R y z}
+
+-- Solution for (a)
+
+example : ∀x y : S, R x y → R x x := by
+  intro x y
+  intro p
+  have q := u x y p
+  have q1 := v y x x q q
+  exact q1
+
+-- Solution for (b)
+
+example : ∀x y z : S, R x y → R y z → R x z := by
+  intro x y z
+  intro p p1
+  have q := u x y p
+  have q1 := v y x z q p1
+  exact q1
+
 end

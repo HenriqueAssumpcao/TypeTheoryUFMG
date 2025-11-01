@@ -211,15 +211,36 @@ corresponding to M.
 section
 namespace ex_510b
 
-variable (S : Type) (P : S → Prop) (f g : S → S) (u : ∀x : S, (P (f x) → P (g x))) (v : ∀x y : S, ((P x → P y) → P (f x)))
+variable {S : Type}
+axiom P : S → Prop
+axiom f : S → S
+axiom g : S → S
+axiom v : ∀x y : S, ((P x → P y) → P (f x))
+axiom u : ∀x : S, (P (f x) → P (g x))
 
 def M (x : S) := v (f x) (g x) (u x)
 
-example: ∀x : S, P (f (f x)) := M S P f g u v
-example: ∀x : S, P (f (f x)) := λx : S => v (f x) (g x) (u x)
+example: ∀x : S, P (f (f x)) := M
+
+end ex_510b
+end
 
 
-namespace ex_511b
+/-
+Exercise 5.11
+Let S be a set, with Q and R relations on S × S, and let f and g be
+functions from S to S. Assume that ∀x,y ∈ S (Q(x,f(y)) ⇒ Q(g(x),y)),
+∀x,y ∈ S (Q(x,f(y)) ⇒ R(x,y)), and ∀x ∈ S(Q(x,f(f(x)))).
+Prove that ∀x ∈ S (R(g(g(x)),g(x))) by giving a context Γ and finding a
+term M such that:
+Γ ⊢ M : Πx:S. R(g(gx))(gx).
+Give the corresponding (shortened) λP-derivation.
+-/
+
+-- Solution
+section
+namespace ex_511
+
 variable (S: Type) (Q R : S → S → Prop) (f g : S → S)
 
 variable( t : ∀ x y: S, Q x (f y) → Q (g x) y )
@@ -238,3 +259,6 @@ example : ∀ x: S, R (g (g x)) (g x) := by
   have q : Q (g x) (f (f (g x))) := u (g x)
   have q1 : Q (g (g x)) (f (g x)) := t (g x) (f (g x)) q
   exact  s (g (g x)) (g x) q1
+
+end ex_511
+end

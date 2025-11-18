@@ -232,3 +232,89 @@ def N := (∀α : Prop, ((∀x : S, (P x → α)) → α)) → (∀x : S, (P x �
 theorem T : N := by
   intro p q
   exact p Cont q
+
+-- Solution for (b) and (c)
+-- Sorry
+
+end ex_68
+end
+
+
+/-
+Exercise 6.9
+Given S : ∗, P : S → ∗ and f : S → S, we deﬁne in λC the expression:
+M ≡ λx : S . ΠQ : S → ∗ . (Πz : S . (Q z → Q(f z))) → Q x.
+Give a term of type Πa : S . (M a → M (f a)) and a (shortened) deriva-
+tion proving this.
+-/
+
+-- Solution
+section
+namespace ex_69
+
+variable {S : Type}
+axiom P : S → Prop
+axiom f : S → S
+
+def M := λx : S => ∀ Q : S → Prop, (∀z : S, (Q z → Q (f z))) → Q x
+
+example : ∀a : S, (M a → M (f a)) := by
+  intro a p
+  intro q x
+  have h := x a
+  have h1 := p q x
+  exact h h1
+
+end ex_69
+end
+
+
+/-
+Exercise 6.10 Given S : ∗ and P1, P2 : S → ∗, we deﬁne in λC the expression:
+  R ≡ λx : S. ΠQ : S → ∗ . (Πy : S . (P1 y → P2 y → Q y)) → Q x.
+We claim that R codes ‘the intersection of P1 and P2 ’, i.e. the predicate
+that holds if and only if both P1 and P2 hold. In order to show this, give
+inhabitants of the following types, plus (shortened) derivations proving
+this:
+(a) Πx : S. (P1 x → P2 x → R x),
+(b) Πx : S. (R x → P1 x),
+(c) Πx : S. (R x → P2 x).
+Why do (a), (b) and (c) entail that R is this intersection?
+(Hint for (b): see Exercise 5.8 (a).)
+-/
+
+section
+namespace ex_610
+
+variable {S : Type}
+axiom P1 : S → Prop
+axiom P2 : S → Prop
+
+def R := λx : S => ∀Q : S → Prop, (∀y : S, (P1 y → P2 y → Q y)) → Q x
+
+-- Solution for (a)
+
+example : ∀x : S, (P1 x → P2 x → R x) := by
+  intro x p1 p2
+  intro q h1
+  have h2 := h1 x p1 p2
+  exact h2
+
+-- Solution for (b)
+
+example : ∀x : S, (R x → P1 x) := by
+  intro x r
+  have q := r P1
+  have f := λy : S => λg : P1 y => λ_ : P2 y => g
+  exact q f
+
+-- Solution for (c)
+
+example : ∀x : S, (R x → P2 x) := by
+  intro x r
+  have q := r P2
+  have f := λy : S => λ_ : P1 y => λg : P2 y => g
+  exact q f
+
+end ex_610
+end

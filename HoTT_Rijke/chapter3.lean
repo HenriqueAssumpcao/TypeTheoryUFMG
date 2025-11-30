@@ -125,48 +125,41 @@ def predZ (x : myZ) : myZ :=
     | myN.succ x' => Sum.inr (Sum.inl x')
 
 inductive myBool where
-  | myTrue  : myBool 
-  | myFalse : myBool 
+  | myTrue  : myBool
+  | myFalse : myBool
 
-open myBool 
+open myBool
 
-def myNeg (x : myBool) : myBool := 
-  match x with 
+def myNeg (x : myBool) : myBool :=
+  match x with
   | myTrue  => myFalse
   | myFalse => myTrue
 
-def myConj(x y : myBool) : myBool := 
-  match x with 
-  | myFalse => myFalse 
-  | myTrue => 
-    match y with 
-    | myFalse => myFalse 
+def myConj(x y : myBool) : myBool :=
+  match x with
+  | myFalse => myFalse
+  | myTrue =>
+    match y with
+    | myFalse => myFalse
     | myTrue => myTrue
 
-def myDisj(x y : myBool) : myBool := 
-  match x with 
-  | myTrue => myTrue 
-  | myFalse => 
-    match y with 
-    | myTrue => myTrue 
-    | myFalse => myFalse 
+def myDisj(x y : myBool) : myBool :=
+  match x with
+  | myTrue => myTrue
+  | myFalse =>
+    match y with
+    | myTrue => myTrue
+    | myFalse => myFalse
 
 
 inductive myProd (P Q : Type)
   | mk (x: P) (y: Q)
 
 variable (P Q : Type) (z : Prod P Q)
-#check 
-
 
 -- Accessors for components of a value z : myProd P Q
-def myFst {P Q : Type} : myProd P Q → P
-  | myProd.mk x _ => x
-
-def mySnd {P Q : Type} : myProd P Q → Q
-  | myProd.mk _ y => y
-
 -- Example: pattern matching directly
+
 def proj1 {P Q : Type} (z : myProd P Q) : P :=
   match z with
   | myProd.mk x _ => x
@@ -176,17 +169,38 @@ def proj2 {P Q : Type} (z : myProd P Q) : Q :=
   | myProd.mk _ y => y
 
 
-def myProdFunc (P Q R: Type) (f : P → Q → R) := 
-  func (z : myProd P Q) => 
+def myProdFunc {P Q R : Type} (f : P → Q → R) : (myProd P Q → R) :=
+  fun (z : myProd P Q) => f (proj1 z) (proj2 z)
 
-def myEquiv (P Q : Type) : Type := Prod (P → Q) (Q → P)
-def myNegType  : Type := P → Empty 
+#check myProdFunc
 
-#check myNegType 
+def myEquiv (P Q : Type) : Type := myProd (P → Q) (Q → P)
+def myNegType  : Type := P → Empty
 
 
-example (P Q : Type): (Prod P (P → Empty)) → Empty := 
-  fun (x : P) (y : P → Empty) => y x 
+example (P : Type) : myNegType (myProd P (myNegType P)):=
+  myProdFunc (fun (x : P) (y : P → Empty)  => y x)
+
+example (P : Type) : myNegType (myEquiv P (myNegType P)) :=
+  myProdFunc fun (f: P → myNegType P) (g: myNegType P → P) =>
+    let q := fun p' => f p' p'    -- q : P -> 0
+      let p := g q                -- p : P
+      f p p                       -- Empty
+
+def double_neg : (P → myNegType (myNegType P)) :=
+  fun (p : P) => fun f => f p
+
+
+def double_contrapositive : (P → Q) → (myNegType (myNegType Q) → myNegType (myNegType P)) :=
+  fun f : (P -> Q) =>
+      -- have: P -> Q
+      -- need: ((Q -> 0) -> 0) -> ((P -> 0) -> 0)
+    fun q : myNegType (myNegType Q) =>
+      -- have (Q -> 0) -> 0
+      -- need (P -> 0) -> 0
+
+
+
 
 
 

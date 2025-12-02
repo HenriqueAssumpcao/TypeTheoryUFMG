@@ -191,23 +191,32 @@ def double_neg : (P → myNegType (myNegType P)) :=
   fun (p : P) => fun f => f p
 
 
-def double_contrapositive : (P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q)) := 
-  fun (f : P → Q) => 
-    fun (g : myNegType (myNegType P)) => 
-      fun (h : myNegType Q) => 
-        g (h ∘ f) 
+def double_contrapositive : (P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q)) :=
+  fun (f : P → Q) =>
+    fun (g : myNegType (myNegType P)) =>
+      fun (h : myNegType Q) =>
+        g (h ∘ f)
 
-def double_contrapositive_ii : (P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q)) := 
+def double_contrapositive_ii : (P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q)) :=
   fun  f : P → myNegType (myNegType Q) =>
     -- have P -> ((Q -> 0) -> 0)
     fun g : myNegType (myNegType P) =>
-      -- have (P -> 0) -> 0 
+      -- have (P -> 0) -> 0
       fun h : myNegType Q =>
-        -- need function P -> 0 
-        have z : myNegType P := fun (p : P) => f p h 
-        g z 
-         
-        
+        -- need function P -> 0
+        have z : myNegType P := fun (p : P) => f p h
+        g z
+
+
+def double_contrapositive_iii : myNegType (myNegType (myNegType (myNegType P) → P)) :=
+  fun f : myNegType (myNegType (myNegType P) → P) =>
+    -- f : (((P → Empty) → Empty) → P) → Empty
+    let h1 : myNegType P := fun p : P => f (fun _ => p)
+    let toP : myNegType (myNegType P) → P := fun nnP => Empty.elim (nnP h1)
+    f toP
+
+
+
 
 
 

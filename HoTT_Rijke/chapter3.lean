@@ -191,14 +191,23 @@ def double_neg : (P → myNegType (myNegType P)) :=
   fun (p : P) => fun f => f p
 
 
-def double_contrapositive : (P → Q) → (myNegType (myNegType Q) → myNegType (myNegType P)) :=
-  fun f : (P -> Q) =>
-      -- have: P -> Q
-      -- need: ((Q -> 0) -> 0) -> ((P -> 0) -> 0)
-    fun q : myNegType (myNegType Q) =>
-      -- have (Q -> 0) -> 0
-      -- need (P -> 0) -> 0
+def double_contrapositive : (P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q)) := 
+  fun (f : P → Q) => 
+    fun (g : myNegType (myNegType P)) => 
+      fun (h : myNegType Q) => 
+        g (h ∘ f) 
 
+def double_contrapositive_ii : (P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q)) := 
+  fun  f : P → myNegType (myNegType Q) =>
+    -- have P -> ((Q -> 0) -> 0)
+    fun g : myNegType (myNegType P) =>
+      -- have (P -> 0) -> 0 
+      fun h : myNegType Q =>
+        -- need function P -> 0 
+        have z : myNegType P := fun (p : P) => f p h 
+        g z 
+         
+        
 
 
 

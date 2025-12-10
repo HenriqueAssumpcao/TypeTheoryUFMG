@@ -36,12 +36,12 @@ def myEq_symm {α : Type} {a x : α} : (a ≡ x) → (x ≡ a) := by
 
  def myEq_trans {α : Type} {a x y : α} : (a ≡ x) → (x ≡ y) → (a ≡ y):= by
   intro p
-  let P : (x : α) → (a ≡ x) → Type := fun x _ => (x ≡ y) → (a ≡ y)
-  exact ind_eq (α:=α) (a:=a) P (fun a => a) x p
+  let P : (x' : α) → (a ≡ x') → Type := fun x' _ => (x' ≡ y) → (a ≡ y)
+  exact ind_eq P (fun a => a) x p
 
 def concat_eq {α : Type} {x y z : α} : (x ≡ y) → (y ≡ z) → (x ≡ z) :=  by
   intro p
-  let P : (y : α) → (x ≡ y) → Type := fun y _ => (y ≡ z) → (x ≡ z)
+  let P : (y' : α) → (x ≡ y') → Type := fun y' _ => (y' ≡ z) → (x ≡ z)
   exact ind_eq P (fun a => a) y p
 
 notation:50 a " • " b => concat_eq a b
@@ -58,3 +58,21 @@ def left_unit  {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := MyEq.refl a �
 def right_unit {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := p • MyEq.refl b
 
 
+def ap {α β : Type} (f : α → β) (x y : α) (p : x ≡ y) : (f x ≡ f y) := by
+  let P : (y' : α) → (x ≡ y') → Type := fun y' _ => f x ≡ f y'
+  exact ind_eq P (MyEq.refl (f x)) y p
+
+def ap_id {α : Type} (x y : α) (p : x ≡ y) : p ≡ (ap (fun (x:α) => x) x y p) := by
+  let P : (y' : α) → (p' : x ≡ y') → Type := fun y' p' => p' ≡ (ap (fun (x:α) => x) x y' p')
+  exact ind_eq P (MyEq.refl _) y p
+
+
+
+def ap_comp {α β γ : Type} (f : α → β) (g : β → γ) (x y : α) (p : x ≡ y) :
+  ap g (f x) (f y) (ap f x y  p) ≡ ap (g ∘ f) x y p := by
+  let t := ap  f x x (MyEq.refl x)
+  let s := ap_id x x (MyEq.refl x)
+  let P : (y' : α) → (p' : x ≡ y') → Type :=
+    fun y' p' => ap g (f x) (f y') (ap f x y' p') ≡ ap (g ∘ f) x y' p'
+  have u : P x (MyEq.refl x) := sorry
+  exact ind_eq P u y p

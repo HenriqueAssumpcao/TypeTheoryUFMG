@@ -56,3 +56,5 @@ def concat_assoc {α : Type} {a b c d : α} (p : a ≡ b) (q : b ≡ c) (r : c �
 
 def left_unit  {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := MyEq.refl a • p
 def right_unit {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := p • MyEq.refl b
+
+

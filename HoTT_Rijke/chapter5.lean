@@ -76,3 +76,10 @@ def ap_comp {α β γ : Type} (f : α → β) (g : β → γ) (x y : α) (p : x 
     fun y' p' => ap g (f x) (f y') (ap f x y' p') ≡ ap (g ∘ f) x y' p'
   have u : P x (MyEq.refl x) := sorry
   exact ind_eq P u y p
+
+
+def unique_ref {α : Type} (x y : α) (p : x ≡ y) :
+  (⟨x, MyEq.refl x⟩ : Σ (y' : α ), x ≡ y') ≡ ⟨y, p⟩ :=
+    by
+      cases p
+      exact MyEq.refl _

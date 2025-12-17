@@ -1,0 +1,10 @@
+name = "HoTT_Rijke"
+version = "0.1.0"
+defaultTargets = ["hott_rijke"]
+
+[[lean_lib]]
+name = "HoTTRijke"
+
+[[lean_exe]]
+name = "hott_rijke"
+root = "Main"

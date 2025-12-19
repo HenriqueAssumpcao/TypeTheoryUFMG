@@ -1,7 +1,4 @@
-import HoTT_Rijke.chapter3
-
-open chapter3
-
+import HoTTRijke.chapter3
 
 universe u v w
 
@@ -92,8 +89,19 @@ def unique_ref {α : Type u} (x y : α) (p : x ≡ y) :
       exact MyEq.refl _
 
 
-def transport {α : Type u} (x y : α) (β : (x' : α) → Type (u+1)) : (x ≡ y) → (β x ≡ β y) := 
-  by 
-    sorry 
+def transport {α : Type u} (x y : α) (β : (x' : α) → Type (u+1)) : (x ≡ y) → (β x ≡ β y) :=
+  by
+    sorry
     /- let P : (y' : α) → (p' : x ≡ y') → Type (u + 1) := fun y' p => (x ≡ y') → (β x ≡ β y')
        exact ind_eq (α:=α) (a:=x) P y p -/
+
+
+open chapter3
+
+def left_unit_add_N  (a : myN) : myAdd a _0 ≡ a := MyEq.refl a
+
+def right_unit_add_N  (a : myN)  : myAdd _0 a ≡ a :=
+  match a with
+  | myN.zero => MyEq.refl _
+  | myN.succ a =>
+      ap (fun x => myN.succ x) (myAdd _0 a) a (right_unit_add_N a)

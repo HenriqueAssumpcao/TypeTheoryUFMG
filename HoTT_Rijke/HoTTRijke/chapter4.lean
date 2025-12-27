@@ -1,3 +1,6 @@
+import HoTTRijke.chapter3
+
+namespace chapter4_lists
 variable (A B : Type)
 
 
@@ -30,9 +33,6 @@ def list_length {A : Type} (l : myList A) : Nat :=
         match i with
         | 0 => some a
         | Nat.succ j => nth_list l1 j
-
-
-
 
 def fold_list (μ : A → (B → B)) (b : B): myList A → B :=
   fun (l : myList A) =>
@@ -80,3 +80,66 @@ def reverse_list {A : Type} : myList A → myList A :=
   match l with
   | nil => nil
   | cons a l1 => concat_list (cons a nil ) (reverse_list l1)
+
+end chapter4_lists
+
+namespace chapter4_integers
+open chapter3_integers
+open chapter3_naturals
+/- myZ is myN ⊕ (myN ⊕ Unit)
+Left:
+0 -> -1
+1 -> -2
+2 -> -3
+etc...
+
+Right-Left
+(0,U) -> 1
+(1,U) -> 2
+(2,U) -> 3
+etc...
+
+Right-Right
+U -> 0
+-/
+
+
+def addNaturalToZ (n : myN) (z : myZ) : myZ :=
+  match n with
+  | myN.zero => z
+  | myN.succ n' => addNaturalToZ n' (succZ z)
+
+
+def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
+  match n with
+  | myN.zero => z
+  | myN.succ n' => subtractNaturalFromZ n' (predZ z)
+
+
+
+
+def myAdd (a b : myZ) : myZ :=
+  match b with
+  | Sum.inr (Sum.inr _) => a
+  | Sum.inr (Sum.inl n) => addNaturalToZ (myN.succ n) a
+  | Sum.inl n => subtractNaturalFromZ (myN.succ n) a
+
+
+def multNaturalWithZ (a : myZ) (b : myN) : myZ :=
+  match b with
+  | myN.zero => Zzero
+  | myN.succ n' => myAdd a (multNaturalWithZ a n')
+
+
+
+def myMult (a b : myZ) : myZ :=
+  match b with
+  | Sum.inr (Sum.inr _) => Zzero
+  | Sum.inr (Sum.inl n) => multNaturalWithZ a n.succ
+  | Sum.inl n =>  negative (multNaturalWithZ a n.succ)
+
+
+scoped notation:40 a " + " b => myAdd  a b
+scoped notation:60 a " × "  b => myMult a b
+
+end chapter4_integers

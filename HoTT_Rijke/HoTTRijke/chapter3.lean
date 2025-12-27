@@ -1,4 +1,4 @@
-namespace chapter3
+namespace chapter3_naturals
 
 inductive myN where
   | zero : myN
@@ -16,10 +16,26 @@ def _7 : myN := myN.succ _6
 def _8 : myN := myN.succ _7
 def _9 : myN := myN.succ _8
 
+def toStringMyN : myN → String
+  | myN.zero => "0"
+  | myN.succ myN.zero => "1"
+  | myN.succ (myN.succ myN.zero) => "2"
+  | myN.succ (myN.succ (myN.succ myN.zero)) => "3"
+  | myN.succ (myN.succ (myN.succ (myN.succ myN.zero))) => "4"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero)))) => "5"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero))))) => "6"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero)))))) => "7"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero))))))) => "8"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero)))))))) => "9"
+  | _ => "≥10"   -- any larger number
+
+instance : ToString myN where
+  toString := toStringMyN
+
 def myAdd (a b : myN) : myN :=
   match b with
   | myN.zero => a
-  | myN.succ b => myN.succ (myAdd a b)
+  | myN.succ b' => myN.succ (myAdd a b')
 
 def myMult (a b : myN) : myN :=
   match b with
@@ -81,9 +97,18 @@ def div2 (n : myN) : myN :=
   | myN.succ myN.zero => myN.zero
   | myN.succ (myN.succ n') => myAdd (div2 n') (myN.succ myN.zero)
 
-#eval div2 _6
+end chapter3_naturals
 
-def myN_ext := Sum myN Unit
+
+namespace chapter3_integers
+open chapter3_naturals
+
+def myZ := myN ⊕ (myN ⊕ Unit)
+
+def Zneg (n : myN) : myZ := Sum.inl n
+def Zpos (n : myN) : myZ := Sum.inr (Sum.inl n)
+def Zzero : myZ := Sum.inr (Sum.inr ())
+
 /- myZ is myN ⊕ (myN ⊕ Unit)
 Left:
 0 -> -1
@@ -101,28 +126,60 @@ Right-Right
 U -> 0
 -/
 
-def myZ := Sum myN myN_ext
-
 variable(U : Unit)
 
-#check (Sum.inl _1 : myN_ext)
+def __0 : myZ := (Sum.inr (Sum.inr U))
+
+def myNatToInt (n : myN) : myZ :=
+  -- your definition, e.g. using your constructors
+  -- example if you have myZ.zero / myZ.pos:
+  match n with
+  | myN.zero      => Zzero
+  | myN.succ n'   => Zpos n'
+
+ def negative (n : myZ) : myZ :=
+  match n with
+  | Sum.inl n' => Sum.inr (Sum.inl n')
+  | Sum.inr (Sum.inr ()) => Zzero
+  | Sum.inr (Sum.inl n') => Sum.inl n'
+
+def showMyZ (z : myZ) : String :=
+  match z with
+  | Sum.inl n =>  "-" ++ toString n.succ
+      -- negative: 0 ↦ -1, 1 ↦ -2, ...
+  | Sum.inr (Sum.inl n) => toString n.succ
+      -- positive: 0 ↦ 1, 1 ↦ 2, ...
+  | Sum.inr (Sum.inr _) => "0"
 
 
-def in_pos  := (fun (x : myN) => (Sum.inr (Sum.inl x : myN_ext) : myZ))
-def in_zero := (fun (x : Unit) => (Sum.inr (Sum.inr x : myN_ext) : myZ))
-def in_neg  := (fun (x : myN) => (Sum.inl x : myZ))
+instance : Coe myN myZ where
+  coe := myNatToInt
 
-def predZ (x : myZ) : myZ :=
-  match x with
-  | Sum.inr (Sum.inr _) => Sum.inl _0
-  | Sum.inl x =>
-    match x with
-    | myN.zero => Sum.inl _1
-    | myN.succ x' => Sum.inl (myN.succ (myN.succ x'))
-  | Sum.inr (Sum.inl x) =>
-    match x with
-    | myN.zero => Sum.inr (Sum.inr U)
-    | myN.succ x' => Sum.inr (Sum.inl x')
+#check (_1 : myZ)
+
+def predZ (z : myZ) : myZ :=
+  match z with
+  | Sum.inl z' => Zneg z'.succ
+  | Sum.inr (Sum.inr ()) => Zneg myN.zero
+  | Sum.inr (Sum.inl n)  =>
+    match n with
+    | myN.zero => Zzero
+    | myN.succ n' => Zpos n'
+
+#eval showMyZ (predZ (_0))
+
+def succZ (z : myZ) : myZ :=
+  match z with
+  | Sum.inl n =>
+      match n with
+      | myN.zero     => Zzero
+      | myN.succ n'  => Zneg n'
+  | Sum.inr (Sum.inl n)     => Zpos (myN.succ n)
+  | Sum.inr (Sum.inr ())    => Zpos _0
+
+end chapter3_integers
+
+namespace chapter3_booleans
 
 inductive myBool where
   | myTrue  : myBool
@@ -215,4 +272,4 @@ def double_contrapositive_iii : myNegType (myNegType (myNegType (myNegType P) �
     let toP : myNegType (myNegType P) → P := fun nnP => Empty.elim (nnP h1)
     f toP
 
-end chapter3
+end chapter3_booleans

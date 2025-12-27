@@ -103,5 +103,4 @@ def left_unit_add_N  (a : myN) : myAdd a _0 ≡ a := MyEq.refl a
 def right_unit_add_N  (a : myN)  : myAdd _0 a ≡ a :=
   match a with
   | myN.zero => MyEq.refl _
-  | myN.succ a =>
-      ap (fun x => myN.succ x) (myAdd _0 a) a (right_unit_add_N a)
+  | myN.succ a => ap myN.succ (myAdd _0 a) a (right_unit_add_N a)

@@ -1,12 +1,11 @@
 namespace chapter3_naturals
 
+-- Naturals now start at 1 (base constructor), so `myN.zero` represents 1.
 inductive myN where
-  | zero : myN
+  | one : myN   -- represents 1
   | succ : myN → myN
 
-
-def _0 : myN := myN.zero
-def _1 : myN := myN.succ _0
+def _1 : myN := myN.one
 def _2 : myN := myN.succ _1
 def _3 : myN := myN.succ _2
 def _4 : myN := myN.succ _3
@@ -15,43 +14,44 @@ def _6 : myN := myN.succ _5
 def _7 : myN := myN.succ _6
 def _8 : myN := myN.succ _7
 def _9 : myN := myN.succ _8
+def _10 : myN := myN.succ _9
 
 def toStringMyN : myN → String
-  | myN.zero => "0"
-  | myN.succ myN.zero => "1"
-  | myN.succ (myN.succ myN.zero) => "2"
-  | myN.succ (myN.succ (myN.succ myN.zero)) => "3"
-  | myN.succ (myN.succ (myN.succ (myN.succ myN.zero))) => "4"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero)))) => "5"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero))))) => "6"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero)))))) => "7"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero))))))) => "8"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.zero)))))))) => "9"
-  | _ => "≥10"   -- any larger number
+  | _1 => "1"
+  | _2 => "2"
+  | _3 => "3"
+  | _4 => "4"
+  | _5 => "5"
+  | _6 => "6"
+  | _7 => "7"
+  | _8 => "8"
+  | _9 => "9"
+  | _10 => "10"
+  | _ => "≥11"   -- any larger number
 
 instance : ToString myN where
   toString := toStringMyN
 
 def myAdd (a b : myN) : myN :=
   match b with
-  | myN.zero => a
+  | myN.zero => myN.succ a        -- adding 1
   | myN.succ b' => myN.succ (myAdd a b')
 
 def myMult (a b : myN) : myN :=
   match b with
-  | myN.zero => myN.zero
-  | myN.succ b => myAdd (myMult a b) a
+  | myN.zero => a                 -- multiplying by 1
+  | myN.succ b' => myAdd (myMult a b') a
 
 -- #eval myMult _2 _3
 
 def myExp (a b : myN) : myN :=
   match b with
-  | myN.zero => myN.succ myN.zero
-  | myN.succ b => myMult (myExp a b) a
+  | myN.zero => a                 -- a^1 = a
+  | myN.succ b' => myMult (myExp a b') a
 
 def myMin (a b : myN) : myN :=
   match b with
-  | myN.zero => b
+  | myN.zero => myN.zero
   | myN.succ c => myN.succ (myMin a c)
 
 def myMax (a b : myN) : myN :=
@@ -64,7 +64,7 @@ def myMax (a b : myN) : myN :=
 
 def triangular_number (a : myN) : myN :=
   match a with
-  | myN.zero => myN.zero
+  | myN.zero => myN.zero          -- 1
   | myN.succ a' => myAdd (triangular_number a') a
 
 def factorial (a : myN) : myN :=
@@ -76,26 +76,26 @@ def factorial (a : myN) : myN :=
 def binomial (a b : myN) : myN :=
   match a with
   | myN.zero =>
-  match b with
+    match b with
     | myN.zero => _1
-    | myN.succ _ => _0
+    | myN.succ _ => _1            -- no zero in 1-based naturals
   | myN.succ a' =>
-  match b with
+    match b with
     | myN.zero => _1
     | myN.succ b' => myAdd (binomial a' b') (binomial a' b)
 
 
 def fibonacci (n: myN) : myN :=
   match n with
-  | myN.zero => myN.zero
-  | myN.succ myN.zero => myN.succ myN.zero
-  | myN.succ (myN.succ n) => myAdd (fibonacci (myN.succ n)) (fibonacci n)
+  | myN.zero => myN.zero          -- F1 = 1
+  | myN.succ myN.zero => myN.zero -- F2 = 1
+  | myN.succ (myN.succ n') => myAdd (fibonacci (myN.succ n')) (fibonacci n')
 
 def div2 (n : myN) : myN :=
   match n with
-  | myN.zero => myN.zero
-  | myN.succ myN.zero => myN.zero
-  | myN.succ (myN.succ n') => myAdd (div2 n') (myN.succ myN.zero)
+  | myN.zero => myN.zero          -- 1 / 2 rounded to 1 for 1-based naturals
+  | myN.succ myN.zero => myN.zero -- 2 / 2 = 1
+  | myN.succ (myN.succ n') => myAdd (div2 n') myN.zero
 
 end chapter3_naturals
 

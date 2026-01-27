@@ -1,4 +1,4 @@
-import HoTTRijke
+import HoTTRijke.Basic
 
 def main : IO Unit :=
   IO.println s!"Hello, {hello}!"

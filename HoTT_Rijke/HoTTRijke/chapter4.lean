@@ -86,17 +86,18 @@ end chapter4_lists
 namespace chapter4_integers
 open chapter3_integers
 open chapter3_naturals
+
 /- myZ is myN ⊕ (myN ⊕ Unit)
 Left:
-0 -> -1
-1 -> -2
-2 -> -3
+1 -> -1
+2 -> -2
+3 -> -3
 etc...
 
 Right-Left
-(0,U) -> 1
-(1,U) -> 2
-(2,U) -> 3
+(1,U) -> 1
+(2,U) -> 2
+(3,U) -> 3
 etc...
 
 Right-Right
@@ -106,32 +107,34 @@ U -> 0
 
 def addNaturalToZ (n : myN) (z : myZ) : myZ :=
   match n with
-  | myN.zero => z
+  | myN.one => succZ z
   | myN.succ n' => addNaturalToZ n' (succZ z)
 
 
 def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
   match n with
-  | myN.zero => z
+  | myN.one => predZ z
   | myN.succ n' => subtractNaturalFromZ n' (predZ z)
 
 
 def myAdd (a b : myZ) : myZ :=
   match b with
   | Sum.inr (Sum.inr _) => a
-  | Sum.inr (Sum.inl n) => addNaturalToZ (myN.succ n) a
-  | Sum.inl n => subtractNaturalFromZ (myN.succ n) a
+  | Sum.inr (Sum.inl n) => addNaturalToZ n a
+  | Sum.inl n => subtractNaturalFromZ n a
+
 
 
 def multNaturalWithZ (a : myZ) (b : myN) : myZ :=
   match b with
-  | myN.zero => Zzero
+  | myN.one => a
   | myN.succ n' => myAdd a (multNaturalWithZ a n')
 
 
 def myMult (a b : myZ) : myZ :=
   match b with
   | Sum.inr (Sum.inr _) => Zzero
-  | Sum.inr (Sum.inl n) => multNaturalWithZ a n.succ
-  | Sum.inl n =>  negative (multNaturalWithZ a n.succ)
+  | Sum.inr (Sum.inl n) => multNaturalWithZ a n
+  | Sum.inl n =>  negative (multNaturalWithZ a n)
+
 end chapter4_integers

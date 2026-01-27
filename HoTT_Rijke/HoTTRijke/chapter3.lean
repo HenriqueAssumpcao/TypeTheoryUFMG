@@ -17,16 +17,16 @@ def _9 : myN := myN.succ _8
 def _10 : myN := myN.succ _9
 
 def toStringMyN : myN → String
-  | _1 => "1"
-  | _2 => "2"
-  | _3 => "3"
-  | _4 => "4"
-  | _5 => "5"
-  | _6 => "6"
-  | _7 => "7"
-  | _8 => "8"
-  | _9 => "9"
-  | _10 => "10"
+  | myN.one => "1"
+  | myN.succ myN.one  => "2"
+  | myN.succ (myN.succ myN.one)  => "3"
+  | myN.succ (myN.succ (myN.succ myN.one)) => "4"
+  | myN.succ (myN.succ (myN.succ (myN.succ myN.one))) => "5"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one)))) => "6"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one))))) => "7"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one)))))) => "8"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one))))))) => "9"
+  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one)))))))) => "10"
   | _ => "≥11"   -- any larger number
 
 instance : ToString myN where
@@ -34,68 +34,70 @@ instance : ToString myN where
 
 def myAdd (a b : myN) : myN :=
   match b with
-  | myN.zero => myN.succ a        -- adding 1
+  | myN.one => myN.succ a        -- adding 1
   | myN.succ b' => myN.succ (myAdd a b')
 
 def myMult (a b : myN) : myN :=
   match b with
-  | myN.zero => a                 -- multiplying by 1
+  | myN.one => a                 -- multiplying by 1
   | myN.succ b' => myAdd (myMult a b') a
 
 -- #eval myMult _2 _3
 
 def myExp (a b : myN) : myN :=
   match b with
-  | myN.zero => a                 -- a^1 = a
+  | myN.one => a                 -- a^1 = a
   | myN.succ b' => myMult (myExp a b') a
 
 def myMin (a b : myN) : myN :=
   match b with
-  | myN.zero => myN.zero
+  | myN.one => myN.one
   | myN.succ c => myN.succ (myMin a c)
 
 def myMax (a b : myN) : myN :=
   match a with
-  | myN.zero => b
+  | myN.one => b
   | myN.succ a' =>
     match b with
-    | myN.zero => a
+    | myN.one => a
     | myN.succ b' => myN.succ (myMax a' b')
 
 def triangular_number (a : myN) : myN :=
   match a with
-  | myN.zero => myN.zero          -- 1
+  | myN.one => myN.one          -- 1
   | myN.succ a' => myAdd (triangular_number a') a
 
 def factorial (a : myN) : myN :=
   match a with
-  | myN.zero => _1
+  | myN.one => _1
   | myN.succ a' => myMult (factorial a') a
 
 
 def binomial (a b : myN) : myN :=
   match a with
-  | myN.zero =>
+  | myN.one =>
     match b with
-    | myN.zero => _1
+    | myN.one => _1
     | myN.succ _ => _1            -- no zero in 1-based naturals
   | myN.succ a' =>
     match b with
-    | myN.zero => _1
+    | myN.one => _1
     | myN.succ b' => myAdd (binomial a' b') (binomial a' b)
 
 
 def fibonacci (n: myN) : myN :=
   match n with
-  | myN.zero => myN.zero          -- F1 = 1
-  | myN.succ myN.zero => myN.zero -- F2 = 1
+  | myN.one => myN.one          -- F1 = 1
+  | myN.succ myN.one => myN.one -- F2 = 1
   | myN.succ (myN.succ n') => myAdd (fibonacci (myN.succ n')) (fibonacci n')
 
+/-
 def div2 (n : myN) : myN :=
   match n with
-  | myN.zero => myN.zero          -- 1 / 2 rounded to 1 for 1-based naturals
+  | myN.one => myN.zero          -- 1 / 2 rounded to 1 for 1-based naturals
   | myN.succ myN.zero => myN.zero -- 2 / 2 = 1
   | myN.succ (myN.succ n') => myAdd (div2 n') myN.zero
+-/
 
 end chapter3_naturals
 
@@ -111,15 +113,15 @@ def Zzero : myZ := Sum.inr (Sum.inr ())
 
 /- myZ is myN ⊕ (myN ⊕ Unit)
 Left:
-0 -> -1
-1 -> -2
-2 -> -3
+1 -> -1
+2 -> -2
+3 -> -3
 etc...
 
 Right-Left
-(0,U) -> 1
-(1,U) -> 2
-(2,U) -> 3
+(1,U) -> 1
+(2,U) -> 2
+(3,U) -> 3
 etc...
 
 Right-Right
@@ -131,11 +133,7 @@ variable(U : Unit)
 def __0 : myZ := (Sum.inr (Sum.inr U))
 
 def myNatToInt (n : myN) : myZ :=
-  -- your definition, e.g. using your constructors
-  -- example if you have myZ.zero / myZ.pos:
-  match n with
-  | myN.zero      => Zzero
-  | myN.succ n'   => Zpos n'
+  Zpos n
 
  def negative (n : myZ) : myZ :=
   match n with
@@ -145,9 +143,9 @@ def myNatToInt (n : myN) : myZ :=
 
 def showMyZ (z : myZ) : String :=
   match z with
-  | Sum.inl n =>  "-" ++ toString n.succ
+  | Sum.inl n =>  "-" ++ toString n
       -- negative: 0 ↦ -1, 1 ↦ -2, ...
-  | Sum.inr (Sum.inl n) => toString n.succ
+  | Sum.inr (Sum.inl n) => toString n
       -- positive: 0 ↦ 1, 1 ↦ 2, ...
   | Sum.inr (Sum.inr _) => "0"
 
@@ -160,22 +158,22 @@ instance : Coe myN myZ where
 def predZ (z : myZ) : myZ :=
   match z with
   | Sum.inl z' => Zneg z'.succ
-  | Sum.inr (Sum.inr ()) => Zneg myN.zero
+  | Sum.inr (Sum.inr ()) => Zneg _1
   | Sum.inr (Sum.inl n)  =>
     match n with
-    | myN.zero => Zzero
+    | myN.one => Zzero
     | myN.succ n' => Zpos n'
 
-#eval showMyZ (predZ (_0))
+#eval showMyZ (predZ (negative _2))
 
 def succZ (z : myZ) : myZ :=
   match z with
   | Sum.inl n =>
       match n with
-      | myN.zero     => Zzero
+      | myN.one     => Zzero
       | myN.succ n'  => Zneg n'
   | Sum.inr (Sum.inl n)     => Zpos (myN.succ n)
-  | Sum.inr (Sum.inr ())    => Zpos _0
+  | Sum.inr (Sum.inr ())    => _1
 
 end chapter3_integers
 

@@ -106,13 +106,13 @@ def fibonacci (n: myN) : myN :=
   | myN.succ myN.one => myN.one -- F2 = 1
   | myN.succ (myN.succ n') => myAdd (fibonacci (myN.succ n')) (fibonacci n')
 
-/-
+
 def div2 (n : myN) : myN :=
   match n with
-  | myN.one => myN.zero          -- 1 / 2 rounded to 1 for 1-based naturals
-  | myN.succ myN.zero => myN.zero -- 2 / 2 = 1
-  | myN.succ (myN.succ n') => myAdd (div2 n') myN.zero
--/
+  | myN.one => myN.one          -- 1 / 2 rounded to 1 for 1-based naturals
+  | myN.succ myN.one => myN.one -- 2 / 2 = 1
+  | myN.succ (myN.succ myN.one) => myN.one
+  | myN.succ (myN.succ (myN.succ n')) => myAdd (div2 (myN.succ n')) myN.one
 
 end chapter3_naturals
 

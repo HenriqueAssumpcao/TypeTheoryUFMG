@@ -1,0 +1,11 @@
+{"log":
+ [{"message":
+   ".> LEAN_PATH=././.lake/build/lib LD_LIBRARY_PATH=././.lake/build/lib:/home/tsf/.elan/toolchains/leanprover--lean4---v4.14.0-rc2/lib/lean:/home/tsf/.elan/toolchains/leanprover--lean4---v4.14.0-rc2/lib /home/tsf/.elan/toolchains/leanprover--lean4---v4.14.0-rc2/bin/lean ././././HoTTRijke/chapter3.lean -R ./././. -o ././.lake/build/lib/HoTTRijke/chapter3.olean -i ././.lake/build/lib/HoTTRijke/chapter3.ilean -c ././.lake/build/ir/HoTTRijke/chapter3.c --json",
+   "level": "trace"},
+  {"message": "././././HoTTRijke/chapter3.lean:156:0: myNatToInt _1 : myZ",
+   "level": "info"},
+  {"message": "././././HoTTRijke/chapter3.lean:167:0: \"-3\"", "level": "info"},
+  {"message":
+   "././././HoTTRijke/chapter3.lean:230:0: chapter3_booleans.myProdFunc {P Q R : Type} (f : P → Q → R) : myProd P Q → R",
+   "level": "info"}],
+ "depHash": "12354082232767321889"}

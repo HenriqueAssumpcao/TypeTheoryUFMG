@@ -1,0 +1,5 @@
+{"log":
+ [{"message":
+   ".> LEAN_PATH=././.lake/build/lib LD_LIBRARY_PATH=././.lake/build/lib:/home/tsf/.elan/toolchains/leanprover--lean4---v4.14.0-rc2/lib/lean:/home/tsf/.elan/toolchains/leanprover--lean4---v4.14.0-rc2/lib /home/tsf/.elan/toolchains/leanprover--lean4---v4.14.0-rc2/bin/lean ././././HoTTRijke/chapter2.lean -R ./././. -o ././.lake/build/lib/HoTTRijke/chapter2.olean -i ././.lake/build/lib/HoTTRijke/chapter2.ilean -c ././.lake/build/ir/HoTTRijke/chapter2.c --json",
+   "level": "trace"}],
+ "depHash": "14633407513435840036"}

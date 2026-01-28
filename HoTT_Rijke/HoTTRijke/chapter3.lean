@@ -50,9 +50,10 @@ def myExp (a b : myN) : myN :=
   | myN.succ b' => myMult (myExp a b') a
 
 def myMin (a b : myN) : myN :=
-  match b with
-  | myN.one => myN.one
-  | myN.succ c => myN.succ (myMin a c)
+  match a, b with
+  | myN.one, _ => myN.one
+  | _, myN.one => myN.one
+  | myN.succ a', myN.succ b' => myN.succ (myMin a' b')
 
 def myMax (a b : myN) : myN :=
   match a with

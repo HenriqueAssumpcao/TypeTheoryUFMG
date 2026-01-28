@@ -5,6 +5,8 @@ inductive myN where
   | one : myN   -- represents 1
   | succ : myN → myN
 
+deriving DecidableEq  -- Decids x = y
+
 def _1 : myN := myN.one
 def _2 : myN := myN.succ _1
 def _3 : myN := myN.succ _2
@@ -73,18 +75,30 @@ def factorial (a : myN) : myN :=
   | myN.one => _1
   | myN.succ a' => myMult (factorial a') a
 
+/- This works in 0-based naturals
 
 def binomial (a b : myN) : myN :=
   match a with
   | myN.one =>
     match b with
     | myN.one => _1
-    | myN.succ _ => _1            -- no zero in 1-based naturals
+    | myN.succ _ => _1
   | myN.succ a' =>
     match b with
     | myN.one => _1
     | myN.succ b' => myAdd (binomial a' b') (binomial a' b)
+-/
 
+def binomial (a b : myN) [DecidableEq myN] : myN :=
+  let c := myMin a b
+  match a, b with
+  | d, myN.one => d
+  | myN.one, _ => myN.one                   -- No zero in 1-based naturals
+  | myN.succ a', myN.succ b' =>
+    if c = a then                           -- Needs DecidableEq to decide c = a
+      binomial a' b'
+    else
+      myAdd (binomial a' b') (binomial a' b)
 
 def fibonacci (n: myN) : myN :=
   match n with

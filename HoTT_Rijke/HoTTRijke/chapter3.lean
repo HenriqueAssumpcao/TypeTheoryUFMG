@@ -93,25 +93,25 @@ def binomial (a b : myN) [DecidableEq myN] : myN :=
   let c := myMin a b
   match a, b with
   | d, myN.one => d
-  | myN.one, _ => myN.one                   -- No zero in 1-based naturals
+  | myN.one, _ => myN.one   -- No zero in 1-based naturals
   | myN.succ a', myN.succ b' =>
-    if c = a then                           -- Needs DecidableEq to decide c = a
+    if c = a then           -- Needs DecidableEq to decide c = a
       binomial a' b'
     else
       myAdd (binomial a' b') (binomial a' b)
 
 def fibonacci (n: myN) : myN :=
   match n with
-  | myN.one => myN.one          -- F1 = 1
-  | myN.succ myN.one => myN.one -- F2 = 1
+  | myN.one => myN.one            -- F1 = 1
+  | myN.succ myN.one => myN.one   -- F2 = 1
   | myN.succ (myN.succ n') => myAdd (fibonacci (myN.succ n')) (fibonacci n')
 
 
 def div2 (n : myN) : myN :=
   match n with
-  | myN.one => myN.one          -- 1 / 2 rounded to 1 for 1-based naturals
-  | myN.succ myN.one => myN.one -- 2 / 2 = 1
-  | myN.succ (myN.succ myN.one) => myN.one
+  | myN.one => myN.one                        -- 1 / 2 rounded to 1 for 1-based naturals
+  | myN.succ myN.one => myN.one               -- 2 / 2 = 1
+  | myN.succ (myN.succ myN.one) => myN.one    -- 3 / 2 rounded to 1
   | myN.succ (myN.succ (myN.succ n')) => myAdd (div2 (myN.succ n')) myN.one
 
 end chapter3_naturals

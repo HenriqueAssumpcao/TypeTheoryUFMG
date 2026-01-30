@@ -150,7 +150,7 @@ def __0 : myZ := (Sum.inr (Sum.inr U))
 def myNatToInt (n : myN) : myZ :=
   Zpos n
 
- def negative (n : myZ) : myZ :=
+def negative (n : myZ) : myZ :=
   match n with
   | Sum.inl n' => Sum.inr (Sum.inl n')
   | Sum.inr (Sum.inr ()) => Zzero
@@ -189,6 +189,7 @@ def succZ (z : myZ) : myZ :=
       | myN.succ n'  => Zneg n'
   | Sum.inr (Sum.inl n)     => Zpos (myN.succ n)
   | Sum.inr (Sum.inr ())    => _1
+
 
 end chapter3_integers
 

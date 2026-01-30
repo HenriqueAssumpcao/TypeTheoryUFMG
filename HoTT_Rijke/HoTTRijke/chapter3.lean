@@ -114,6 +114,14 @@ def div2 (n : myN) : myN :=
   | myN.succ (myN.succ myN.one) => myN.one    -- 3 / 2 rounded to 1
   | myN.succ (myN.succ (myN.succ n')) => myAdd (div2 (myN.succ n')) myN.one
 
+def dist (m n : myN) : myN :=
+  match m, n with
+  | myN.one, myN.one => myN.one   -- No zero in 1-based naturals
+  | myN.one, myN.succ n => n
+  | myN.succ m, myN.one => m
+  | myN.succ m, myN.succ n => dist m n
+
+
 end chapter3_naturals
 
 
@@ -189,6 +197,24 @@ def succZ (z : myZ) : myZ :=
       | myN.succ n'  => Zneg n'
   | Sum.inr (Sum.inl n)     => Zpos (myN.succ n)
   | Sum.inr (Sum.inr ())    => _1
+
+
+def addZ (m n : myZ) : myZ :=
+  match m, n with
+  | m, Sum.inr (Sum.inr ()) => m
+  | Sum.inr (Sum.inr ()), n => n
+  | Sum.inr (Sum.inl m), Sum.inr (Sum.inl n) => myAdd m n
+  | Sum.inl m, Sum.inl n => Zneg (myAdd m n)
+  | Sum.inr (Sum.inl m), Sum.inl n =>
+    if myMax m n = m then
+      Zpos (dist m n)
+    else
+      Zneg (dist m n)
+  | Sum.inl m, Sum.inr (Sum.inl n) =>
+    if myMax m n = m then
+      Zneg (dist m n)
+    else
+      Zpos (dist m n)
 
 
 end chapter3_integers

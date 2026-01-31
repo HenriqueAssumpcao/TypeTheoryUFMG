@@ -1,5 +1,19 @@
 import HoTTRijke.chapter3
 
+namespace chapter4_booleans
+open chapter3_booleans
+
+variable (P Q : Type)
+
+def _3_c_ii : myNegType (myNegType (((P → Q) → P) → P)) :=
+  fun f : myNegType (((P → Q) → P) → P) =>
+    let g : P → Q := fun p : P => Empty.elim (f fun _ => p)
+    let h : ((P → Q) → P) → P := fun x => x g
+    f h
+
+
+end chapter4_booleans
+
 namespace chapter4_lists
 variable (A B : Type)
 

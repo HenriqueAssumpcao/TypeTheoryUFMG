@@ -5,11 +5,42 @@ open chapter3_booleans
 
 variable (P Q : Type)
 
+def proj_rightEmpty (A B : Type) : myNegType B → ((A ⊕ B) → A) :=
+  fun b : myNegType B =>
+    let g : B → A := fun x : B => Empty.elim (b x)
+    let f : A → A := fun x : A => x
+    fun n : A ⊕ B =>
+      match n with
+      | Sum.inl n => f n
+      | Sum.inr n => g n
+
+def proj_leftEmpty (A B : Type) : myNegType A → ((A ⊕ B) → B) :=
+  fun b : myNegType A =>
+    let g : A → B := fun x : A => Empty.elim (b x)
+    let f : B → B := fun x : B => x
+    fun n : A ⊕ B =>
+      match n with
+      | Sum.inl n => g n
+      | Sum.inr n => f n
+
 def _3_c_ii : myNegType (myNegType (((P → Q) → P) → P)) :=
   fun f : myNegType (((P → Q) → P) → P) =>
     let g : P → Q := fun p : P => Empty.elim (f fun _ => p)
     let h : ((P → Q) → P) → P := fun x => x g
     f h
+
+
+def _3_c_iv : myNegType (myNegType (P ⊕ (myNegType P))) :=
+  fun f : myNegType (Sum P (myNegType P)) =>
+    let g : myNegType P := fun x : P => f (Sum.inl x)
+    let h : myNegType (myNegType P) := fun x : myNegType P => f (Sum.inr x)
+    h g
+
+def _3_d_i : (P ⊕ myNegType P) → (myNegType (myNegType P) → P) :=
+  fun f : P ⊕ myNegType P =>
+    fun g : myNegType (myNegType P) =>
+      let h : (P ⊕ myNegType P) → P := proj_rightEmpty P (myNegType P) g
+      h f
 
 
 end chapter4_booleans

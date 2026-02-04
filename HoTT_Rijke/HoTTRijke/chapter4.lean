@@ -29,8 +29,9 @@ def _3_c_ii : myNegType (myNegType (((P → Q) → P) → P)) :=
     let h : ((P → Q) → P) → P := fun x => x g
     f h
 
+-- def _3_c_iii : myNegType (myNegType ((P → Q) ⊕ (Q → P))) :=
 
-def _3_c_iv : myNegType (myNegType (P ⊕ (myNegType P))) :=
+def LEM : myNegType (myNegType (P ⊕ (myNegType P))) :=   -- Exercise 3 c) iv (Almost Law of Exclude Middle)
   fun f : myNegType (Sum P (myNegType P)) =>
     let g : myNegType P := fun x : P => f (Sum.inl x)
     let h : myNegType (myNegType P) := fun x : myNegType P => f (Sum.inr x)
@@ -41,6 +42,124 @@ def _3_d_i : (P ⊕ myNegType P) → (myNegType (myNegType P) → P) :=
     fun g : myNegType (myNegType P) =>
       let h : (P ⊕ myNegType P) → P := proj_rightEmpty P (myNegType P) g
       h f
+
+def _3_d_ii : myEquiv (myNegType (myNegType (Q → P))) ((Sum P (myNegType P)) → (Q → P)) :=
+  let impl :=
+    fun g : (myNegType (myNegType (Q → P))) =>
+      fun s : Sum P (myNegType P) =>
+        match s with
+        | Sum.inl s' => fun _ : Q => s'
+        | Sum.inr s' =>
+          fun t : Q =>
+            let QP0 := fun r : Q → P => s' (r t)
+            Empty.elim (g QP0)
+
+  let conv :=
+    fun f : (Sum P (myNegType P)) → (Q → P) =>
+      fun f' : myNegType (Q → P) =>
+        let Neg_LEM : myNegType (Sum P (myNegType P)) := fun x : Sum P (myNegType P) => f' (f x)
+        LEM P Neg_LEM
+
+
+  myProd.mk impl conv
+
+def _3_e_i : myNegType (myNegType (myNegType P)) → myNegType P :=
+  fun f : myNegType (myNegType (myNegType P)) =>
+    fun p : P =>
+      let f' := fun x : myNegType P => x p
+      f f'
+
+def _3_e_ii : myNegType (myNegType (P → myNegType (myNegType Q))) → (P → myNegType (myNegType Q)) :=
+  fun f : myNegType (myNegType (P → myNegType (myNegType Q))) =>
+    fun p : P =>
+      fun x : myNegType Q =>
+        f (fun y : P → myNegType (myNegType Q) => y p x)
+
+def _3_e_iii : myNegType (myNegType (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))) → (myProd (myNegType (myNegType P)) (myNegType (myNegType Q))) :=
+  fun f : myNegType (myNegType  (myProd  (myNegType (myNegType P)) (myNegType (myNegType Q)))) =>
+    let g1 := fun x : myNegType P =>
+      f (fun y : myProd (myNegType (myNegType P)) (myNegType (myNegType Q)) => proj1 y x)
+    let g2 := fun x : myNegType Q =>
+      f (fun y : myProd (myNegType (myNegType P)) (myNegType (myNegType Q)) => proj2 y x)
+
+    myProd.mk g1 g2
+
+def _3_f_i : myEquiv (myNegType (myNegType (myProd P Q))) (myProd (myNegType (myNegType P)) (myNegType (myNegType Q))) :=
+  let impl :=
+    fun f : myNegType (myNegType (myProd P Q)) =>
+      let g1 := fun x : myNegType P =>
+        f (fun y : myProd P Q => x (proj1 y))
+      let g2 := fun x : myNegType Q =>
+        f (fun y : myProd P Q => x (proj2 y))
+
+      myProd.mk g1 g2
+
+  let conv :=
+    fun f : myProd (myNegType (myNegType P)) (myNegType (myNegType Q)) =>
+      fun f' : myNegType (myProd P Q) =>
+        let Neg_LEM := fun x : (Sum P (myNegType P)) =>
+          match x with
+          | Sum.inr x' => proj1 f x'
+          | Sum.inl x' =>
+            let Neg_LEM2 := fun y : (Sum Q (myNegType Q)) =>
+              match y with
+              | Sum.inr y' => proj2 f y'
+              | Sum.inl y' =>
+                f' (myProd.mk x' y')
+
+            LEM Q Neg_LEM2
+
+        LEM P Neg_LEM
+
+  myProd.mk impl conv
+
+def _3_f_ii : myEquiv (myNegType (myNegType (Sum P Q))) (myNegType (myProd (myNegType P) (myNegType Q))) :=
+  let impl:=
+    fun f : myNegType (myNegType (Sum P Q)) =>
+      fun g : (myProd (myNegType P) (myNegType Q)) =>
+        let f' := fun x : P ⊕ Q =>
+          match x with
+          | Sum.inl x' => proj1 g x'
+          | Sum.inr x' => proj2 g x'
+        f f'
+
+  let conv :=
+    fun f : myNegType (myProd (myNegType P) (myNegType Q)) =>
+      fun g : myNegType (Sum P Q) =>
+        let Neg_LEM := fun x : (Sum P (myNegType P)) =>
+          match x with
+          | Sum.inl x' => g (Sum.inl x')
+          | Sum.inr x' =>
+            let Neg_LEM2 := fun y : (Sum Q (myNegType Q)) =>
+              match y with
+              | Sum.inl y' => g (Sum.inr y')
+              | Sum.inr y' =>
+                f (myProd.mk x' y')
+
+            LEM Q Neg_LEM2
+
+        LEM P Neg_LEM
+
+  myProd.mk impl conv
+
+def _3_f_iii : myEquiv (myNegType (myNegType (P → Q))) ((myNegType (myNegType P)) → (myNegType (myNegType Q))) :=
+  let impl :=
+    fun f : myNegType (myNegType (P → Q)) =>
+      fun g : (myNegType (myNegType P)) =>
+        fun h : myNegType Q =>
+          let f' := fun p : P =>
+            f (fun x : P → Q => h (x p))
+          g f'
+
+
+  let conv :=
+    fun f : (myNegType (myNegType P)) → (myNegType (myNegType Q)) =>
+      fun g : myNegType (P → Q) =>
+        let nQ : myNegType Q := fun x : Q => g (fun _ : P => x)
+        let P0 : P → Q := fun x : P => Empty.elim (f (double_neg P x) nQ)
+        g P0
+
+  myProd.mk impl conv
 
 
 end chapter4_booleans
@@ -63,21 +182,21 @@ def list_string : (myList Nat) →  String :=
 
 def l := cons 5 (cons 4 (cons 3 (cons 2 (cons 1 nil))))
 
-
 def list_length {A : Type} (l : myList A) : Nat :=
   match l with
   | nil => 0
   | cons _ l1 => list_length l1 + 1
 
 
-  def nth_list {A : Type} : myList A → Nat → Option A :=
-    fun l i =>
-      match l with
-      | nil => none
-      | cons a l1 =>
-        match i with
-        | 0 => some a
-        | Nat.succ j => nth_list l1 j
+def nth_list {A : Type} : myList A → Nat → Option A :=
+  fun l i =>
+    match l with
+    | nil => none
+    | cons a l1 =>
+      match i with
+      | 0 => some a
+      | Nat.succ j => nth_list l1 j
+
 
 def fold_list (μ : A → (B → B)) (b : B): myList A → B :=
   fun (l : myList A) =>

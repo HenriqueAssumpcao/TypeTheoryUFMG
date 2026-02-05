@@ -194,8 +194,8 @@ def maclane_pentagon {α : Type} (a b c d e : α) (p : a ≡ b) (q : b ≡ c) (r
     cases ((α₁ • α₂) • α₃)
     cases α₄ • α₅
     exact MyEq.refl (MyEq.refl (((MyEq.refl a • MyEq.refl a) • MyEq.refl a) • MyEq.refl a))
-  exact α
 
+  exact α
 
 end chapter5_myeq
 
@@ -237,7 +237,14 @@ def add_associative(a b c : myN) : myAdd (myAdd a b) c ≡ myAdd a (myAdd b c) :
 
 
 def add_commutative(a b : myN) : myAdd a b ≡ myAdd b a :=
-  have comm_one : myAdd a _1 ≡ myAdd _1 a := sorry
+  have comm_one : myAdd a _1 ≡ myAdd _1 a :=
+    match a with
+    | myN.one => MyEq.refl (_1 + _1)
+    | myN.succ a' =>
+      (left_successor_law_add a' _1) •
+      (ap myN.succ (myAdd a' _1) (myAdd _1 a') (add_commutative a' _1)) •
+      myEq_symm (right_successor_law_add _1 a')
+
   match b with
     | myN.one => comm_one
     | myN.succ b' =>

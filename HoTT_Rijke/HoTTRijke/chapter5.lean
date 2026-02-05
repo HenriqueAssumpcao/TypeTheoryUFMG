@@ -23,7 +23,7 @@ def ind_eq {α : Type} {a : α}
   by
     intro h x p
     cases p
-    exact  h
+    exact h
 
 
 -- Prove basic properties

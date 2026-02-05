@@ -79,6 +79,8 @@ def ap {α : Type} {β : Type} (f : α → β) (x y : α) (p : x ≡ y) : (f x �
 def left_unit  {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := (MyEq.refl a) • p
 def right_unit {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := p • MyEq.refl b
 
+-- Exercise 5.1
+
 def sym_contat_distributive {α : Type} {x y z : α} (p1 : x ≡ y ) (p2 : y ≡ z ) :
       myEq_symm (p1 • p2) ≡ (myEq_symm p2) • (myEq_symm p1) := by
         cases p1
@@ -89,7 +91,7 @@ def sym_contat_distributive {α : Type} {x y z : α} (p1 : x ≡ y ) (p2 : y ≡
         myEq_symm_refl (x) •
         concat_right_unit (MyEq.refl x)
 
--- Exercise 5.1
+--Exercise 5.2
 
 def inv_con {α : Type} {a b c : α} (p : a ≡ b) (q : b ≡ c) (r : a ≡ c) :
     ((p • q) ≡ r) → (q ≡ (myEq_symm p • r)) := by
@@ -113,7 +115,7 @@ def ap_id {α : Type} (x y : α) (p : x ≡ y) : p ≡ (ap (fun (x:α) => x) x y
   exact ind_eq (α:=α) (a:=x) P (MyEq.refl _) y p
 
 
-
+/-
 def ap_comp {α : Type} {β : Type} {γ : Type} (f : α → β) (g : β → γ) (x y : α) (p : x ≡ y) :
   ap g (f x) (f y) (ap f x y  p) ≡ ap (g ∘ f) x y p := by
   let t := ap  f x x (MyEq.refl x)
@@ -124,7 +126,15 @@ def ap_comp {α : Type} {β : Type} {γ : Type} (f : α → β) (g : β → γ) 
       cases p
       sorry
   exact ind_eq (α:=α) (a:=x) P u y p
+-/
 
+def ap_comp {α : Type} {β : Type} {γ : Type} (f : α → β) (g : β → γ) (x y : α) (p : x ≡ y) : ap g (f x) (f y) (ap f x y  p) ≡ ap (g ∘ f) x y p := by
+  let P (y' : α) (p' : x ≡ y') : Type :=
+    ap g (f x) (f y') (ap f x y' p') ≡ ap (g ∘ f) x y' p'
+  have u : P x (MyEq.refl x) :=
+    MyEq.refl (MyEq.refl (g (f x)))
+
+  exact ind_eq (α:=α) (a:=x) P u y p
 
 def unique_ref {α : Type} (x y : α) (p : x ≡ y) :
   (⟨x, MyEq.refl x⟩ : Σ (y' : α ), x ≡ y') ≡ ⟨y, p⟩ :=
@@ -161,6 +171,7 @@ def maclane_pentagon {α : Type} (a b c d e : α) (p : a ≡ b) (q : b ≡ c) (r
 
 
 end chapter5_myeq
+
 -- Exercise 5.5
 
 namespace Naturals

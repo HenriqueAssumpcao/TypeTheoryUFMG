@@ -387,4 +387,34 @@ def mult_associative (a b c : myN) : ((a × b) × c) ≡ (a × (b × c)) :=
     ap (myAdd_right (a × b)) ((a × b) × c') (a × (b × c')) (mult_associative _ _ _) •
     myEq_symm (mult_distributive_left _ _ _) •
     ap (myMult a) ((b × c') + b) (b × c'.succ) (myEq_symm (mult_successor_right _ _))
+
 end Naturals
+
+namespace Integers
+open chapter3_naturals
+open chapter3_integers
+open chapter5_myeq
+
+-- Exercise 5.6
+
+def succ_pred_elim : succZ (predZ k) ≡ k :=
+  match k with
+  | Sum.inr (Sum.inr _) => MyEq.refl (Sum.inr (Sum.inr _))
+  | Sum.inr (Sum.inl (myN.succ k')) => MyEq.refl (Sum.inr (Sum.inl (myN.succ k')))
+  | Sum.inr (Sum.inl myN.one) => MyEq.refl (Sum.inr (Sum.inl myN.one))
+  | Sum.inl (myN.succ k') => MyEq.refl (Sum.inl (myN.succ k'))
+  | Sum.inl (myN.one) => MyEq.refl (Sum.inl (myN.one))
+
+def pred_succ_elim : predZ (succZ k) ≡ k :=
+  match k with
+  | Sum.inr (Sum.inr _) => MyEq.refl (Sum.inr (Sum.inr _))
+  | Sum.inr (Sum.inl (myN.succ k')) => MyEq.refl (Sum.inr (Sum.inl (myN.succ k')))
+  | Sum.inr (Sum.inl myN.one) => MyEq.refl (Sum.inr (Sum.inl myN.one))
+  | Sum.inl (myN.succ k') => MyEq.refl (Sum.inl (myN.succ k'))
+  | Sum.inl (myN.one) => MyEq.refl (Sum.inl (myN.one))
+
+-- Exercise 5.7
+
+
+
+end Integers

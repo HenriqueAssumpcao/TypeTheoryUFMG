@@ -199,6 +199,7 @@ def succZ (z : myZ) : myZ :=
   | Sum.inr (Sum.inr ())    => _1
 
 
+/-
 def addZ (m n : myZ) : myZ :=
   match m, n with
   | m, Sum.inr (Sum.inr ()) => m
@@ -215,6 +216,7 @@ def addZ (m n : myZ) : myZ :=
       Zneg (dist m n)
     else
       Zpos (dist m n)
+-/
 
 
 end chapter3_integers

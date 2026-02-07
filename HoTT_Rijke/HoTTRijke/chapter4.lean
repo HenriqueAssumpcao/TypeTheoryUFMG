@@ -272,21 +272,30 @@ U -> 0
 def addNaturalToZ (n : myN) (z : myZ) : myZ :=
   match n with
   | myN.one => succZ z
-  | myN.succ n' => addNaturalToZ n' (succZ z)
+  | myN.succ n' => succZ (addNaturalToZ n' z)
 
 
 def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
   match n with
   | myN.one => predZ z
-  | myN.succ n' => subtractNaturalFromZ n' (predZ z)
+  | myN.succ n' => predZ (subtractNaturalFromZ n' z)
 
 
 def myAdd (a b : myZ) : myZ :=
-  match b with
-  | Sum.inr (Sum.inr _) => a
-  | Sum.inr (Sum.inl n) => addNaturalToZ n a
-  | Sum.inl n => subtractNaturalFromZ n a
+  match a with
+  | Sum.inr (Sum.inr _) => b
 
+  | Sum.inr (Sum.inl _) =>
+    match b with
+    | Sum.inr (Sum.inr _) => a
+    | Sum.inr (Sum.inl n) => addNaturalToZ n a
+    | Sum.inl n => subtractNaturalFromZ n a
+
+  | Sum.inl _ =>
+      match b with
+    | Sum.inr (Sum.inr _) => a
+    | Sum.inr (Sum.inl n) => addNaturalToZ n a
+    | Sum.inl n => subtractNaturalFromZ n a
 
 
 def multNaturalWithZ (a : myZ) (b : myN) : myZ :=

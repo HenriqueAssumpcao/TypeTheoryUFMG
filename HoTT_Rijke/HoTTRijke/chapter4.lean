@@ -282,20 +282,10 @@ def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
 
 
 def myAdd (a b : myZ) : myZ :=
-  match a with
-  | Sum.inr (Sum.inr _) => b
-
-  | Sum.inr (Sum.inl _) =>
-    match b with
-    | Sum.inr (Sum.inr _) => a
-    | Sum.inr (Sum.inl n) => addNaturalToZ n a
-    | Sum.inl n => subtractNaturalFromZ n a
-
-  | Sum.inl _ =>
-      match b with
-    | Sum.inr (Sum.inr _) => a
-    | Sum.inr (Sum.inl n) => addNaturalToZ n a
-    | Sum.inl n => subtractNaturalFromZ n a
+  match b with
+  | Sum.inr (Sum.inr _) => a
+  | Sum.inr (Sum.inl n) => addNaturalToZ n a
+  | Sum.inl n => subtractNaturalFromZ n a
 
 
 def multNaturalWithZ (a : myZ) (b : myN) : myZ :=

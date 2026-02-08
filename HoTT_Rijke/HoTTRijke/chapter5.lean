@@ -403,7 +403,6 @@ def right_equiv_add (x : myZ) (p : a ≡ b) : myAdd x a ≡ myAdd x b :=
 def left_equiv_add (x : myZ) (p : a ≡ b) : myAdd a x ≡ myAdd b x :=
   ap (fun y => (myAdd y x)) a b p
 
-def ap_ {a : A} (f : A → B) (p : a ≡ b) := chapter5_myeq.ap f a b p
 
 -- Exercise 5.6
 
@@ -429,13 +428,24 @@ def succ_pred_symm (z : myZ) := succ_pred_elim z • myEq_symm (pred_succ_elim z
 -- Exercise 5.7
 -- a)
 
-def left_sum_zero (x : myZ) : (myAdd Zzero x) ≡ x := sorry
+def left_add_zero_toZpos (n : myN) : addNaturalToZ n Zzero ≡ Zpos n :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => ap succZ _ _ (left_add_zero_toZpos n')
 
-def right_sum_zero (x : myZ) : (myAdd x Zzero) ≡ x :=
+def left_add_zero_toZneg (n : myN) : subtractNaturalFromZ n Zzero ≡ Zneg n :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => ap predZ _ _ (left_add_zero_toZneg n')
+
+
+def left_sum_zero (x : myZ) : (myAdd Zzero x) ≡ x :=
   match x with
   | Sum.inr (Sum.inr _) => MyEq.refl _
-  | Sum.inr (Sum.inl _) => MyEq.refl _
-  | Sum.inl _ => MyEq.refl _
+  | Sum.inr (Sum.inl x') => left_add_zero_toZpos x'
+  | Sum.inl x' => left_add_zero_toZneg x'
+
+def right_sum_zero (x : myZ) : (myAdd x Zzero) ≡ x := MyEq.refl _
 
 
 -- b)
@@ -445,16 +455,29 @@ def addNtoZ_left_pred_law (n: myN) (z : myZ) : addNaturalToZ n (predZ z) ≡ pre
   | myN.one => succ_pred_symm z
   | myN.succ n' => by
     have h : succZ (addNaturalToZ n' (predZ z)) ≡ succZ (predZ (addNaturalToZ n' z)) :=
-      ap_ succZ (addNtoZ_left_pred_law n' z)
+      ap succZ _ _ (addNtoZ_left_pred_law n' z)
     exact h • myEq_symm (pred_succ_symm (addNaturalToZ n' z))
 
 def subNfromZ_left_pred_law (n: myN) (z : myZ) : subtractNaturalFromZ n (predZ z) ≡ predZ (subtractNaturalFromZ n z) :=
   match n with
   | myN.one => MyEq.refl _
+  | myN.succ n' => ap predZ _ _ (subNfromZ_left_pred_law n' z)
+
+
+def addNtoZ_left_succ_law (n: myN) (z : myZ) : addNaturalToZ n (succZ z) ≡ succZ (addNaturalToZ n z) :=
+  match n with
+  | myN.one => MyEq.refl _
   | myN.succ n' => by
-    have h : predZ (subtractNaturalFromZ n' (predZ z)) ≡ predZ (predZ (subtractNaturalFromZ n' z)) :=
-      ap_ predZ (subNfromZ_left_pred_law n' z)
+    have h : succZ (addNaturalToZ n' (succZ z)) ≡ succZ (succZ (addNaturalToZ n' z)) :=
+      ap succZ _ _ (addNtoZ_left_succ_law n' z)
     exact h
+
+def subNfromZ_left_succ_law (n: myN) (z : myZ) : subtractNaturalFromZ n (succZ z) ≡ succZ (subtractNaturalFromZ n z) :=
+  match n with
+  | myN.one => pred_succ_symm z
+  | myN.succ n' => ap predZ _ _ (subNfromZ_left_succ_law n' z) • (pred_succ_symm (subtractNaturalFromZ n' z))
+
+
 
 
 def left_pred_law (x y : myZ) : myAdd (predZ x) y ≡ predZ (myAdd x y) :=
@@ -462,6 +485,28 @@ def left_pred_law (x y : myZ) : myAdd (predZ x) y ≡ predZ (myAdd x y) :=
   | Sum.inr (Sum.inr _) => (right_sum_zero (predZ x)) • (myEq_symm (ap predZ (myAdd x Zzero) x (right_sum_zero x)))
   | Sum.inl y' => subNfromZ_left_pred_law y' x
   | Sum.inr (Sum.inl y') => addNtoZ_left_pred_law y' x
+
+def right_pred_law (x y : myZ) : myAdd x (predZ y) ≡ predZ (myAdd x y) :=
+  match y with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inl _ => MyEq.refl _
+  | Sum.inr (Sum.inl myN.one) => myEq_symm (pred_succ_elim x)
+  | Sum.inr (Sum.inl (myN.succ n)) => myEq_symm (pred_succ_elim (myAdd x (Sum.inr (Sum.inl n))))
+
+
+def right_succ_law (x y : myZ) : myAdd x (succZ y) ≡ succZ (myAdd x y) :=
+  match y with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inl myN.one => myEq_symm (succ_pred_elim x)
+  | Sum.inl (myN.succ n) => myEq_symm (succ_pred_elim (myAdd x (Sum.inl n)))
+
+def left_succ_law (x y : myZ) : myAdd (succZ x) y ≡ succZ (myAdd x y) :=
+  match y with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl n) => addNtoZ_left_succ_law n x
+  | Sum.inl n => subNfromZ_left_succ_law n x
+
 
 
 end Integers

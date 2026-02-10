@@ -439,13 +439,13 @@ def left_add_zero_toZneg (n : myN) : subtractNaturalFromZ n Zzero ≡ Zneg n :=
   | myN.succ n' => ap predZ _ _ (left_add_zero_toZneg n')
 
 
-def left_sum_zero (x : myZ) : (myAdd Zzero x) ≡ x :=
+def left_add_zero (x : myZ) : (myAdd Zzero x) ≡ x :=
   match x with
   | Sum.inr (Sum.inr _) => MyEq.refl _
   | Sum.inr (Sum.inl x') => left_add_zero_toZpos x'
   | Sum.inl x' => left_add_zero_toZneg x'
 
-def right_sum_zero (x : myZ) : (myAdd x Zzero) ≡ x := MyEq.refl _
+def right_add_zero (x : myZ) : (myAdd x Zzero) ≡ x := MyEq.refl _
 
 
 -- b)
@@ -482,7 +482,7 @@ def subNfromZ_left_succ_law (n: myN) (z : myZ) : subtractNaturalFromZ n (succZ z
 
 def left_pred_law (x y : myZ) : myAdd (predZ x) y ≡ predZ (myAdd x y) :=
   match y with
-  | Sum.inr (Sum.inr _) => (right_sum_zero (predZ x)) • (myEq_symm (ap predZ (myAdd x Zzero) x (right_sum_zero x)))
+  | Sum.inr (Sum.inr _) => (right_add_zero (predZ x)) • (myEq_symm (ap predZ (myAdd x Zzero) x (right_add_zero x)))
   | Sum.inl y' => subNfromZ_left_pred_law y' x
   | Sum.inr (Sum.inl y') => addNtoZ_left_pred_law y' x
 
@@ -508,26 +508,104 @@ def left_succ_law (x y : myZ) : myAdd (succZ x) y ≡ succZ (myAdd x y) :=
   | Sum.inl n => subNfromZ_left_succ_law n x
 
 
+-- c
 
-end Integers
+def addNtoZ_associative (n : myN) (x y : myZ) : addNaturalToZ n (myAdd x y) ≡ myAdd x (addNaturalToZ n y) :=
+  match n with
+  | myN.one => myEq_symm (right_succ_law x y)
+  | myN.succ n' => (ap succZ _ _ (addNtoZ_associative n' x y)) • myEq_symm (right_succ_law x (addNaturalToZ n' y))
 
-/-
-def left_sub_one_negative (n : myN): myAdd (Sum.inl myN.one) (Sum.inl n) ≡ predZ (Sum.inl n) :=
+def subNfromZ_associative (n : myN) (x y : myZ) : subtractNaturalFromZ n (myAdd x y) ≡ myAdd x (subtractNaturalFromZ n y) :=
+  match n with
+  | myN.one => myEq_symm (right_pred_law x y)
+  | myN.succ n' => (ap predZ _ _ (subNfromZ_associative n' x y)) • myEq_symm (right_pred_law x (subtractNaturalFromZ n' y))
+
+def addZ_associative (x y z : myZ) : myAdd (myAdd x y) z ≡ myAdd x (myAdd y z) :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => addNtoZ_associative z' x y
+  | Sum.inl z' => subNfromZ_associative z' x y
+
+
+def left_add_one_toZpos (n : myN) :  myAdd (Sum.inr (Sum.inl myN.one)) (Sum.inr (Sum.inl n)) ≡ succZ (Sum.inr (Sum.inl n)) :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => ap succZ _ _ (left_add_one_toZpos n')
+
+def left_add_one_toZneg (n : myN) :  myAdd (Sum.inr (Sum.inl myN.one)) (Sum.inl n) ≡ succZ (Sum.inl n) :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => ap predZ _ _ (left_add_one_toZneg n') • pred_succ_symm (Sum.inl n')
+
+def left_sub_one_toZpos (n : myN) :  myAdd (Sum.inl myN.one) (Sum.inr (Sum.inl n)) ≡ predZ (Sum.inr (Sum.inl n)) :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => ap succZ _ _ (left_sub_one_toZpos n') • succ_pred_symm (Sum.inr (Sum.inl n'))
+
+def left_sub_one_toZneg (n : myN) :  myAdd (Sum.inl myN.one) (Sum.inl n) ≡ predZ (Sum.inl n) :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => ap predZ _ _ (left_sub_one_toZneg n')
+
+def left_add_one (z : myZ) : myAdd (Sum.inr (Sum.inl myN.one)) z ≡ succZ z :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => left_add_one_toZpos z'
+  | Sum.inl z' => left_add_one_toZneg z'
+
+def left_sub_one (z : myZ) : myAdd (Sum.inl myN.one) z ≡ predZ z :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => left_sub_one_toZpos z'
+  | Sum.inl z' => left_sub_one_toZneg z'
+
+def addNtoZ_commutative (n : myN) (z : myZ) : addNaturalToZ n z ≡ myAdd (Sum.inr (Sum.inl n)) z :=
+  match n with
+  | myN.one => myEq_symm (left_add_one z)
+  | myN.succ n' => ap succZ _ _ (addNtoZ_commutative n' z) • myEq_symm (left_succ_law (Sum.inr (Sum.inl n')) z)
+
+def subNfromZ_commutative (n : myN) (z : myZ) : subtractNaturalFromZ n z ≡ myAdd (Sum.inl n) z :=
+  match n with
+  | myN.one => myEq_symm (left_sub_one z)
+  | myN.succ n' =>  ap predZ _ _ (subNfromZ_commutative n' z) • myEq_symm (left_pred_law (Sum.inl n') z)
+
+def addZ_commutative (x y : myZ) : myAdd x y ≡ myAdd y x :=
+  match y with
+  | Sum.inr (Sum.inr _) => (right_add_zero x) • myEq_symm (left_add_zero x)
+  | Sum.inr (Sum.inl y') => addNtoZ_commutative y' x
+  | Sum.inl y' => subNfromZ_commutative y' x
+
+
+-- d
+
+def addNtoZ_inverse (n : myN) : addNaturalToZ n (Sum.inl n) ≡ Zzero :=
   match n with
   | myN.one => MyEq.refl _
   | myN.succ n' =>
-    ap predZ (myAdd (Sum.inl _1) (Sum.inl n')) (predZ (Sum.inl n')) (left_sub_one_negative n')
+    (addNtoZ_left_pred_law n'.succ (Sum.inl n')) •
+    (pred_succ_elim (addNaturalToZ n' (Sum.inl n'))) •
+    (addNtoZ_inverse n')
 
-def right_sub_one_pos (m : myN) : myAdd (Sum.inr (Sum.inl m)) (Sum.inl myN.one) ≡ predZ (Sum.inr (Sum.inl m)) := MyEq.refl _
-
-def left_add_one_negative (n : myN): myAdd (Sum.inr (Sum.inl myN.one)) (Sum.inl n) ≡ succZ (Sum.inl n) :=
+def subNfromZ_inverse (n : myN) : subtractNaturalFromZ n (Sum.inr (Sum.inl n)) ≡ Zzero :=
   match n with
   | myN.one => MyEq.refl _
-  | myN.succ n' => by
-    have h : predZ (myAdd (Sum.inr (Sum.inl myN.one)) (Sum.inl n')) ≡ predZ (succZ (Sum.inl n')) :=
-      ap predZ (myAdd (Sum.inr (Sum.inl myN.one)) (Sum.inl n')) (succZ (Sum.inl n')) (left_add_one_negative n')
+  | myN.succ n' =>
+    (subNfromZ_left_succ_law n'.succ (Sum.inr (Sum.inl n'))) •
+    (succ_pred_elim (subtractNaturalFromZ n' (Sum.inr (Sum.inl n')))) •
+    (subNfromZ_inverse n')
 
-    exact h • pred_succ_elim _
 
-def pred_succN_elim (n : myN) : predZ (Sum.inr (Sum.inl n.succ)) ≡ Sum.inr (Sum.inl n) := MyEq.refl _
--/
+
+def left_inverse_law (z : myZ) : myAdd (negative z) z ≡ Zzero :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => addNtoZ_inverse z'
+  | Sum.inl z' => subNfromZ_inverse z'
+
+def right_inverse_law (z : myZ) : myAdd z (negative z) ≡ Zzero :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => subNfromZ_inverse z'
+  | Sum.inl z' => addNtoZ_inverse z'
+
+end Integers

@@ -626,4 +626,5 @@ def left_multby0 (z : myZ) : myMult Zzero z ≡ Zzero :=
   | Sum.inr (Sum.inl z') => multNatWithZero z'
   | Sum.inl z' => ap negative _ _ (multNatWithZero z')
 
+
 end Integers

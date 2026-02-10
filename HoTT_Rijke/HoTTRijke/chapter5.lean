@@ -508,7 +508,7 @@ def left_succ_law (x y : myZ) : myAdd (succZ x) y ≡ succZ (myAdd x y) :=
   | Sum.inl n => subNfromZ_left_succ_law n x
 
 
--- c
+-- c)
 
 def addNtoZ_associative (n : myN) (x y : myZ) : addNaturalToZ n (myAdd x y) ≡ myAdd x (addNaturalToZ n y) :=
   match n with
@@ -576,7 +576,7 @@ def addZ_commutative (x y : myZ) : myAdd x y ≡ myAdd y x :=
   | Sum.inl y' => subNfromZ_commutative y' x
 
 
--- d
+-- d)
 
 def addNtoZ_inverse (n : myN) : addNaturalToZ n (Sum.inl n) ≡ Zzero :=
   match n with
@@ -607,5 +607,23 @@ def right_inverse_law (z : myZ) : myAdd z (negative z) ≡ Zzero :=
   | Sum.inr (Sum.inr _) => MyEq.refl _
   | Sum.inr (Sum.inl z') => subNfromZ_inverse z'
   | Sum.inl z' => addNtoZ_inverse z'
+
+
+--Exercise 5.8
+
+-- a)
+
+def multNatWithZero (n : myN) : multNaturalWithZ Zzero n ≡ Zzero :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' => left_add_zero (multNaturalWithZ Zzero n') • (multNatWithZero n')
+
+def right_multby0 (z : myZ) : myMult z Zzero ≡ Zzero := MyEq.refl _
+
+def left_multby0 (z : myZ) : myMult Zzero z ≡ Zzero :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => multNatWithZero z'
+  | Sum.inl z' => ap negative _ _ (multNatWithZero z')
 
 end Integers

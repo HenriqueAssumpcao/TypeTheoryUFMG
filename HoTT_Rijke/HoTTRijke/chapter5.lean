@@ -588,7 +588,7 @@ def addNtoZ_inverse (n : myN) : addNaturalToZ n (Sum.inl n) ≡ Zzero :=
 
 def subNfromZ_inverse (n : myN) : subtractNaturalFromZ n (Sum.inr (Sum.inl n)) ≡ Zzero :=
   match n with
-  | myN.one => MyEq.refl _
+  | myN.one => MyEq.refl _(
   | myN.succ n' =>
     (subNfromZ_left_succ_law n'.succ (Sum.inr (Sum.inl n'))) •
     (succ_pred_elim (subtractNaturalFromZ n' (Sum.inr (Sum.inl n')))) •
@@ -618,6 +618,13 @@ def multNatWithZero (n : myN) : multNaturalWithZ Zzero n ≡ Zzero :=
   | myN.one => MyEq.refl _
   | myN.succ n' => left_add_zero (multNaturalWithZ Zzero n') • (multNatWithZero n')
 
+def multNatWithOne (n : myN) : multNaturalWithZ (Sum.inr (Sum.inl myN.one)) n ≡ Sum.inr (Sum.inl n) :=
+  match n with
+  | myN.one => MyEq.refl _
+  | myN.succ n' =>
+  left_add_one (multNaturalWithZ (Sum.inr (Sum.inl myN.one)) n') •
+  (ap succZ _ _ (multNatWithOne n'))
+
 def right_multby0 (z : myZ) : myMult z Zzero ≡ Zzero := MyEq.refl _
 
 def left_multby0 (z : myZ) : myMult Zzero z ≡ Zzero :=
@@ -626,5 +633,12 @@ def left_multby0 (z : myZ) : myMult Zzero z ≡ Zzero :=
   | Sum.inr (Sum.inl z') => multNatWithZero z'
   | Sum.inl z' => ap negative _ _ (multNatWithZero z')
 
+def right_multbyOne (z : myZ) : myMult z (Sum.inr (Sum.inl myN.one)) ≡ z := MyEq.refl _
+
+def left_multbyOne (z : myZ) : myMult (Sum.inr (Sum.inl myN.one)) z ≡ z :=
+  match z with
+  | Sum.inr (Sum.inr _) => MyEq.refl _
+  | Sum.inr (Sum.inl z') => multNatWithOne z'
+  | Sum.inl z' => ap negative _ _ (multNatWithOne z')
 
 end Integers

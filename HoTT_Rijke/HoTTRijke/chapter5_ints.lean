@@ -20,7 +20,7 @@ def pred_succ_Z (a : myZ) : predZ (succZ a) ≡ a :=
   match a with
   | Sum.inl k =>
     match k with
-    | myN.zero => MyEq.refl _
+    | myN.one => MyEq.refl _
     -- k is zero, a is -1;
     -- predZ succZ a = predZ Zzero = Zneg myN.zero
     -- alternative: ap predZ (succZ (Sum.inl myN.zero)) (Zzero) (MyEq.refl _)
@@ -44,7 +44,7 @@ def succ_pred_Z (a : myZ) : succZ (predZ a) ≡ a :=
   | Sum.inr (Sum.inr _) => MyEq.refl _
   | Sum.inr (Sum.inl k) =>
     match k with
-    | myN.zero => MyEq.refl _
+    | myN.one => MyEq.refl _
     | myN.succ _ => MyEq.refl _
 
 -- Exercise 5.7
@@ -56,43 +56,35 @@ def zero_add_right_Z (a : myZ) : (a + Zzero) ≡ a :=
   | Sum.inr (Sum.inl _) => MyEq.refl _
 
 
+/- def myAdd (a b : myZ) : myZ :=
+  match b with
+  | Sum.inr (Sum.inr _) => a
+  | Sum.inr (Sum.inl n) => addNaturalToZ n a
+  | Sum.inl n => subtractNaturalFromZ n a
+
+def addNaturalToZ (n : myN) (z : myZ) : myZ :=
+  match n with
+  | myN.one => succZ z
+  | myN.succ n' => addNaturalToZ n' (succZ z)
+
+
+def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
+  match n with
+  | myN.one => predZ z
+  | myN.succ n' => subtractNaturalFromZ n' (predZ z)
+-/
+
 def zero_add_left_Z  (a : myZ) : (Zzero + a) ≡ a :=
-  -- helper for subtracting a natural from a negative integer
-  let rec sub_neg : (n k : myN) → subtractNaturalFromZ n (Zneg k) ≡ Zneg (myAdd k n) :=
-    fun n =>
-      match n with
-      | myN.zero => fun _ => MyEq.refl _
-      | myN.succ n' =>
-        fun k =>
-          have ih := sub_neg n' (myN.succ k)
-          have step₁ := ap Zneg (myAdd (myN.succ k) n') (myN.succ (myAdd k n')) (Naturals.left_successor_law_add k n')
-          have step₂ := myEq_symm (ap Zneg (myAdd k (myN.succ n')) (myN.succ (myAdd k n')) (Naturals.right_successor_law_add k n'))
-          ih • step₁ • step₂
-  -- helper for adding a natural to a positive integer
-  let rec add_pos : (n k : myN) → addNaturalToZ n (Zpos k) ≡ Zpos (myAdd k n) :=
-    fun n =>
-      match n with
-      | myN.zero => fun _ => MyEq.refl _
-      | myN.succ n' =>
-        fun k =>
-          have ih := add_pos n' (myN.succ k)
-          have step₁ := ap Zpos (myAdd (myN.succ k) n') (myN.succ (myAdd k n')) (Naturals.left_successor_law_add k n')
-          have step₂ := myEq_symm (ap Zpos (myAdd k (myN.succ n')) (myN.succ (myAdd k n')) (Naturals.right_successor_law_add k n'))
-          ih • step₁ • step₂
-  match a with
-  | Sum.inl a' =>
-      change subtractNaturalFromZ (myN.succ a') Zzero ≡ Zneg a'
-      change subtractNaturalFromZ a' (Zneg myN.zero) ≡ Zneg a'
-      have h := sub_neg a' myN.zero
-      have hadd := ap Zneg (myAdd _0 a') a' (Naturals.right_unit_add_N a')
-      h • hadd
-  | Sum.inr (Sum.inr _) => MyEq.refl _
-  | Sum.inr (Sum.inl a') =>
-      change addNaturalToZ (myN.succ a') Zzero ≡ Zpos a'
-      change addNaturalToZ a' (Zpos myN.zero) ≡ Zpos a'
-      have h := add_pos a' myN.zero
-      have hadd := ap Zpos (myAdd _0 a') a' (Naturals.right_unit_add_N a')
-      h • hadd
+  match a with 
+  | Sum.inl a' => 
+    match a' with 
+    | myN.one => MyEq.refl _ 
+    | myN.succ a'' =>  sorry -- substractNatFromZ a'' -1 = -a  
+  | Sum.inr (Sum.inr _) => MyEq.refl _ 
+  | Sum.inr (Sum.inl a') => 
+    match a' with 
+    | myN.one => MyEq.refl _ 
+    | myN.succ a'' => sorry 
 
 
 def add_commutative_Z (a b : myZ) : (a + b) ≡ (b + a) := 

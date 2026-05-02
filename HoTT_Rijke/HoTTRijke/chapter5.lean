@@ -586,14 +586,13 @@ def addNtoZ_inverse (n : myN) : addNaturalToZ n (Sum.inl n) ≡ Zzero :=
     (pred_succ_elim (addNaturalToZ n' (Sum.inl n'))) •
     (addNtoZ_inverse n')
 
-def subNfromZ_inverse (n : myN) : subtractNaturalFromZ n (Sum.inr (Sum.inl n)) ≡ Zzero :=
+/-- def subNfromZ_inverse (n : myN) : subtractNaturalFromZ n (Sum.inr (Sum.inl n)) ≡ Zzero :=
   match n with
-  | myN.one => MyEq.refl _(
+  | myN.one => MyEq.refl _
   | myN.succ n' =>
     (subNfromZ_left_succ_law n'.succ (Sum.inr (Sum.inl n'))) •
     (succ_pred_elim (subtractNaturalFromZ n' (Sum.inr (Sum.inl n')))) •
     (subNfromZ_inverse n')
-
 
 
 def left_inverse_law (z : myZ) : myAdd (negative z) z ≡ Zzero :=
@@ -608,7 +607,7 @@ def right_inverse_law (z : myZ) : myAdd z (negative z) ≡ Zzero :=
   | Sum.inr (Sum.inl z') => subNfromZ_inverse z'
   | Sum.inl z' => addNtoZ_inverse z'
 
-
+--/
 --Exercise 5.8
 
 -- a)

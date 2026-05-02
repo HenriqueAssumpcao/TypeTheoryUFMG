@@ -317,4 +317,5 @@ example : ∀x : S, (R x → P2 x) := by
   exact q f
 
 end ex_610
+
 end

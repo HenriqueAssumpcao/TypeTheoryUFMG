@@ -5,6 +5,8 @@ inductive myN where
   | one : myN   -- represents 1
   | succ : myN → myN
 
+deriving DecidableEq  -- Decids x = y
+
 def _1 : myN := myN.one
 def _2 : myN := myN.succ _1
 def _3 : myN := myN.succ _2
@@ -17,17 +19,17 @@ def _9 : myN := myN.succ _8
 def _10 : myN := myN.succ _9
 
 def toStringMyN : myN → String
-  | myN.one      => "1"
-  | myN.succ myN.one  => "2"
-  | myN.succ (myN.succ myN.one) => "3"
-  | myN.succ (myN.succ (myN.succ myN.one)) => "4"
-  | myN.succ (myN.succ (myN.succ (myN.succ myN.one))) => "5"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one)))) => "6"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one))))) => "7"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one)))))) => "8"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one))))))) => "9"
-  | myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ (myN.succ myN.one)))))))) => "10"
-  | _ => "n>10"
+  | _1 => "1"
+  | _2 => "2"
+  | _3 => "3"
+  | _4 => "4"
+  | _5 => "5"
+  | _6 => "6"
+  | _7 => "7"
+  | _8 => "8"
+  | _9 => "9"
+  | _10 => "10"
+  | _ => "≥11"   -- any larger number
 
 instance : ToString myN where
   toString := toStringMyN
@@ -51,7 +53,7 @@ def myExp (a b : myN) : myN :=
 
 def myMin (a b : myN) : myN :=
   match b with
-  | myN.one => myN.one
+  | myN.zero => myN.zero
   | myN.succ c => myN.succ (myMin a c)
 
 def myMax (a b : myN) : myN :=
@@ -72,24 +74,42 @@ def factorial (a : myN) : myN :=
   | myN.one => _1
   | myN.succ a' => myMult (factorial a') a
 
+/- This works in 0-based naturals
 
 def binomial (a b : myN) : myN :=
   match a with
   | myN.one =>
     match b with
-    | myN.one => _1
+    | myN.zero => _1
     | myN.succ _ => _1            -- no zero in 1-based naturals
   | myN.succ a' =>
     match b with
     | myN.one => _1
     | myN.succ b' => myAdd (binomial a' b') (binomial a' b)
+-/
 
+def binomial (a b : myN) [DecidableEq myN] : myN :=
+  let c := myMin a b
+  match a, b with
+  | d, myN.one => d
+  | myN.one, _ => myN.one   -- No zero in 1-based naturals
+  | myN.succ a', myN.succ b' =>
+    if c = a then           -- Needs DecidableEq to decide c = a
+      binomial a' b'
+    else
+      myAdd (binomial a' b') (binomial a' b)
 
 def fibonacci (n: myN) : myN :=
   match n with
-  | myN.one => myN.one         -- F1 = 1
-  | myN.succ myN.one => myN.one -- F2 = 1
+  | myN.zero => myN.zero          -- F1 = 1
+  | myN.succ myN.zero => myN.zero -- F2 = 1
   | myN.succ (myN.succ n') => myAdd (fibonacci (myN.succ n')) (fibonacci n')
+
+def div2 (n : myN) : myN :=
+  match n with
+  | myN.zero => myN.zero          -- 1 / 2 rounded to 1 for 1-based naturals
+  | myN.succ myN.zero => myN.zero -- 2 / 2 = 1
+  | myN.succ (myN.succ n') => myAdd (div2 n') myN.zero
 
 end chapter3_naturals
 
@@ -123,6 +143,14 @@ U -> 0
 
 variable(U : Unit)
 
+def __0 : myZ := (Sum.inr (Sum.inr U))
+
+def myNatToInt (n : myN) : myZ :=
+  -- your definition, e.g. using your constructors
+  -- example if you have myZ.zero / myZ.pos:
+  match n with
+  | myN.zero      => Zzero
+  | myN.succ n'   => Zpos n'
 
 def negative (n : myZ) : myZ :=
   match n with
@@ -140,27 +168,29 @@ def showMyZ (z : myZ) : String :=
 
 
 instance : Coe myN myZ where
-  coe := Zpos 
+  coe := Zpos
 
 #check (_1 : myZ)
 
 def predZ (z : myZ) : myZ :=
   match z with
   | Sum.inl z' => Zneg z'.succ
-  | Sum.inr (Sum.inr ()) => Zneg myN.one
+  | Sum.inr (Sum.inr ()) => Zneg myN.zero
   | Sum.inr (Sum.inl n)  =>
     match n with
-    | myN.one => ZZero
+    | myN.zero => Zzero
     | myN.succ n' => Zpos n'
+
+#eval showMyZ (predZ (_0))
 
 def succZ (z : myZ) : myZ :=
   match z with
   | Sum.inl n =>
       match n with
-      | myN.one     => ZZero 
+      | myN.zero     => Zzero
       | myN.succ n'  => Zneg n'
   | Sum.inr (Sum.inl n)     => Zpos (myN.succ n)
-  | Sum.inr (Sum.inr ())    => ZOne 
+  | Sum.inr (Sum.inr ())    => Zpos _0
 
 end chapter3_integers
 

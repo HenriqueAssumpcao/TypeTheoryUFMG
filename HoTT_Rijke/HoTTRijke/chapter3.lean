@@ -102,7 +102,7 @@ def binomial_v2 (a b : myN) [DecidableEq myN] : myN :=
   | d, myN.one => d
   | myN.one, _ => myN.one   -- No zero in 1-based naturals
   | myN.succ a', myN.succ b' =>
-    if c = a then           -- Needs DecidableEq to decide c = a
+    if c = a then           -- Needs DecidablmyAddeEq to decide c = a
       binomial a' b'
     else
       myAdd (binomial a' b') (binomial a' b)

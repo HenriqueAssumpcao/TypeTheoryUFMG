@@ -281,23 +281,23 @@ def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
   | myN.succ n' => predZ (subtractNaturalFromZ n' z)
 
 
-def myAdd (a b : myZ) : myZ :=
+def myAddZ (a b : myZ) : myZ :=
   match b with
-  | Sum.inr (Sum.inr _) => a
-  | Sum.inr (Sum.inl n) => addNaturalToZ n a
+  | Sum.inr (Sum.inl _) => a
+  | Sum.inr (Sum.inr n) => addNaturalToZ n a
   | Sum.inl n => subtractNaturalFromZ n a
 
 
 def multNaturalWithZ (a : myZ) (b : myN) : myZ :=
   match b with
   | myN.one => a
-  | myN.succ n' => myAdd a (multNaturalWithZ a n')
+  | myN.succ n' => myAddZ a (multNaturalWithZ a n')
 
 
-def myMult (a b : myZ) : myZ :=
+def myMultZ (a b : myZ) : myZ :=
   match b with
-  | Sum.inr (Sum.inr _) => Zzero
-  | Sum.inr (Sum.inl n) => multNaturalWithZ a n
+  | Sum.inr (Sum.inl _) => Zzero
+  | Sum.inr (Sum.inr n) => multNaturalWithZ a n
   | Sum.inl n =>  negative (multNaturalWithZ a n)
 
 end chapter4_integers

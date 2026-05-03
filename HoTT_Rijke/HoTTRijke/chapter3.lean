@@ -34,6 +34,15 @@ def toStringMyN : myN → String
 instance : ToString myN where
   toString := toStringMyN
 
+
+-- `myN0` adjoins a new point to `myN`, which we use as zero.
+def myN0 := myN ⊕ Unit
+
+def N0pos (n : myN) : myN0 := Sum.inl n
+def N0zero : myN0 := Sum.inr ()
+
+
+
 def myAdd (a b : myN) : myN :=
   match b with
   | myN.one => myN.succ a        -- adding 1
@@ -75,8 +84,6 @@ def factorial (a : myN) : myN :=
   | myN.one => _1
   | myN.succ a' => myMult (factorial a') a
 
-/- This works in 0-based naturals
-
 def binomial (a b : myN) : myN :=
   match a with
   | myN.one =>
@@ -87,9 +94,9 @@ def binomial (a b : myN) : myN :=
     match b with
     | myN.one => _1
     | myN.succ b' => myAdd (binomial a' b') (binomial a' b)
--/
 
-def binomial (a b : myN) [DecidableEq myN] : myN :=
+
+def binomial_v2 (a b : myN) [DecidableEq myN] : myN :=
   let c := myMin a b
   match a, b with
   | d, myN.one => d
@@ -128,11 +135,11 @@ end chapter3_naturals
 namespace chapter3_integers
 open chapter3_naturals
 
-def myZ := myN ⊕ (myN ⊕ Unit)
+def myZ := myN ⊕ (Unit ⊕ myN)
 
 def Zneg (n : myN) : myZ := Sum.inl n
-def Zpos (n : myN) : myZ := Sum.inr (Sum.inl n)
-def Zzero : myZ := Sum.inr (Sum.inr ())
+def Zpos (n : myN) : myZ := Sum.inr (Sum.inr n)
+def Zzero : myZ := Sum.inr (Sum.inl ())
 
 /- myZ is myN ⊕ (myN ⊕ Unit)
 Left:
@@ -141,53 +148,49 @@ Left:
 3 -> -3
 etc...
 
-Right-Left
+Right-right
 (1,U) -> 1
 (2,U) -> 2
 (3,U) -> 3
 etc...
 
-Right-Right
+Right-left
 U -> 0
 -/
 
 variable(U : Unit)
 
-def __0 : myZ := (Sum.inr (Sum.inr U))
+def __0 : myZ := (Sum.inr (Sum.inl U))
 
 def myNatToInt (n : myN) : myZ :=
   Zpos n
 
 def negative (n : myZ) : myZ :=
   match n with
-  | Sum.inl n' => Sum.inr (Sum.inl n')
-  | Sum.inr (Sum.inr ()) => Zzero
-  | Sum.inr (Sum.inl n') => Sum.inl n'
+  | Sum.inl n' => Sum.inr (Sum.inr n')
+  | Sum.inr (Sum.inl ()) => Zzero
+  | Sum.inr (Sum.inr n') => Sum.inl n'
 
 def showMyZ (z : myZ) : String :=
   match z with
   | Sum.inl n =>  "-" ++ toString n
       -- negative: 0 ↦ -1, 1 ↦ -2, ...
-  | Sum.inr (Sum.inl n) => toString n
+  | Sum.inr (Sum.inr n) => toString n
       -- positive: 0 ↦ 1, 1 ↦ 2, ...
-  | Sum.inr (Sum.inr _) => "0"
+  | Sum.inr (Sum.inl _) => "0"
 
 
 instance : Coe myN myZ where
   coe := myNatToInt
 
-#check (_1 : myZ)
-
 def predZ (z : myZ) : myZ :=
   match z with
   | Sum.inl z' => Zneg z'.succ
-  | Sum.inr (Sum.inr ()) => Zneg _1
-  | Sum.inr (Sum.inl n)  =>
+  | Sum.inr (Sum.inl ()) => Zneg _1
+  | Sum.inr (Sum.inr n)  =>
     match n with
     | myN.one => Zzero
     | myN.succ n' => Zpos n'
-
-#eval showMyZ (predZ (negative _2))
 
 def succZ (z : myZ) : myZ :=
   match z with
@@ -195,28 +198,26 @@ def succZ (z : myZ) : myZ :=
       match n with
       | myN.one     => Zzero
       | myN.succ n'  => Zneg n'
-  | Sum.inr (Sum.inl n)     => Zpos (myN.succ n)
-  | Sum.inr (Sum.inr ())    => _1
+  | Sum.inr (Sum.inr n)     => Zpos (myN.succ n)
+  | Sum.inr (Sum.inl ())    => _1
 
 
-/-
 def addZ (m n : myZ) : myZ :=
   match m, n with
-  | m, Sum.inr (Sum.inr ()) => m
-  | Sum.inr (Sum.inr ()), n => n
-  | Sum.inr (Sum.inl m), Sum.inr (Sum.inl n) => myAdd m n
-  | Sum.inl m, Sum.inl n => Zneg (myAdd m n)
-  | Sum.inr (Sum.inl m), Sum.inl n =>
+  | m, Sum.inr (Sum.inl ()) => m -- n is zero
+  | Sum.inr (Sum.inl ()), n => n -- m is zero
+  | Sum.inr (Sum.inr m), Sum.inr (Sum.inr n) => myAdd m n  -- both positive
+  | Sum.inl m, Sum.inl n => Zneg (myAdd m n) -- both negative
+  | Sum.inr (Sum.inr m), Sum.inl n =>
     if myMax m n = m then
       Zpos (dist m n)
     else
       Zneg (dist m n)
-  | Sum.inl m, Sum.inr (Sum.inl n) =>
+  | Sum.inl m, Sum.inr (Sum.inr n) =>
     if myMax m n = m then
       Zneg (dist m n)
     else
       Zpos (dist m n)
--/
 
 
 end chapter3_integers
@@ -270,8 +271,6 @@ def proj2 {P Q : Type} (z : myProd P Q) : Q :=
 
 def myProdFunc {P Q R : Type} (f : P → Q → R) : (myProd P Q → R) :=
   fun (z : myProd P Q) => f (proj1 z) (proj2 z)
-
-#check myProdFunc
 
 def myEquiv (P Q : Type) : Type := myProd (P → Q) (Q → P)
 def myNegType  : Type := P → Empty

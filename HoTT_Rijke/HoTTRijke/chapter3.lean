@@ -2,10 +2,10 @@ namespace chapter3_naturals
 
 -- Naturals now start at 1 (base constructor), so `myN.one` represents 1.
 inductive myN where
-  | one : myN   -- represents 1
+  | one : myN         -- represents 1
   | succ : myN → myN
 
-deriving DecidableEq  -- Decids x = y
+deriving DecidableEq  -- Decides x = y
 
 def _1 : myN := myN.one
 def _2 : myN := myN.succ _1

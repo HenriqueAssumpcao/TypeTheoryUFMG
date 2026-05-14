@@ -4,14 +4,27 @@ import HoTTRijke.chapter4
 namespace chapter5_myeq
 universe u v w
 
--- If you want to define your own identity type (e.g., for Type Theory exercises):
+-- We define our own identity type (e.g., for Type Theory exercises):
 
 inductive MyEq {α : Type} : α → α → Type where
   | refl (a : α) : MyEq a a
 
--- The induction principle for MyEq type is
--- ind-eqₐ : P(a, reflₐ) →  Π(x:A). Π(p:a=x). P(x,p) giving
--- ind_eqₐ(u,a,relfₐ) = u
+/-
+   The induction principle for MyEq type is
+   ind-eqₐ : P(a, reflₐ) →  Π(x:A). Π(p:a=x). P(x,p) giving
+   ind_eqₐ(u,a,relfₐ) = u
+
+   This says that if P(a,reflₐ) is true then for all x of the same type
+   and for all proofs that a = x, we have that P(x,p) must also be true.
+
+  More specifically, if u is a proof that P(a,reflₐ), x:A, and p is a proof
+  that a = x, then ind_eqₐ(u,x,p) is a proof that P(x,p).
+
+  Moreover, ind_eqₐ(u,a,relfₐ) = u; that is ind_eqₐ returns the same proof
+  in this case.
+-/
+
+#check MyEq.rec
 
 -- You can add notation
 notation:100 a " ≡ " b => MyEq a b

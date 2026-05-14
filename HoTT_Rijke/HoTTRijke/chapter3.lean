@@ -5,7 +5,8 @@ inductive myN where
   | one : myN   -- represents 1
   | succ : myN → myN
 
-deriving DecidableEq  -- Decids x = y
+deriving DecidableEq  -- Decides x = y
+
 
 def _1 : myN := myN.one
 def _2 : myN := myN.succ _1
@@ -17,6 +18,7 @@ def _7 : myN := myN.succ _6
 def _8 : myN := myN.succ _7
 def _9 : myN := myN.succ _8
 def _10 : myN := myN.succ _9
+
 
 def toStringMyN : myN → String
   | myN.one => "1"
@@ -35,36 +37,30 @@ instance : ToString myN where
   toString := toStringMyN
 
 
--- `myN0` adjoins a new point to `myN`, which we use as zero.
-def myN0 := myN ⊕ Unit
-
-def N0pos (n : myN) : myN0 := Sum.inl n
-def N0zero : myN0 := Sum.inr ()
-
-
-
 def myAdd (a b : myN) : myN :=
   match b with
   | myN.one => myN.succ a        -- adding 1
   | myN.succ b' => myN.succ (myAdd a b')
+
 
 def myMult (a b : myN) : myN :=
   match b with
   | myN.one => a                 -- multiplying by 1
   | myN.succ b' => myAdd (myMult a b') a
 
--- #eval myMult _2 _3
 
 def myExp (a b : myN) : myN :=
   match b with
   | myN.one => a                 -- a^1 = a
   | myN.succ b' => myMult (myExp a b') a
 
+
 def myMin (a b : myN) : myN :=
   match a, b with
   | myN.one, _ => myN.one
   | _, myN.one => myN.one
   | myN.succ a', myN.succ b' => myN.succ (myMin a' b')
+
 
 def myMax (a b : myN) : myN :=
   match a with
@@ -74,15 +70,25 @@ def myMax (a b : myN) : myN :=
     | myN.one => a
     | myN.succ b' => myN.succ (myMax a' b')
 
+
 def triangular_number (a : myN) : myN :=
   match a with
   | myN.one => myN.one          -- 1
   | myN.succ a' => myAdd (triangular_number a') a
 
+
 def factorial (a : myN) : myN :=
   match a with
   | myN.one => _1
   | myN.succ a' => myMult (factorial a') a
+
+/- There is a problem with the implementation of some of the following functions. Since
+   there is no zero among naturals, binomial a b for a < b returns 1.
+
+   One might fix this problem by
+   -- introducing a new type N0 = Sum myN Unit
+   -- checking if a >= b.
+-/
 
 def binomial (a b : myN) : myN :=
   match a with
@@ -113,6 +119,7 @@ def fibonacci (n: myN) : myN :=
   | myN.succ myN.one => myN.one   -- F2 = 1
   | myN.succ (myN.succ n') => myAdd (fibonacci (myN.succ n')) (fibonacci n')
 
+-- Same problem with div2: 1/2 = 1
 
 def div2 (n : myN) : myN :=
   match n with
@@ -162,8 +169,10 @@ variable(U : Unit)
 
 def __0 : myZ := (Sum.inr (Sum.inl U))
 
+
 def myNatToInt (n : myN) : myZ :=
   Zpos n
+
 
 def negative (n : myZ) : myZ :=
   match n with
@@ -171,17 +180,17 @@ def negative (n : myZ) : myZ :=
   | Sum.inr (Sum.inl ()) => Zzero
   | Sum.inr (Sum.inr n') => Sum.inl n'
 
+
 def showMyZ (z : myZ) : String :=
   match z with
   | Sum.inl n =>  "-" ++ toString n
-      -- negative: 0 ↦ -1, 1 ↦ -2, ...
   | Sum.inr (Sum.inr n) => toString n
-      -- positive: 0 ↦ 1, 1 ↦ 2, ...
   | Sum.inr (Sum.inl _) => "0"
 
 
 instance : Coe myN myZ where
   coe := myNatToInt
+
 
 def predZ (z : myZ) : myZ :=
   match z with
@@ -190,7 +199,8 @@ def predZ (z : myZ) : myZ :=
   | Sum.inr (Sum.inr n)  =>
     match n with
     | myN.one => Zzero
-    | myN.succ n' => Zpos n'
+    | myN.succ n' => n'
+
 
 def succZ (z : myZ) : myZ :=
   match z with
@@ -198,27 +208,8 @@ def succZ (z : myZ) : myZ :=
       match n with
       | myN.one     => Zzero
       | myN.succ n'  => Zneg n'
-  | Sum.inr (Sum.inr n)     => Zpos (myN.succ n)
+  | Sum.inr (Sum.inr n)     => myN.succ n
   | Sum.inr (Sum.inl ())    => _1
-
-
-def addZ (m n : myZ) : myZ :=
-  match m, n with
-  | m, Sum.inr (Sum.inl ()) => m -- n is zero
-  | Sum.inr (Sum.inl ()), n => n -- m is zero
-  | Sum.inr (Sum.inr m), Sum.inr (Sum.inr n) => myAdd m n  -- both positive
-  | Sum.inl m, Sum.inl n => Zneg (myAdd m n) -- both negative
-  | Sum.inr (Sum.inr m), Sum.inl n =>
-    if myMax m n = m then
-      Zpos (dist m n)
-    else
-      Zneg (dist m n)
-  | Sum.inl m, Sum.inr (Sum.inr n) =>
-    if myMax m n = m then
-      Zneg (dist m n)
-    else
-      Zpos (dist m n)
-
 
 end chapter3_integers
 

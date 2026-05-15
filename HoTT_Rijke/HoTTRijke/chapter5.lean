@@ -43,10 +43,10 @@ def myEq_symm {α : Type} {a x : α} : (a ≡ x) → (x ≡ a) := by
   /- At this point we want to prove x ≡ a. The type P(x,p) is 'x ≡ a'
      independent of p. -/
   let P : (x : α) → (a ≡ x) → Type := fun x _ => (x ≡ a)
-
   -- P a (MyEq.refl a) is 'a = a' and 'MyEq.refl a' is proof of this.
   -- thus we apply ind_eq
   exact ind_eq (α:=α) (a:=a) P (MyEq.refl a) x p
+
 
 def myEq_symm_refl {α: Type} (a : α) : myEq_symm (MyEq.refl a) ≡ (MyEq.refl a) :=
   MyEq.refl _
@@ -54,15 +54,20 @@ def myEq_symm_refl {α: Type} (a : α) : myEq_symm (MyEq.refl a) ≡ (MyEq.refl 
 
  def myEq_refl {α : Type} {a : α} : (a ≡ a) := MyEq.refl a
 
+
  def myEq_trans {α : Type} {a x y : α} : (a ≡ x) → (x ≡ y) → (a ≡ y):= by
   intro p
   let P : (x' : α) → (a ≡ x') → Type := fun x' _ => (x' ≡ y) → (a ≡ y)
   exact ind_eq P (fun a => a) x p
 
+instance {α : Type} : Trans (@MyEq α) (@MyEq α) (@MyEq α) where
+  trans := myEq_trans
+
 def concat_eq {α : Type} {x y z : α} : (x ≡ y) → (y ≡ z) → (x ≡ z) :=  by
   intro p
   let P : (y' : α) → (x ≡ y') → Type := fun y' _ => (y' ≡ z) → (x ≡ z)
   exact ind_eq P (fun a => a) y p
+
 
 notation:60 a " • " b => concat_eq a b
 
@@ -594,25 +599,26 @@ def addNtoZ_inverse (n : myN) : addNaturalToZ n (Sum.inl n) ≡ Zzero :=
     (pred_succ_elim (addNaturalToZ n' (Sum.inl n'))) •
     (addNtoZ_inverse n')
 
-/-- def subNfromZ_inverse (n : myN) : subtractNaturalFromZ n (Sum.inr (Sum.inl n)) ≡ Zzero :=
+def subNfromZ_inverse (n : myN) : subtractNaturalFromZ n (Sum.inr (Sum.inr n)) ≡ Zzero :=
   match n with
   | myN.one => MyEq.refl _
   | myN.succ n' =>
-    (subNfromZ_left_succ_law n'.succ (Sum.inr (Sum.inl n'))) •
-    (succ_pred_elim (subtractNaturalFromZ n' (Sum.inr (Sum.inl n')))) •
+    (subNfromZ_left_succ_law n'.succ (Sum.inr (Sum.inr n'))) •
+    (succ_pred_elim (subtractNaturalFromZ n' (Sum.inr (Sum.inr n')))) •
     (subNfromZ_inverse n')
 
-
-def left_inverse_law (z : myZ) : myAdd (negative z) z ≡ Zzero :=
+def left_inverse_law (z : myZ) : myAddZ (negative z) z ≡ Zzero :=
   match z with
-  | Sum.inr (Sum.inr _) => MyEq.refl _
-  | Sum.inr (Sum.inl z') => addNtoZ_inverse z'
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inr (Sum.inr z') => addNtoZ_inverse z'
   | Sum.inl z' => subNfromZ_inverse z'
 
-def right_inverse_law (z : myZ) : myAdd z (negative z) ≡ Zzero :=
+
+
+def right_inverse_law (z : myZ) : myAddZ z (negative z) ≡ Zzero :=
   match z with
-  | Sum.inr (Sum.inr _) => MyEq.refl _
-  | Sum.inr (Sum.inl z') => subNfromZ_inverse z'
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inr (Sum.inr z') => subNfromZ_inverse z'
   | Sum.inl z' => addNtoZ_inverse z'
 
 --/

@@ -56,35 +56,31 @@ def zero_add_right_Z (a : myZ) : (a + Zzero) ≡ a :=
   | Sum.inr (Sum.inl _) => MyEq.refl _
 
 
-/- def myAdd (a b : myZ) : myZ :=
-  match b with
-  | Sum.inr (Sum.inr _) => a
-  | Sum.inr (Sum.inl n) => addNaturalToZ n a
-  | Sum.inl n => subtractNaturalFromZ n a
-
-def addNaturalToZ (n : myN) (z : myZ) : myZ :=
+def zero_add_left_neg (n : myN) : (Zzero + Sum.inl n) ≡ Sum.inl n :=
   match n with
-  | myN.one => succZ z
-  | myN.succ n' => addNaturalToZ n' (succZ z)
+  | myN.one => MyEq.refl _
+  | myN.succ n' =>
+      calc
+        (Zzero + Sum.inl (myN.succ n')) ≡ predZ (Zzero + Sum.inl n') := MyEq.refl _
+        _ ≡ predZ (Sum.inl n') := ap predZ (Zzero + Sum.inl n') (Sum.inl n') (zero_add_left_neg n')
+        _ ≡ Sum.inl (myN.succ n') := MyEq.refl _
 
 
-def subtractNaturalFromZ (n : myN) (z : myZ) : myZ :=
+def zero_add_left_pos (n : myN) : (Zzero + Sum.inr (Sum.inr n)) ≡ Sum.inr (Sum.inr n) :=
   match n with
-  | myN.one => predZ z
-  | myN.succ n' => subtractNaturalFromZ n' (predZ z)
--/
+  | myN.one => MyEq.refl _
+  | myN.succ n' =>
+      calc
+        (Zzero + Sum.inr (Sum.inr (myN.succ n'))) ≡ succZ (Zzero + Sum.inr (Sum.inr n')) := MyEq.refl _
+        _ ≡ succZ (Sum.inr (Sum.inr n')) := ap succZ (Zzero + Sum.inr (Sum.inr n')) (Sum.inr (Sum.inr n')) (zero_add_left_pos n')
+        _ ≡ Sum.inr (Sum.inr (myN.succ n')) := MyEq.refl _
 
-def zero_add_left_Z  (a : myZ) : (Zzero + a) ≡ a :=
+
+def zero_add_left_Z (a : myZ) : (Zzero + a) ≡ a :=
   match a with
-  | Sum.inl a' =>
-    match a' with
-    | myN.one => MyEq.refl _
-    | myN.succ a'' =>  sorry -- substractNatFromZ a'' -1 = -a
+  | Sum.inl n => zero_add_left_neg n
   | Sum.inr (Sum.inl _) => MyEq.refl _
-  | Sum.inr (Sum.inr a') =>
-    match a' with
-    | myN.one => MyEq.refl _
-    | myN.succ a'' => sorry
+  | Sum.inr (Sum.inr n) => zero_add_left_pos n
 
 
 def add_commutative_Z (a b : myZ) : (a + b) ≡ (b + a) :=

@@ -1,0 +1,80 @@
+---
+title: "Chapter 4 Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+  
+---
+
+# Overview
+
+This document summarizes the functions defined in `chapter4.lean`.  
+Each entry includes the function name, its Lean signature, and a short description.
+
+# Namespace `chapter4_booleans`
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `proj_rightEmpty` | `(A B : Type) → myNegType B → ((A ⊕ B) → A)` | Builds a projection from `A ⊕ B` to `A`, assuming `B` is impossible. |
+| `proj_leftEmpty` | `(A B : Type) → myNegType A → ((A ⊕ B) → B)` | Builds a projection from `A ⊕ B` to `B`, assuming `A` is impossible. |
+| `_3_c_ii` | `myNegType (myNegType (((P → Q) → P) → P))` | Proves double-negated Peirce-like principle constructively. |
+| `LEM` | `myNegType (myNegType (P ⊕ (myNegType P)))` | Constructive double-negated law of excluded middle for `P`. |
+| `_3_d_i` | `(P ⊕ myNegType P) → (myNegType (myNegType P) → P)` | Uses excluded-middle witness to eliminate double negation of `P`. |
+| `_3_d_ii` | `myEquiv (myNegType (myNegType (Q → P))) ((Sum P (myNegType P)) → (Q → P))` | Gives an equivalence between double-negated implication and case-based function construction. |
+| `_3_e_i` | `myNegType (myNegType (myNegType P)) → myNegType P` | Triple-negation elimination into single negation. |
+| `_3_e_ii` | `myNegType (myNegType (P → myNegType (myNegType Q))) → (P → myNegType (myNegType Q))` | Eliminates double negation at a function type into a direct function. |
+| `_3_e_iii` | `myNegType (myNegType (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))) → (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))` | Extracts a pair of double-negated components from a double-negated product. |
+| `_3_f_i` | `myEquiv (myNegType (myNegType (myProd P Q))) (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))` | Equivalence between double-negated product and product of double-negations. |
+| `_3_f_ii` | `myEquiv (myNegType (myNegType (Sum P Q))) (myNegType (myProd (myNegType P) (myNegType Q)))` | Equivalence between double-negated sum and negation of pair of negations. |
+| `_3_f_iii` | `myEquiv (myNegType (myNegType (P → Q))) ((myNegType (myNegType P)) → (myNegType (myNegType Q)))` | Equivalence relating double-negated implication and map on double-negations. |
+
+# Namespace `chapter4_lists`
+
+## Types
+
+- `myList (A : Type)`: custom list type with constructors `nil` and `cons`.
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `list_string` | `myList Nat → String` | Serializes a `Nat` list into a concatenated string of element values. |
+| `list_length` | `{A : Type} → myList A → Nat` | Computes the length of a list. |
+| `nth_list` | `{A : Type} → myList A → Nat → Option A` | Returns the element at index `i` if present, otherwise `none`. |
+| `fold_list` | `(mu : A → (B → B)) → (b : B) → myList A → B` | Right fold over a list using step function `mu` and base `b`. |
+| `map_list` | `{A B : Type} → (A → B) → (myList A → myList B)` | Applies a function to every element of a list. |
+| `sum_list` | `myList Nat → Nat` | Computes the sum of all `Nat` elements in a list. |
+| `prod_list` | `myList Nat → Nat` | Computes the product of all `Nat` elements in a list. |
+| `concat_list` | `{A : Type} → myList A → myList A → myList A` | Appends the second list onto the first parameterized prefix behavior in this definition order. |
+| `flatten_list` | `{A : Type} → myList (myList A) → myList A` | Flattens a list of lists into a single list. |
+| `reverse_list` | `{A : Type} → myList A → myList A` | Reverses a list recursively using `concat_list`. |
+
+## Defined Example Values
+
+| Name | Signature | Description |
+|---|---|---|
+| `l` | `myList Nat` | Example list: `5, 4, 3, 2, 1`. |
+| `l2` | `myList Nat` | Example list: `7, 9, 11`. |
+| `ll` | `myList (myList Nat)` | Example nested list made from `l2` and `l`. |
+
+# Namespace `chapter4_integers`
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `addNaturalToZ` | `myN → myZ → myZ` | Adds a positive natural amount to an integer by repeated successor. |
+| `subtractNaturalFromZ` | `myN → myZ → myZ` | Subtracts a positive natural amount from an integer by repeated predecessor. |
+| `myAddZ` | `myZ → myZ → myZ` | Integer addition by case analysis on the second argument. |
+| `multNaturalWithZ` | `myZ → myN → myZ` | Multiplies an integer by a positive natural through repeated addition. |
+| `myMultZ` | `myZ → myZ → myZ` | Integer multiplication by reducing to natural multiplication and sign handling. |
+
+# Notes
+
+- The booleans section mostly develops constructive logic transformations using `myNegType` and `myEquiv` from `chapter3`.
+- The list type uses a custom inductive encoding where `cons` takes an element and then a list constructor argument.
+- Integer operations rely on predecessor and successor machinery defined in `chapter3`.

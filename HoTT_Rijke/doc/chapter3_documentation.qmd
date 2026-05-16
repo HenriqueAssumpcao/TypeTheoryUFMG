@@ -1,0 +1,123 @@
+---
+title: "Chapter 3: Natural Numbers, Integers, and Booleans"
+author: "HoTT in Lean"
+date: today
+format: 
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes the functions defined in `chapter3.lean`.
+Each entry includes the function name, its Lean signature, and a short description.
+
+# Namespace `chapter3_naturals`
+
+## Types
+
+| Name | Signature | Description |
+|---|---|---|
+| `myN.one` | `myN` | Base constructor, representing 1 in this 1-based natural system. |
+| `myN.succ` | `myN → myN` | Successor constructor for naturals. |
+
+## Numeric Constants
+
+| Function | Signature | Description |
+|---|---|---|
+| `_1` | `myN` | The number 1. |
+| `_2` | `myN` | The number 2. |
+| `_3` | `myN` | The number 3. |
+| `_4` | `myN` | The number 4. |
+| `_5` | `myN` | The number 5. |
+| `_6` | `myN` | The number 6. |
+| `_7` | `myN` | The number 7. |
+| `_8` | `myN` | The number 8. |
+| `_9` | `myN` | The number 9. |
+| `_10` | `myN` | The number 10. |
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `toStringMyN` | `myN → String` | Converts naturals to strings (`1` through `10`, and `>=11` fallback). |
+| `myAdd` | `(a b : myN) → myN` | Recursive addition on 1-based naturals. |
+| `myMult` | `(a b : myN) → myN` | Recursive multiplication via repeated addition. |
+| `myExp` | `(a b : myN) → myN` | Exponentiation via repeated multiplication. |
+| `myMin` | `(a b : myN) → myN` | Minimum of two naturals. |
+| `myMax` | `(a b : myN) → myN` | Maximum of two naturals. |
+| `triangular_number` | `(a : myN) → myN` | Computes the triangular number of `a`. |
+| `factorial` | `(a : myN) → myN` | Computes factorial recursively. |
+| `binomial` | `(a b : myN) → myN` | Binomial coefficient recurrence (with 1-based limitation for `a < b`). |
+| `binomial_v2` | `(a b : myN) [DecidableEq myN] → myN` | Alternative binomial using equality decisions and `myMin`. |
+| `fibonacci` | `(n : myN) → myN` | Fibonacci numbers with base cases `F1 = 1`, `F2 = 1`. |
+| `div2` | `(n : myN) → myN` | Integer division by 2 in the 1-based natural setting. |
+| `dist` | `(m n : myN) → myN` | Distance-like recursive difference function on naturals. |
+
+## Instances
+
+| Name | Signature | Description |
+|---|---|---|
+| `ToString myN` | `instance : ToString myN` | Uses `toStringMyN` for string rendering. |
+
+# Namespace `chapter3_integers`
+
+## Types and Constructors
+
+| Name | Signature | Description |
+|---|---|---|
+| `myZ` | `Type` | Integer type encoded as `myN ⊕ (Unit ⊕ myN)`. |
+| `Zneg` | `(n : myN) → myZ` | Builds a negative integer. |
+| `Zpos` | `(n : myN) → myZ` | Builds a positive integer. |
+| `Zzero` | `myZ` | Zero integer constructor. |
+| `__0` | `myZ` | Alternative explicit zero term. |
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `myNatToInt` | `(n : myN) → myZ` | Injects naturals into positive integers. |
+| `negative` | `(n : myZ) → myZ` | Integer negation. |
+| `showMyZ` | `(z : myZ) → String` | String view of integers (`-n`, `0`, `n`). |
+| `predZ` | `(z : myZ) → myZ` | Integer predecessor operation. |
+| `succZ` | `(z : myZ) → myZ` | Integer successor operation. |
+
+## Instances
+
+| Name | Signature | Description |
+|---|---|---|
+| `Coe myN myZ` | `instance : Coe myN myZ` | Coercion from naturals to integers via `myNatToInt`. |
+
+# Namespace `chapter3_booleans`
+
+## Types
+
+| Name | Signature | Description |
+|---|---|---|
+| `myBool.myTrue` | `myBool` | Boolean true constructor. |
+| `myBool.myFalse` | `myBool` | Boolean false constructor. |
+| `myProd.mk` | `(x : P) → (y : Q) → myProd P Q` | Constructor for custom product type. |
+| `myEquiv` | `(P Q : Type) → Type` | Type equivalence as a pair of maps `P → Q` and `Q → P`. |
+| `myNegType` | `Type` | Negation type alias (`P → Empty`). |
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `myNeg` | `(x : myBool) → myBool` | Boolean negation. |
+| `myConj` | `(x y : myBool) → myBool` | Boolean conjunction (AND). |
+| `myDisj` | `(x y : myBool) → myBool` | Boolean disjunction (OR). |
+| `proj1` | `{P Q : Type} → (z : myProd P Q) → P` | First projection from `myProd`. |
+| `proj2` | `{P Q : Type} → (z : myProd P Q) → Q` | Second projection from `myProd`. |
+| `myProdFunc` | `{P Q R : Type} → (f : P → Q → R) → (myProd P Q → R)` | Converts curried binary function to product-input function. |
+| `double_neg` | `P → myNegType (myNegType P)` | Introduction of double negation. |
+| `double_contrapositive` | `(P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q))` | Double-negation contrapositive transport across implication. |
+| `double_contrapositive_ii` | `(P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q))` | Variant of double-negation transport with a double-negated codomain. |
+| `double_contrapositive_iii` | `myNegType (myNegType (myNegType (myNegType P) → P))` | Higher-order negation principle over a classical-style implication. |
+
+# Notes
+
+- This chapter uses 1-based naturals (`myN.one` is the smallest natural).
+- Several constructions in the boolean namespace are logic/proof combinators over types.

@@ -436,24 +436,70 @@ variable (U : Unit)
 
 def add_commutative_Z (a b : myZ) : (a + b) ≡ (b + a) :=
   match b with
-  | Sum.inl b' => sorry
+  | Sum.inl b' => subNfromZ_commutative b' a 
   | Sum.inr (Sum.inl _) => Integers.right_add_zero a • (myEq_symm (zero_add_left_Z a))
-  | Sum.inr (Sum.inr b') => sorry
+  | Sum.inr (Sum.inr b') => addNtoZ_commutative b' a  
 
 
-def add_associative_Z (a b c : myZ) : (a + (b + c)) ≡ ((a + b) + c) := sorry
+def add_associative_Z (a b c : myZ) : (a + (b + c)) ≡ ((a + b) + c) := 
+  match c with 
+  | Sum.inl c' => 
+    calc 
+      (a + b + (Sum.inl c')) ≡ (a + (subtractNaturalFromZ c' b)) := MyEq.refl _ 
+      _ ≡ (subtractNaturalFromZ c' (a + b)) := sorry 
+      _  ≡ ((a+b) + Sum.inl c')  := MyEq.refl _ 
+  | Sum.inr (Sum.inl _) => MyEq.refl _ 
+  | Sum.inr (Sum.inr c') => sorry    
 
-def add_right_inverse (a : myZ) : (a + (negative a)) ≡ Zzero := sorry
-def add_left_inverse  (a : myZ) : ((negative a) + a) ≡ Zzero := sorry
+def add_right_inverse (a : myZ) : (a + (negative a)) ≡ Zzero := 
+  match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
+ 
 
-def mult_right_zero (a : myZ) : (a × Zzero) ≡ Zzero := sorry
-def mult_left_zero  (a : myZ) : (Zzero × a) ≡ Zzero := sorry
+def add_left_inverse  (a : myZ) : ((negative a) + a) ≡ Zzero := 
+  match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
 
-def mult_right_unit (a : myZ) : (a × _1) ≡ a := sorry
-def mult_left_unit  (a : myZ) : (_1 × a) ≡ a := sorry
+
+def mult_right_zero (a : myZ) : (a × Zzero) ≡ Zzero := 
+    match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
 
 
-def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) := sorry
+def mult_left_zero  (a : myZ) : (Zzero × a) ≡ Zzero := 
+    match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
+
+
+def mult_right_unit (a : myZ) : (a × _1) ≡ a := 
+    match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
+
+
+def mult_left_unit  (a : myZ) : (_1 × a) ≡ a := 
+    match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
+
+
+def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) := 
+    match a with 
+  | Sum.inl a' => sorry
+  | Sum.inr (Sum.inl _) => sorry 
+  | Sum.inr (Sum.inr a') => sorry    
+
+
 def mult_associative (a b c : myZ) : ((a × b) × c) ≡ a × (b × c) := sorry
 def add_mult_right_distributive (a b c : myZ) : ((a + b) × c)  ≡ ((a × c) + (b × c)) := sorry
 def add_mult_left_distributive  (a b c : myZ) : (a × (b + c) × c)  ≡ ((a × b) + (a × c)) := sorry

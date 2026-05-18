@@ -1,0 +1,14 @@
+---
+title: "HoTTRijke Documentation Index"
+format:
+  html:
+    toc: true
+---
+
+# Documentation Pages
+
+
+- [Chapter 3 HTML](chapter3_documentation.html)
+- [Chapter 4 HTML](chapter4_documentation.html)
+- [Chapter 5 Equality HTML](chapter5_eq_documentation.html)
+- [Chapter 5 Integers HTML](chapter5_ints_documentation.html)

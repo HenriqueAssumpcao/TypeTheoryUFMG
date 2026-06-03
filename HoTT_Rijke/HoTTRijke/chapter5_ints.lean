@@ -432,72 +432,84 @@ variable (U : Unit)
 -- Exercise 5.6
 -- see succ_pred_elim
 
-
-
 def add_commutative_Z (a b : myZ) : (a + b) ≡ (b + a) :=
   match b with
-  | Sum.inl b' => subNfromZ_commutative b' a 
+  | Sum.inl b' => subNfromZ_commutative b' a
   | Sum.inr (Sum.inl _) => Integers.right_add_zero a • (myEq_symm (zero_add_left_Z a))
-  | Sum.inr (Sum.inr b') => addNtoZ_commutative b' a  
+  | Sum.inr (Sum.inr b') => addNtoZ_commutative b' a
 
 
-def add_associative_Z (a b c : myZ) : (a + (b + c)) ≡ ((a + b) + c) := 
-  match c with 
-  | Sum.inl c' => 
+def add_associative_Z (a b c : myZ) : (a + (b + c)) ≡ ((a + b) + c) :=
+  match c with
+  | Sum.inl _ => myEq_symm (subNfromZ_associative _ _ _)
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inr (Sum.inr _) => myEq_symm (addNtoZ_associative _ _ _)
+
+def add_right_inverse (a : myZ) : (a + (negative a)) ≡ Zzero :=
+  match a with
+  | Sum.inl _ => addNtoZ_inverse _
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inr (Sum.inr _) => subNfromZ_inverse _
+
+
+def add_left_inverse  (a : myZ) : ((negative a) + a) ≡ Zzero :=
+  calc
+    ((negative a) + a) ≡ a + (negative a) := add_commutative_Z _ _
+    _ ≡ Zzero := add_right_inverse _
+
+
+def mult_left_zero  (a : myZ) : (Zzero × a) ≡ Zzero :=
+    match a with
+  | Sum.inl a' =>
+    calc
+      negative (multNaturalWithZ Zzero a') ≡ negative Zzero := ap negative (multNaturalWithZ Zzero a') Zzero (multNatWithZero a')
+      _ ≡ Zzero := MyEq.refl _
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inr (Sum.inr a') => multNatWithZero a'
+
+
+def mult_right_zero (a : myZ) : (a × Zzero) ≡ Zzero := MyEq.refl _
+
+def mult_right_unit (a : myZ) : (a × _1) ≡ a :=
+  calc
+    (a × _1) ≡ (multNaturalWithZ a _1) := MyEq.refl _
+    _ ≡ a := MyEq.refl _
+
+#print myMultZ
+
+def mult_left_unit  (a : myZ) : (_1 × a) ≡ a :=
+  match a with
+  | Sum.inl a' =>
+    calc
+     (_1 × Sum.inl a') ≡ negative (multNaturalWithZ _1 a') := MyEq.refl _
+     _ ≡ negative  a' := ap negative (multNaturalWithZ _1 a') a' (multNatWithOne a')
+     _ ≡ Sum.inl a' := MyEq.refl _
+  | Sum.inr (Sum.inl _) => MyEq.refl _
+  | Sum.inr (Sum.inr a') =>
+    calc
+      (_1 × Sum.inr (Sum.inr a')) ≡ multNaturalWithZ _1 a' := MyEq.refl _
+      _ ≡ Sum.inr (Sum.inr a') := multNatWithOne a'
+
+def multNaturalWithZ_comm (a b : myN) : multNaturalWithZ a b ≡ multNaturalWithZ b a := sorry 
+
+
+def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) :=
+    match b with
+  | Sum.inl b' => 
+      match a with 
+      | Sum.inl a' => sorry
+      | Sum.inr (Sum.inl _) => sorry 
+      | Sum.inr (Sum.inr a') => sorry
+  | Sum.inr (Sum.inl _) =>  
     calc 
-      (a + b + (Sum.inl c')) ≡ (a + (subtractNaturalFromZ c' b)) := MyEq.refl _ 
-      _ ≡ (subtractNaturalFromZ c' (a + b)) := sorry 
-      _  ≡ ((a+b) + Sum.inl c')  := MyEq.refl _ 
-  | Sum.inr (Sum.inl _) => MyEq.refl _ 
-  | Sum.inr (Sum.inr c') => sorry    
-
-def add_right_inverse (a : myZ) : (a + (negative a)) ≡ Zzero := 
-  match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
- 
-
-def add_left_inverse  (a : myZ) : ((negative a) + a) ≡ Zzero := 
-  match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
-
-
-def mult_right_zero (a : myZ) : (a × Zzero) ≡ Zzero := 
-    match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
-
-
-def mult_left_zero  (a : myZ) : (Zzero × a) ≡ Zzero := 
-    match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
-
-
-def mult_right_unit (a : myZ) : (a × _1) ≡ a := 
-    match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
-
-
-def mult_left_unit  (a : myZ) : (_1 × a) ≡ a := 
-    match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
-
-
-def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) := 
-    match a with 
-  | Sum.inl a' => sorry
-  | Sum.inr (Sum.inl _) => sorry 
-  | Sum.inr (Sum.inr a') => sorry    
+      (a × (Sum.inr (Sum.inl _))) ≡ a × Zzero := MyEq.refl _   
+      _ ≡ (Zzero × a) := (mult_right_zero a) • (myEq_symm (mult_left_zero a))
+      _ ≡ (Sum.inr (Sum.inl _)) × a := MyEq.refl _
+  | Sum.inr (Sum.inr b') => 
+      match a with 
+      | Sum.inl a' => sorry
+      | Sum.inr (Sum.inl _) => sorry 
+      | Sum.inr (Sum.inr a') => multNaturalWithZ_comm _ _ 
 
 
 def mult_associative (a b c : myZ) : ((a × b) × c) ≡ a × (b × c) := sorry

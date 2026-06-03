@@ -1,0 +1,14 @@
+project:
+  title: "HoTTRijke Documentation"
+  output-dir: .
+  render:
+    - index.qmd
+    - chapter3_documentation.qmd
+    - chapter4_documentation.qmd
+    - chapter5_eq_documentation.qmd
+    - chapter5_ints_documentation.qmd
+
+format:
+  html:
+    toc: true
+    number-sections: true

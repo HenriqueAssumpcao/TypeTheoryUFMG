@@ -29,7 +29,7 @@ notation:100 "+"a => myInt.ofNat a
 
 def dif (m n : N) : myInt :=
   match n with
-  | N.zero => + m
+  | N.zero => +m
   | N.succ n' =>
     match m with
     | N.zero => -n
@@ -38,16 +38,16 @@ def dif (m n : N) : myInt :=
 
 def Zsum (a b : myInt) : myInt :=
   match a, b with
-  | + m, + n => + (myAdd m n)
-  | + m, -n => dif m (N.succ n)
-  | -m, + n => dif n (N.succ m)
+  | +m, + n => +(myAdd m n)
+  | +m, -n => dif m (N.succ n)
+  | -m, +n => dif n (N.succ m)
   | -m, -n => -(N.succ (myAdd m n))
 
 notation:100 a "+" b => Zsum a b
 
 example (a b : myInt) : (a + b) ≡ (b + a) :=
   match a, b with
-  | + m, + n => sorry
-  | + m, -n => sorry
+  | +m, +n => sorry
+  | +m, -n => sorry
   | -m, +n => sorry
   | -m, -n => sorry

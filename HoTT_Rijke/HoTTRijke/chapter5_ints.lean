@@ -490,26 +490,26 @@ def mult_left_unit  (a : myZ) : (_1 × a) ≡ a :=
       (_1 × Sum.inr (Sum.inr a')) ≡ multNaturalWithZ _1 a' := MyEq.refl _
       _ ≡ Sum.inr (Sum.inr a') := multNatWithOne a'
 
-def multNaturalWithZ_comm (a b : myN) : multNaturalWithZ a b ≡ multNaturalWithZ b a := sorry 
+def multNaturalWithZ_comm (a b : myN) : multNaturalWithZ a b ≡ multNaturalWithZ b a := sorry
 
 
 def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) :=
     match b with
-  | Sum.inl b' => 
-      match a with 
+  | Sum.inl b' =>
+      match a with
       | Sum.inl a' => sorry
-      | Sum.inr (Sum.inl _) => sorry 
+      | Sum.inr (Sum.inl _) => sorry
       | Sum.inr (Sum.inr a') => sorry
-  | Sum.inr (Sum.inl _) =>  
-    calc 
-      (a × (Sum.inr (Sum.inl _))) ≡ a × Zzero := MyEq.refl _   
+  | Sum.inr (Sum.inl _) =>
+    calc
+      (a × (Sum.inr (Sum.inl _))) ≡ a × Zzero := MyEq.refl _
       _ ≡ (Zzero × a) := (mult_right_zero a) • (myEq_symm (mult_left_zero a))
       _ ≡ (Sum.inr (Sum.inl _)) × a := MyEq.refl _
-  | Sum.inr (Sum.inr b') => 
-      match a with 
+  | Sum.inr (Sum.inr b') =>
+      match a with
       | Sum.inl a' => sorry
-      | Sum.inr (Sum.inl _) => sorry 
-      | Sum.inr (Sum.inr a') => multNaturalWithZ_comm _ _ 
+      | Sum.inr (Sum.inl _) => sorry
+      | Sum.inr (Sum.inr a') => multNaturalWithZ_comm _ _
 
 
 def mult_associative (a b c : myZ) : ((a × b) × c) ≡ a × (b × c) := sorry

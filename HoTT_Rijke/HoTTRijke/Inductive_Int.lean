@@ -119,6 +119,11 @@ def Zsum_commutative (a b : Z) : (a + b) ≡ (b + a) :=
 
 -- Proving that multiplication of Integers is commutative
 
+def Neg_rule (z : Z) : Negative (Negative z) ≡ z :=
+  match z with
+  | Z.pos _ => ap Negative _ _ (MyEq.refl _)
+  | Z.neg _ => ap Negative _ _ (MyEq.refl _)
+
 def Zsum_zero (a : Z) : (a + (Z.pos N.zero)) ≡ a :=
   match a with
   | Z.pos _ => MyEq.refl _
@@ -153,7 +158,10 @@ def Z_multby_N_commutative (n z : N) : Z_multby_N n (Z.pos z) ≡ Z_multby_N z (
 
 def mult_right_Neg (a b : Z) : Zmult a (Negative b) ≡ Negative (Zmult a b) := sorry
 
-def mult_left_Neg (a b : Z) :  Zmult (Negative a) b ≡ Negative (Zmult a b) := sorry
+def mult_left_Neg (a b : Z) :  Zmult (Negative a) b ≡ Negative (Zmult a b) :=
+  match a with
+  | Z.pos _ => MyEq.refl _
+  | Z.neg a => myEq_symm (Neg_rule (Zmult (Z.pos a) b))
 
 def Zmult_commutative (a b : Z) : Zmult a b ≡ Zmult b a :=
   match a, b with

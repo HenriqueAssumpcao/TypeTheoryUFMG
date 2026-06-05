@@ -1,5 +1,4 @@
 import HoTTRijke.chapter5_eq
-import HoTTRijke.chapter5_ints
 
 open chapter5_myeq
 

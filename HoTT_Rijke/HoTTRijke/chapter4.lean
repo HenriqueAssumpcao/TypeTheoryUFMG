@@ -237,7 +237,6 @@ def flatten_list {A : Type} : myList (myList A) → myList A :=
 
 def ll := cons l2 (cons l nil)
 
-#eval list_string (flatten_list ll)
 
 def reverse_list {A : Type} : myList A → myList A :=
   fun l : myList A =>

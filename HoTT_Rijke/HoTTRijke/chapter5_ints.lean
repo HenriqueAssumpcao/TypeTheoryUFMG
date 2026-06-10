@@ -500,11 +500,7 @@ def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) :=
       | Sum.inl a' => sorry
       | Sum.inr (Sum.inl _) => sorry 
       | Sum.inr (Sum.inr a') => sorry
-  | Sum.inr (Sum.inl _) =>  
-    calc 
-      (a × (Sum.inr (Sum.inl _))) ≡ a × Zzero := MyEq.refl _   
-      _ ≡ (Zzero × a) := (mult_right_zero a) • (myEq_symm (mult_left_zero a))
-      _ ≡ (Sum.inr (Sum.inl _)) × a := MyEq.refl _
+  | Sum.inr (Sum.inl _) =>  (mult_right_zero a) • (myEq_symm (mult_left_zero a))
   | Sum.inr (Sum.inr b') => 
       match a with 
       | Sum.inl a' => sorry

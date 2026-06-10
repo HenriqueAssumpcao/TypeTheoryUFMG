@@ -128,6 +128,7 @@ def div2 (n : myN) : myN :=
   | myN.succ (myN.succ myN.one) => myN.one    -- 3 / 2 rounded to 1
   | myN.succ (myN.succ (myN.succ n')) => myAdd (div2 (myN.succ n')) myN.one
 
+
 def dist (m n : myN) : myN :=
   match m, n with
   | myN.one, myN.one => myN.one   -- No zero in 1-based naturals
@@ -246,21 +247,21 @@ def myDisj(x y : myBool) : myBool :=
 inductive myProd (P Q : Type)
   | mk (x: P) (y: Q)
 
-variable (P Q : Type) (z : Prod P Q)
+variable (P Q R : Type)
 
 -- Accessors for components of a value z : myProd P Q
 -- Example: pattern matching directly
 
-def proj1 {P Q : Type} (z : myProd P Q) : P :=
+def proj1 {P Q} (z : myProd P Q) : P :=
   match z with
   | myProd.mk x _ => x
 
-def proj2 {P Q : Type} (z : myProd P Q) : Q :=
+def proj2 {P Q} (z : myProd P Q) : Q :=
   match z with
   | myProd.mk _ y => y
 
 
-def myProdFunc {P Q R : Type} (f : P → Q → R) : (myProd P Q → R) :=
+def myProdFunc {P Q R} (f : P → Q → R) : (myProd P Q → R) :=
   fun (z : myProd P Q) => f (proj1 z) (proj2 z)
 
 def myEquiv (P Q : Type) : Type := myProd (P → Q) (Q → P)

@@ -48,7 +48,7 @@ def myEq_symm {α : Type} {a x : α} : (a ≡ x) → (x ≡ a) := by
   /- At this point we want to prove x ≡ a. The type P(x,p) is 'x ≡ a'
      independent of p. -/
   let P : (x : α) → (a ≡ x) → Type := fun x _ => (x ≡ a)
-  -- P a (MyEq.refl a) is 'a = a' and 'MyEq.refl a' is proof of this.
+  -- P a (MyEq.refl a) is 'a = a' and 'MyEq.refl a' is proof myInt.ofNat of this.
   -- thus we apply ind_eq
   exact ind_eq (α:=α) (a:=a) P (MyEq.refl a) x p
 

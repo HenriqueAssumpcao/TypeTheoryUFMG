@@ -63,3 +63,32 @@ def P7_conv (m n : N) (p : m.succ ≡ n.succ) : m ≡ n :=
 
 def P8 (n : N) (p : N.zero ≡ n.succ) : Empty :=
   Equality_Equiv N.zero n.succ p
+
+
+
+
+
+-- ######################## Exercises ############################ --
+
+
+-- 6.1
+-- a)
+
+-- (𝑚 = 𝑛) ↔ (𝑚 + 𝑘 = 𝑛 + 𝑘)
+def add_natural_to_equals (k : N) (p : m ≡ n) : (myAdd m k) ≡ (myAdd n k) :=
+  match k with
+  | N.zero => p
+  | N.succ k => ap N.succ _ _ (add_natural_to_equals k p)
+
+def add_nat_injective (p : (myAdd m k) ≡ (myAdd n k)) : m ≡ n :=
+  match k with
+  | N.zero => p
+  | N.succ _ => add_nat_injective (P7_conv _ _ p)
+
+-- (𝑚 = 𝑛) ↔ (𝑚 · (𝑘 + 1) = 𝑛 · (𝑘 + 1))
+def add_succ_to_equals (k : N) (p : m ≡ n) :  (m × (N.succ k)) ≡ (n × (N.succ k)) :=
+  ap (fun x : N => x × (N.succ k)) _ _ p
+
+def add_succ_injectve (p : (m × (N.succ k)) ≡ (n × (N.succ k))) : m ≡ n :=
+  match k with
+  |

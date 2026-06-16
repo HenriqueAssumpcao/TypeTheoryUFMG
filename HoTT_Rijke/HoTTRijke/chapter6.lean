@@ -40,22 +40,22 @@ def Equality_Equiv (m n : N) (p : m ≡ n) : Eq_N m n :=
   let P := fun x : N => fun _ : m ≡ x => Eq_N m x
   ind_eq P (refl_Eq_N m) n p                              -- Using induction principle
 
-def Equality_Equiv_conv (m n : N) (p : Eq_N m n) : m ≡ n :=
+def Equality_Equiv_conv (p : Eq_N m n) : m ≡ n :=
   match m, n with
   | N.zero, N.zero => MyEq.refl _
   | N.zero, N.succ _ => Empty.elim p
   | N.succ _, N.zero => Empty.elim p
-  | N.succ m, N.succ n => ap N.succ _ _ (Equality_Equiv_conv m n p)   -- (Eq_N m n) = (Eq_N m.succ n.succ)
+  | N.succ _, N.succ _ => ap N.succ _ _ (Equality_Equiv_conv p)   -- (Eq_N m n) = (Eq_N m.succ n.succ)
 
 
 -- Theorem 6.4.1
 -- Peano's seventh axiom (m ≡ n  ↔  m+1 ≡ n+1)
 
 def P7 (m n : N) (p : m ≡ n) : m.succ ≡ n.succ :=
-  Equality_Equiv_conv m.succ n.succ (Equality_Equiv m n p)    -- (m ≡ n) → (Eq_N m n) = (Eq_N m+1 n+1) → m+1 ≡ n+1
+  Equality_Equiv_conv (Equality_Equiv m n p)    -- (m ≡ n) → (Eq_N m n) = (Eq_N m+1 n+1) → m+1 ≡ n+1
 
 def P7_conv (m n : N) (p : m.succ ≡ n.succ) : m ≡ n :=
-  Equality_Equiv_conv m n (Equality_Equiv m.succ n.succ p)
+  Equality_Equiv_conv (Equality_Equiv m.succ n.succ p)
 
 
 -- Theorem 6.4.2
@@ -89,6 +89,7 @@ def add_nat_injective (p : (myAdd m k) ≡ (myAdd n k)) : m ≡ n :=
 def add_succ_to_equals (k : N) (p : m ≡ n) :  (m × (N.succ k)) ≡ (n × (N.succ k)) :=
   ap (fun x : N => x × (N.succ k)) _ _ p
 
-def add_succ_injectve (p : (m × (N.succ k)) ≡ (n × (N.succ k))) : m ≡ n :=
+def add_succ_injective (p : (m × (N.succ k)) ≡ (n × (N.succ k))) : m ≡ n :=
   match k with
-  |
+  | N.zero => p
+  | N.succ k' => sorry

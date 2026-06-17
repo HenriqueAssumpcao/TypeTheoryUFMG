@@ -21,6 +21,7 @@ def myAdd (a b : N) : N :=
 inductive Z where
   | pos : N → Z   -- [0, ∞)
   | neg : N → Z   -- (-∞, -1]
+  
 
 #check Z
 

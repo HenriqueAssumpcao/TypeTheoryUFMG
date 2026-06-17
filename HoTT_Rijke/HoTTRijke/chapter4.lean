@@ -1,5 +1,15 @@
 import HoTTRijke.chapter3
 
+namespace chapter4_coproducts
+
+inductive mySum (A B : Type) where
+  | inl : A → mySum A B
+  | inr : B → mySum A B
+
+def mySum_ind (f : A → C) (g : B → C) : (mySum A B) → C
+  | mySum.inl a => f a
+  | mySum.inr b => g b
+
 namespace chapter4_booleans
 open chapter3_booleans
 

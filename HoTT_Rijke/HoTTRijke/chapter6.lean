@@ -86,28 +86,30 @@ def add_nat_injective (p : (myAdd m k) ≡ (myAdd n k)) : m ≡ n :=
   | N.succ _ => add_nat_injective (P7_conv _ _ p)
 
 -- (𝑚 = 𝑛) ↔ (𝑚 · (𝑘 + 1) = 𝑛 · (𝑘 + 1))
-def add_succ_to_equals (k : N) (p : m ≡ n) :  (m × (N.succ k)) ≡ (n × (N.succ k)) :=
+def mult_succ_to_equals (k : N) (p : m ≡ n) :  (m × (N.succ k)) ≡ (n × (N.succ k)) :=
   ap (fun x : N => x × (N.succ k)) _ _ p
 
-def add_succ_injective (p : (m × (N.succ k)) ≡ (n × (N.succ k))) : m ≡ n :=
+def mult_succ_injective (p : (m × (N.succ k)) ≡ (n × (N.succ k))) : m ≡ n :=
   match m, n with
   | N.zero, N.zero => MyEq.refl _
   | N.zero, N.succ n =>
-    let p' : N.zero ≡ N.succ (myAdd (n.succ × k)  n) := sorry
+    have p' : N.zero ≡ N.succ (myAdd (n × k.succ)  k) :=
+      (myEq_symm (myMult_zero_left k.succ)) • p • (myMult_succ_left n k.succ)
     Empty.elim (Equality_Equiv _ _ p')
-  | N.succ _, N.zero => sorry
-  | N.succ m, N.succ n =>
-    have h : (m × (N.succ k)) ≡ (n × (N.succ k)) :=
-      ap add_commutative _ _ (
-        add_nat_injective (
-          ap add_succ _ _ Z_multby_N_nat_succ_right (
 
-          )
-        )
-      )
-    let f (p : (m.succ × (N.succ k)) ≡ (n.succ × (N.succ k))) : (m × (N.succ k)) ≡ (n × (N.succ k)) :=
-      -- ap add_commutative p
-      -- ap add_succ ^
-      -- add_nat_injective (k.succ)
-      -- ap add_commutative ^
-    Equality_Equiv_conv (Equality_Equiv m n (add_succ_injective (f p)))
+  | N.succ m, N.zero =>
+    have p' : N.zero ≡ N.succ (myAdd (m × k.succ)  k) :=
+      (myEq_symm (myMult_zero_left k.succ)) • (myEq_symm p) • (myMult_succ_left m k.succ)
+    Empty.elim (Equality_Equiv _ _ p')
+
+  | N.succ m, N.succ n =>
+    have h : (k.succ × m.succ) ≡ (k.succ × n.succ) :=
+      (myMult_comm k.succ m.succ) • p • (myMult_comm n.succ k.succ)
+
+    have p' : myAdd (k.succ × m) k.succ ≡ myAdd (k.succ × n) k.succ :=
+      (add_commutative _ _) • h • (add_commutative _ _)
+
+    have h' : (m × k.succ) ≡ (n × k.succ) :=
+      (myMult_comm m k.succ) • (add_nat_injective p') • (myMult_comm k.succ n)
+
+    Equality_Equiv_conv (Equality_Equiv m n ( mult_succ_injective h'))

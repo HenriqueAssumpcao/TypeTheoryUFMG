@@ -8,22 +8,22 @@ inductive N where
   | zero : N
   | succ : N → N
 
-/- Integers represented as `pos n` (0,1,2,...) and `neg n` (-1,-2,...) -/
+-- Integers represented as `pos n` (0,1,2,...) and `neg n` (-1,-2,...) --
 inductive Z where
   | pos : N → Z
   | neg : N → Z
 
-/-- Negation on our `Z` type. 0 maps to 0, `pos (succ n)` to `neg n`, and `neg n` to `pos (succ n)` --/
+--- Negation on our `Z` type. 0 maps to 0, `pos (succ n)` to `neg n`, and `neg n` to `pos (succ n)` ---
 def Negative (z : Z) : Z :=
   match z with
   | Z.pos N.zero => Z.pos N.zero
   | Z.pos (N.succ n) => Z.neg n
   | Z.neg n => Z.pos (N.succ n)
 
-/- Notation convenience -/
+-- Notation convenience --
 notation:50 "-" z => Negative z
 
-/- Addition on `N` (structural recursion on the second arg) -/
+-- Addition on `N` (structural recursion on the second arg) --
 def myAdd (a b : N) : N :=
   match b with
   | N.zero => a
@@ -36,7 +36,7 @@ def myMult (a b : N) : N :=
 
 notation:70 a "×" b => myMult a b
 
-/- Difference helper: interpret `m - n` as an integer -/
+-- Difference helper: interpret `m - n` as an integer --
 def dif (m n : N) : Z :=
   match n with
   | N.zero => Z.pos m
@@ -45,7 +45,7 @@ def dif (m n : N) : Z :=
     | N.zero => Z.neg n'
     | N.succ m' => dif m' n'
 
-/- Addition on `Z` using `myAdd` and `dif` -/
+-- Addition on `Z` using `myAdd` and `dif` --
 def Zsum (a b : Z) : Z :=
   match a, b with
   | Z.pos m, Z.pos n => Z.pos (myAdd m n)
@@ -56,7 +56,7 @@ def Zsum (a b : Z) : Z :=
 notation:100 a "+" b => Zsum a b
 
 
-/- Multiplication: multiply an integer by a natural, then extend to `Z × Z` -/
+-- Multiplication: multiply an integer by a natural, then extend to `Z × Z` --
 def Z_multby_N : N → Z → Z
   | N.zero, _ => Z.pos N.zero
   | N.succ n, z => (Z_multby_N n z) + z
@@ -69,7 +69,7 @@ def Zmult (a b : Z) : Z :=
 notation:40 a "*" b => Zmult a b
 
 
-/- Proofs about addition on `N` -/
+-- Proofs about addition on `N` --
 
 def left_zero_add_N  (a : N)  : myAdd N.zero a ≡ a :=
   match a with
@@ -90,7 +90,7 @@ def add_commutative(a b : N) : myAdd a b ≡ myAdd b a :=
     (myEq_symm (left_successor_law_add b a))
 
 
-/- Commutativity for integer addition -/
+-- Commutativity for integer addition --
 def Zsum_commutative (a b : Z) : (a + b) ≡ (b + a) :=
   match a, b with
   | Z.pos m, Z.pos n => ap Z.pos _ _ (add_commutative m n)
@@ -246,3 +246,44 @@ def Zmult_commutative (a b : Z) : Zmult a b ≡ Zmult b a :=
         _ ≡ Negative (Z_multby_N (N.succ b) (Z.neg a)) :=
               myEq_symm (ap Negative _ _ (Z_multby_N_neg_pos (N.succ b) a))
         _ ≡ Zmult (Z.neg b) (Z.neg a) := MyEq.refl _
+
+
+-- Proofs about commutativity of multiplication on `N` --
+
+def myMult_zero_left (a : N) : myMult N.zero a ≡ N.zero :=
+  match a with
+  | N.zero => MyEq.refl _
+  | N.succ a' =>
+      calc
+        myMult N.zero (N.succ a') ≡ myAdd N.zero (myMult N.zero a') := MyEq.refl _
+        _ ≡ myAdd N.zero N.zero := ap (myAdd N.zero) _ _ (myMult_zero_left a')
+        _ ≡ N.zero := left_zero_add_N N.zero
+
+def myMult_succ_left (a b : N) : (a.succ × b) ≡ (myAdd (a × b) b) :=
+  match b with
+  | N.zero => MyEq.refl _
+  | N.succ b' =>
+      calc
+        myMult (a.succ) (N.succ b') ≡ myAdd (N.succ a) (myMult (N.succ a) b') := MyEq.refl _
+        _ ≡ myAdd (N.succ a) (myAdd (a × b') b') :=
+              ap (fun x : N => myAdd (N.succ a) x) _ _ (myMult_succ_left a b')
+        _ ≡ N.succ (myAdd a (myAdd (a × b') b')) := left_successor_law_add a (myAdd (a × b') b')
+        _ ≡ N.succ (myAdd (myAdd a (a × b')) b') := myEq_symm (ap N.succ _ _ (myAdd_assoc a (a × b') b'))
+        _ ≡ myAdd (myAdd a (a × b')) (N.succ b') :=
+              myEq_symm
+                (calc
+                  myAdd (myAdd a (a × b')) (N.succ b') ≡ myAdd (N.succ b') (myAdd a (a × b')) :=
+                        add_commutative (myAdd a (a × b')) (N.succ b')
+                  _ ≡ N.succ (myAdd b' (myAdd a (a × b'))) := left_successor_law_add b' (myAdd a (a × b'))
+                  _ ≡ N.succ (myAdd (myAdd a (a × b')) b') := ap N.succ _ _ (add_commutative b' (myAdd a (a × b')))
+                )
+        _ ≡ myAdd (a × (N.succ b')) (N.succ b') := MyEq.refl _
+
+
+def myMult_comm (a b : N) : (a × b) ≡ (b × a) :=
+  match b with
+  | N.zero => myEq_symm (myMult_zero_left a)
+  | N.succ b =>
+    (ap (myAdd a) _ _ (myMult_comm a b) ) •
+    (add_commutative _ _) •
+    (myEq_symm (myMult_succ_left b a))

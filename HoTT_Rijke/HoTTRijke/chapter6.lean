@@ -90,6 +90,24 @@ def add_succ_to_equals (k : N) (p : m ≡ n) :  (m × (N.succ k)) ≡ (n × (N.s
   ap (fun x : N => x × (N.succ k)) _ _ p
 
 def add_succ_injective (p : (m × (N.succ k)) ≡ (n × (N.succ k))) : m ≡ n :=
-  match k with
-  | N.zero => p
-  | N.succ k' => sorry
+  match m, n with
+  | N.zero, N.zero => MyEq.refl _
+  | N.zero, N.succ n =>
+    let p' : N.zero ≡ N.succ (myAdd (n.succ × k)  n) := sorry
+    Empty.elim (Equality_Equiv _ _ p')
+  | N.succ _, N.zero => sorry
+  | N.succ m, N.succ n =>
+    have h : (m × (N.succ k)) ≡ (n × (N.succ k)) :=
+      ap add_commutative _ _ (
+        add_nat_injective (
+          ap add_succ _ _ Z_multby_N_nat_succ_right (
+
+          )
+        )
+      )
+    let f (p : (m.succ × (N.succ k)) ≡ (n.succ × (N.succ k))) : (m × (N.succ k)) ≡ (n × (N.succ k)) :=
+      -- ap add_commutative p
+      -- ap add_succ ^
+      -- add_nat_injective (k.succ)
+      -- ap add_commutative ^
+    Equality_Equiv_conv (Equality_Equiv m n (add_succ_injective (f p)))

@@ -168,3 +168,41 @@ def mult_equals_one (p : (m × n) ≡ N.zero.succ) : myProd (m ≡ N.zero.succ) 
       (Equality_Equiv_conv (Equality_Equiv n N.zero n0))
 
     | mySum.inl m1 => Empty.elim (Equality_Equiv _ _ m1)
+
+
+-- c)
+
+-- 𝑚 ≠ 𝑚 + (𝑛 + 1)
+def add_dont_fix (p : m ≡ myAdd m (N.succ n)) : Empty :=
+  match m with
+  | N.zero => Empty.elim (P8 _ (p • (left_zero_add_N n.succ))) -- 0 = 0 + (n+1) = n+1
+  | N.succ m =>
+    -- m+1 = (m+1) + (n+1) = (n+1) + (m+1) = ((n+1) + m) + 1 → m = (n+1) + m = m + (n+1) → ∅
+    have h : m.succ ≡ (myAdd (n.succ) m).succ := p • (add_commutative _ _)
+    have h1 : m ≡ myAdd m n.succ :=
+      (Equality_Equiv_conv (Equality_Equiv m.succ ((myAdd (n.succ) m).succ) h)) • (add_commutative _ _)
+
+    Empty.elim (add_dont_fix h1)
+
+-- 𝑚 + 1 ≠ (𝑚 + 1)(𝑛 + 2)
+def mult_dont_fix (p : (N.succ m) ≡ (N.succ m) × (N.succ (N.succ n))) : Empty :=
+  match m  with
+  | N.zero =>
+    -- 0+1 = (0+1)·((n+1)+1) = (0+1) + (0+1)(n+1) = (0+1)(n+1) + (0+1) = (0+1)(n+1) + 1 → 0 = (0+1)(n+1) → (0+1) = 0 ou (n+1) = 0
+    have h : N.zero.succ ≡ (N.zero.succ × n.succ).succ := p • (add_commutative _ _)
+    have h1 : N.zero ≡ N.zero.succ × n.succ := Equality_Equiv_conv (Equality_Equiv N.zero.succ _ h)
+    have h2 := mult_equals_zero (myEq_symm h1)
+    match h2 with
+    | mySum.inl k => Empty.elim (Equality_Equiv _ _ k)
+    | mySum.inr k => Empty.elim (Equality_Equiv _ _ k)
+
+  | N.succ m =>
+    -- (m+1)+1 = ((m+1)+1)((n+1)+1) = ((m+1)+1) + ((m+1)+1)(n+1) = ((m+1) + ((m+1)+1)(n+1)) + 1 → m+1 = (m+1) + (m+1)+1)(n+1)
+    have h : m.succ ≡ (myAdd m.succ (m.succ.succ × n.succ)) :=
+      Equality_Equiv_conv (Equality_Equiv m.succ.succ _ (p • (left_successor_law_add _ _)))
+
+    -- (m+1) + ((m+1)+1)(n+1) = (m+1) + ((m+1)+1) + ((m+1)+1)n = (m+1) + (((m+1) + ((m+1)+1)n) + 1)
+    have h1 : (myAdd m.succ (m.succ.succ × n.succ)) ≡ myAdd m.succ (myAdd m.succ (m.succ.succ × n)).succ :=
+      ap (myAdd m.succ) _ _ (left_successor_law_add _ _)
+
+    add_dont_fix (h • h1)

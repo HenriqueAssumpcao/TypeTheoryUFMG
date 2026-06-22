@@ -10,6 +10,8 @@ def mySum_ind (f : A → C) (g : B → C) : (mySum A B) → C
   | mySum.inl a => f a
   | mySum.inr b => g b
 
+end chapter4_coproducts
+
 namespace chapter4_booleans
 open chapter3_booleans
 
@@ -258,6 +260,7 @@ def reverse_list {A : Type} : myList A → myList A :=
 end chapter4_lists
 
 namespace chapter4_integers
+
 open chapter3_integers
 open chapter3_naturals
 

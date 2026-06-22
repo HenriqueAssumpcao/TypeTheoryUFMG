@@ -6,6 +6,7 @@ import HoTTRijke.chapter4
 open chapter5_myeq
 open chapter3_booleans
 open chapter4_coproducts
+open chapter4_booleans
 
 namespace chapter6_Universes
 
@@ -206,3 +207,38 @@ def mult_dont_fix (p : (N.succ m) ≡ (N.succ m) × (N.succ (N.succ n))) : Empty
       ap (myAdd m.succ) _ _ (left_successor_law_add _ _)
 
     add_dont_fix (h • h1)
+
+
+-- 6.2
+-- a)
+
+def Eq_bool (b1 b2 : myBool) : Type :=
+  match b1, b2 with
+  | myBool.myTrue, myBool.myTrue => Unit
+  | myBool.myFalse, myBool.myFalse => Unit
+  | _, _ => Empty
+
+def Eq_bool_refl (b : myBool) : Eq_bool b b :=
+  match b with
+  | myBool.myTrue => ()
+  | myBool.myFalse => ()
+
+-- b)
+
+def Eq_bool_equiv (b1 b2 : myBool) (p : Eq_bool b1 b2) : (b1 ≡ b2) :=
+  match b1, b2 with
+  | myBool.myTrue, myBool.myTrue => MyEq.refl _
+  | myBool.myFalse, myBool.myFalse => MyEq.refl _
+  | myBool.myFalse, myBool.myTrue => Empty.elim p
+  | myBool.myTrue, myBool.myFalse => Empty.elim p
+
+def Eq_bool_equiv_conv (b1 b2 : myBool) (p : b1 ≡ b2) : Eq_bool b1 b2 :=
+  let P := fun x : myBool => fun _ : b1 ≡ x => Eq_bool b1 x
+  ind_eq P (Eq_bool_refl b1) b2 p
+
+-- c)
+
+def neg_injective (b : myBool) (p : Eq_bool b (myNeg b)) : Empty :=
+  match b with
+  | myBool.myTrue => Empty.elim p
+  | myBool.myFalse => Empty.elim p

@@ -248,6 +248,11 @@ def Zmult_commutative (a b : Z) : Zmult a b ≡ Zmult b a :=
         _ ≡ Zmult (Z.neg b) (Z.neg a) := MyEq.refl _
 
 
+
+
+
+
+
 -- Proofs about commutativity of multiplication on `N` --
 
 def myMult_zero_left (a : N) : myMult N.zero a ≡ N.zero :=
@@ -287,3 +292,19 @@ def myMult_comm (a b : N) : (a × b) ≡ (b × a) :=
     (ap (myAdd a) _ _ (myMult_comm a b) ) •
     (add_commutative _ _) •
     (myEq_symm (myMult_succ_left b a))
+
+
+
+-- Defiyng Min and Max on naturals --
+
+def N_min (a b : N) : N :=
+  match a, b with
+  | N.zero, _ => N.zero
+  | _, N.zero => N.zero
+  | N.succ a', N.succ b' => N.succ (N_min a' b')
+
+def N_max (a b : N) : N :=
+  match a, b with
+  | N.zero, b => b
+  | a, N.zero => a
+  | N.succ a', N.succ b' => N.succ (N_max a' b')

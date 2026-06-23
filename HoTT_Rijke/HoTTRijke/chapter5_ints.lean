@@ -208,10 +208,6 @@ def mult_associative (a b c : myN) : ((a × b) × c) ≡ (a × (b × c)) :=
 end Naturals
 
 namespace Integers
-open chapter3_naturals
-open chapter3_integers
-open chapter5_myeq
-open chapter4_integers
 
 
 notation:40 a " + " b => chapter4_integers.myAddZ a b

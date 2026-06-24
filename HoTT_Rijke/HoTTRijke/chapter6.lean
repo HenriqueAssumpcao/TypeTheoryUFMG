@@ -28,6 +28,16 @@ def Eq_N (n m : N): Type :=
   | N.zero => E_0 m
   | N.succ n => E_S n (Eq_N n) m
 
+-- Alternative definition of Eq_N using pattern matching on both arguments
+/-
+def Eq_N (m n : N) : Type :=
+  match m, n with
+  | N.zero, N.zero => Unit
+  | N.zero, N.succ _ => Empty
+  | N.succ _, N.zero => Empty
+  | N.succ m, N.succ n => Eq m n
+-/
+
 
 -- Lemma 6.3.2
 -- Eq_N is reflexive
@@ -560,4 +570,4 @@ def dist_commutative (m n : N) : (dist m n) ≡ (dist n m) :=
   | N.succ _, N.zero => MyEq.refl _
   | N.succ m, N.succ n => dist_commutative m n
 
-def dist_triangle_inequality (m n k : N) : leq (dist m n) (myAdd (dist m k) (dist k n)) := sorry
+def dist_triangle_inequality (m n k : N): leq (dist m n) (myAdd (dist m k) (dist k n)) := sorry

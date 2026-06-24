@@ -376,4 +376,42 @@ def leq_min (k m n : N) (p : leq k (N_min m n)) : myProd (leq k m) (leq k n) :=
       let h := leq_min k m n p
       myProd.mk (proj1 h) (proj2 h)
 
-def leq_max (k m n : N) (p : leq (N_max m n) k) : myProd (leq m k) (leq n k) := sorry
+def leq_zero (n : N) (p : leq n N.zero): n ≡ N.zero :=
+  match n with
+  | N.zero => MyEq.refl _
+  | N.succ _ => Empty.elim p
+
+def max_equals_zero (m n : N) (p : (N_max m n) ≡ N.zero) : myProd (m ≡ N.zero) (n ≡ N.zero) :=
+  match m, n with
+  | N.zero, N.zero => myProd.mk (MyEq.refl _) (MyEq.refl _)
+  | N.zero, N.succ _ => Empty.elim (Equality_Equiv _ _ p)
+  | N.succ _, N.zero => Empty.elim (Equality_Equiv _ _ p)
+  | N.succ _, N.succ _ => Empty.elim (Equality_Equiv _ _ p)
+
+def leq_max (k m n : N) (p : leq (N_max m n) k) : myProd (leq m k) (leq n k) :=
+  match k with
+  | N.zero =>
+    have h1 : myProd (m ≡ N.zero) (n ≡ N.zero) := max_equals_zero m n (leq_zero (N_max m n) p)
+    myProd.mk (leq_equals _ _ (proj1 h1)) (leq_equals _ _ (proj2 h1))
+
+  | N.succ k =>
+    match m, n with
+    | N.zero, n =>
+    have h1 : n ≡ N_max N.zero n :=
+      match n with
+      | N.zero => MyEq.refl _
+      | N.succ _ => MyEq.refl _
+    have h2 : leq n k.succ := leq_trans _ _ _ (leq_equals n (N_max N.zero n) h1) p
+    myProd.mk () h2
+
+    | m, N.zero =>
+    have h1 : m ≡ N_max m N.zero :=
+      match m with
+      | N.zero => MyEq.refl _
+      | N.succ _ => MyEq.refl _
+    have h2 : leq m k.succ := leq_trans _ _ _ (leq_equals m (N_max m N.zero) h1) p
+    myProd.mk h2 ()
+
+    | N.succ m, N.succ n =>
+      let h := leq_max k m n p
+      myProd.mk (proj1 h) (proj2 h)

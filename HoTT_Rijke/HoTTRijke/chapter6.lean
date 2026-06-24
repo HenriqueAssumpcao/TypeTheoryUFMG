@@ -522,6 +522,42 @@ def less_than_leq_law_conv (m n : N) (p : myProd (leq m n) ((m ≡ n) → Empty)
   match m, n with
   | N.zero, N.zero => Empty.elim (proj2 p (MyEq.refl _))
   | N.zero, N.succ _ => ()
-  | N.succ m, N.succ n => less_than_leq_law_conv m n (myProd.mk (proj1 p) (
-    fun x => proj2 p (Equality_Equiv_conv (Equality_Equiv m n x))
-    ))
+  | N.succ m, N.succ n =>
+    less_than_leq_law_conv m n (myProd.mk (proj1 p) (fun x => proj2 p (Equality_Equiv_conv (Equality_Equiv m n x))))
+
+
+-- 6.5
+
+def dist (m n : N) : N :=
+  match m, n with
+  | N.zero, n => n
+  | m, N.zero => m
+  | N.succ m, N.succ n => dist m n
+
+-- a)
+
+-- (i)  m ≡ n ↔ dist(m, n) ≡ 0
+def dist_equals (m n : N) (p : m ≡ n) : (dist m n) ≡ N.zero :=
+  match m, n with
+  | N.zero, N.zero => MyEq.refl _
+  | N.zero, N.succ _ => Empty.elim (Equality_Equiv _ _ p)
+  | N.succ _, N.zero => Empty.elim (Equality_Equiv _ _ (myEq_symm p))
+  | N.succ m, N.succ n => dist_equals m n (Equality_Equiv_conv (Equality_Equiv m.succ n.succ p))
+
+def dist_equals_conv (m n : N) (p : (dist m n) ≡ N.zero) : m ≡ n :=
+  match m, n with
+  | N.zero, N.zero => MyEq.refl _
+  | N.zero, N.succ _ => Empty.elim (Equality_Equiv _ _ p)
+  | N.succ _, N.zero => Empty.elim (Equality_Equiv _ _ (myEq_symm p))
+  | N.succ m, N.succ n =>
+    Equality_Equiv_conv (Equality_Equiv m n (dist_equals_conv m n (Equality_Equiv_conv (Equality_Equiv (dist m n) N.zero p))))
+
+-- (ii)  dist(m, n) ≡ dist(n, m)
+def dist_commutative (m n : N) : (dist m n) ≡ (dist n m) :=
+  match m, n with
+  | N.zero, N.zero => MyEq.refl _
+  | N.zero, N.succ _ => MyEq.refl _
+  | N.succ _, N.zero => MyEq.refl _
+  | N.succ m, N.succ n => dist_commutative m n
+
+def dist_triangle_inequality (m n k : N) : leq (dist m n) (myAdd (dist m k) (dist k n)) := sorry

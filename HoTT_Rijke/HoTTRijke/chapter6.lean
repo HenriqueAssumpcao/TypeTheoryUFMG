@@ -314,7 +314,7 @@ def mult_succ_leq (m n k : N) (p : leq m n) : leq (m × k) (n × k) :=
   match k with
   | N.zero => ()
   | N.succ k =>
-    -- m < n => mk < nk => mk + m < nk + m => m + mk < nk + m => m + mk < m + nk => m + mk < n + nk
+    -- m ≤ n => mk ≤ nk => mk + m ≤ nk + m => m + mk ≤ nk + m => m + mk ≤ m + nk => m + mk ≤ n + nk
     have h_comm_left : leq (myAdd m (m × k)) (myAdd (m × k) m) :=
       leq_equals _ _ (add_commutative _ _)
 
@@ -349,6 +349,7 @@ def mult_succ_leq_conv (m n k : N) (p : leq (m × k.succ) (n × k.succ)) : leq m
 
 -- e)
 
+-- 𝑘 ≤ min(𝑚, 𝑛) ↔ (𝑘 ≤ 𝑚) e (𝑘 ≤ 𝑛)
 def leq_min (k m n : N) (p : leq k (N_min m n)) : myProd (leq k m) (leq k n) :=
   match k with
   | N.zero => myProd.mk () ()
@@ -376,6 +377,16 @@ def leq_min (k m n : N) (p : leq k (N_min m n)) : myProd (leq k m) (leq k n) :=
       let h := leq_min k m n p
       myProd.mk (proj1 h) (proj2 h)
 
+def leq_min_conv (k m n : N) (p : myProd (leq k m) (leq k n)) : leq k (N_min m n) :=
+  match k with
+  | N.zero => ()
+  | N.succ k =>
+    match m, n with
+    | N.zero, _ => Empty.elim (proj1 p)
+    | _, N.zero => Empty.elim (proj2 p)
+    | N.succ m, N.succ n => leq_min_conv k m n (myProd.mk (proj1 p) (proj2 p))
+
+-- Lemmas
 def leq_zero (n : N) (p : leq n N.zero): n ≡ N.zero :=
   match n with
   | N.zero => MyEq.refl _
@@ -388,6 +399,7 @@ def max_equals_zero (m n : N) (p : (N_max m n) ≡ N.zero) : myProd (m ≡ N.zer
   | N.succ _, N.zero => Empty.elim (Equality_Equiv _ _ p)
   | N.succ _, N.succ _ => Empty.elim (Equality_Equiv _ _ p)
 
+-- 𝑘 ≥ max(𝑚, 𝑛) ↔ (𝑘 ≥ 𝑚) e (𝑘 ≥ 𝑛)
 def leq_max (k m n : N) (p : leq (N_max m n) k) : myProd (leq m k) (leq n k) :=
   match k with
   | N.zero =>
@@ -415,3 +427,101 @@ def leq_max (k m n : N) (p : leq (N_max m n) k) : myProd (leq m k) (leq n k) :=
     | N.succ m, N.succ n =>
       let h := leq_max k m n p
       myProd.mk (proj1 h) (proj2 h)
+
+def leq_max_conv (k m n : N) (p : myProd (leq m k) (leq n k)) : leq (N_max m n) k :=
+  match m, n with
+  | N.zero, n =>
+  have h1 : N_max N.zero n ≡ n :=
+    match n with
+      | N.zero => MyEq.refl _
+      | N.succ _ => MyEq.refl _
+
+  leq_trans _ _ _ (leq_equals (N_max N.zero n) n h1) (proj2 p)
+
+  | m, N.zero =>
+  have h1 : N_max m N.zero ≡ m :=
+    match m with
+      | N.zero => MyEq.refl _
+      | N.succ _ => MyEq.refl _
+
+  leq_trans _ _ _ (leq_equals (N_max m N.zero) m h1) (proj1 p)
+
+  | N.succ m, N.succ n =>
+    match k with
+    | N.zero => Empty.elim (proj1 p)
+    | N.succ k => leq_max_conv k m n (myProd.mk (proj1 p) (proj2 p))
+
+
+-- 6.4
+
+def less_than (m n : N) : Type :=
+  match m, n with
+  | _, N.zero => Empty
+  | N.zero, N.succ _ => Unit
+  | N.succ m, N.succ n => less_than m n
+
+
+-- a)
+
+def less_than_antiref (n : N) (p : less_than n n): Empty :=
+  match n with
+  | N.zero => Empty.elim p
+  | N.succ n => less_than_antiref n p
+
+def less_than_nonsymm (m n : N) (p : less_than m n) (q : less_than n m) : Empty :=
+  match m, n with
+  | N.zero, N.zero => Empty.elim p
+  | N.zero, N.succ _ => Empty.elim q
+  | N.succ _, N.zero => Empty.elim p
+  | N.succ m, N.succ n => less_than_nonsymm m n p q
+
+def less_than_trans (m n k : N) (p : less_than m n) (q : less_than n k) : less_than m k :=
+  match m, n, k with
+  | N.zero, _, N.succ _ => ()
+  | N.zero , N.zero, N.zero => Empty.elim q
+  | N.succ _, N.zero, _ => Empty.elim p
+  | N.succ _, N.succ _, N.zero => Empty.elim q
+  | N.succ m, N.succ n, N.succ k => less_than_trans m n k p q
+
+
+-- b)
+
+def less_than_succ (n : N) : less_than n n.succ :=
+  match n with
+  | N.zero => ()
+  | N.succ n => less_than_succ n
+
+def less_than_sum_succ (m n : N) (p : less_than m n) : less_than m n.succ := less_than_trans _ _ _ p (less_than_succ n)
+
+
+-- c)
+
+-- 𝑚 < 𝑛 ↔ (𝑚 + 1 ≤ 𝑛)
+def less_than_leq (m n : N) (p : less_than m n) : leq m n :=
+  match m, n with
+  | N.zero, _ => ()
+  | N.succ _, N.zero => Empty.elim p
+  | N.succ m, N.succ n => less_than_leq m n p
+
+def less_than_leq_conv (m n : N) (p : leq m.succ n) : less_than m n :=
+  match m, n with
+  | _, N.zero => Empty.elim p
+  | N.zero, N.succ _ => ()
+  | N.succ m, N.succ n => less_than_leq_conv m n p
+
+-- 𝑚 < 𝑛 ↔ (𝑚 ≤ 𝑛) e (𝑚 ≠ 𝑛)
+def less_than_leq_law (m n : N) (p : less_than m n) : myProd (leq m n) ((m ≡ n) → Empty) :=
+  match m, n with
+  | N.zero, N.zero => Empty.elim p
+  | N.zero, N.succ _ => myProd.mk () (fun x => Empty.elim (Equality_Equiv _ _ x))
+  | N.succ m, N.succ n =>
+    let h := less_than_leq_law m n p
+    myProd.mk (proj1 h) (fun x => proj2 h (Equality_Equiv_conv (Equality_Equiv m.succ n.succ x)))
+
+def less_than_leq_law_conv (m n : N) (p : myProd (leq m n) ((m ≡ n) → Empty)) : less_than m n :=
+  match m, n with
+  | N.zero, N.zero => Empty.elim (proj2 p (MyEq.refl _))
+  | N.zero, N.succ _ => ()
+  | N.succ m, N.succ n => less_than_leq_law_conv m n (myProd.mk (proj1 p) (
+    fun x => proj2 p (Equality_Equiv_conv (Equality_Equiv m n x))
+    ))

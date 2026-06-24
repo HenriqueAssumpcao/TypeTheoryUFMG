@@ -17,17 +17,20 @@ def E_0 (n : N) : Type :=   -- (0 = n)
   | N.zero => Unit
   | N.succ _ => Empty
 
+-- Diferente que no livro?
+-- Q: No livro esta função é mais complicada. Porque?
+
 def E_S (_ : N) (X : (N → Type)) (m : N) : Type :=    -- (S(n) = m)
   match m with
   | N.zero => Empty
-  | N.succ m => X m
+  | N.succ m' => X m'
 
+-- Q: porque precisa (_ : N)?
 
 def Eq_N (n m : N): Type :=
   match n with
   | N.zero => E_0 m
-  | N.succ n => E_S n (Eq_N n) m
-
+  | N.succ n' => E_S n' (Eq_N n') m
 
 -- Lemma 6.3.2
 -- Eq_N is reflexive
@@ -35,7 +38,7 @@ def Eq_N (n m : N): Type :=
 def refl_Eq_N (n : N) : Eq_N n n :=
   match n with
   | N.zero => ()
-  | N.succ n => refl_Eq_N n
+  | N.succ n' => refl_Eq_N n'
 
 
 -- Proposition 6.3.3

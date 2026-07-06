@@ -21,9 +21,7 @@ open chapter4_integers
 namespace Naturals
 open chapter3_naturals
 open chapter5_myeq
-
-scoped notation:40 a " + " b => myAdd  a b
-scoped notation:60 a " × "  b => myMult a b
+open chapter4_integers
 
 
 def right_one_add_N (a : myN) : myAdd a _1 ≡ myN.succ a := MyEq.refl _
@@ -135,12 +133,12 @@ def mult_commutative (a b : myN) : (myMult a b) ≡ (myMult b a) :=
   myEq_symm (mult_successor_left _ _)
 
 
-  def mult_distributive_left (a b c : myN) : (a × (b + c)) ≡ ((a × b) + (a × c)) :=
+  def mult_distributive_left (a b c : myN) : (a * (b + c)) ≡ ((a * b) + (a * c)) :=
     match a with
     | myN.one =>
       mult_one_left (b + c) •
-      ap (myAdd b) c (myN.one × c) (myEq_symm (mult_one_left c)) •
-      ap (myAdd_right (myN.one × c)) b (myN.one × b) (myEq_symm (mult_one_left b))
+      ap (myAdd b) c (myN.one * c) (myEq_symm (mult_one_left c)) •
+      ap (myAdd_right (myN.one * c)) b (myN.one * b) (myEq_symm (mult_one_left b))
 
     -- 0 * (b+c) = 0 = 0 + 0 = 0*b + 0 = 0*b + 0*c
     | myN.succ a' =>
@@ -148,24 +146,24 @@ def mult_commutative (a b : myN) : (myMult a b) ≡ (myMult b a) :=
     -- a'b + ((b + a'c)) + c) = a'b + ((b + a'c) + c) = (a'b + (b + a'c)) + c = ((a'b + b)+a'c) + c = (a'b + b) + (a'c + c) = S(a')*b + S(a')c
     mult_successor_left _ _ •
     -- a'(b+c) + (b+c)
-    (ap (myAdd_right (myAdd b c)) (a' × (b + c)) ((a' × b) + (a' × c)) (mult_distributive_left _ _ _)) •
+    (ap (myAdd_right (myAdd b c)) (a' * (b + c)) ((a' * b) + (a' * c)) (mult_distributive_left _ _ _)) •
     -- (a'b + a'c) + (b + c)
     (add_associative _ _ _) •
     -- a'b + (a'c + (b + c))
-    ap (myAdd (myMult a' b)) ((a' × c) + (b + c)) (((a' × c) + b) + c) (myEq_symm (add_associative _ _ _)) •
+    ap (myAdd (myMult a' b)) ((a' * c) + (b + c)) (((a' * c) + b) + c) (myEq_symm (add_associative _ _ _)) •
     -- a'b + ((a'c + b) + c)
-    ap ((myAdd (myMult a' b)) ∘ (myAdd_right c)) ((a' × c) + b) (b + (a' × c)) (add_commutative _ _) •
-    -- (a' × b) _+ ((b + (a × c)) + c)
-    ap (myAdd (a' × b)) ((b + (a' × c)) + c) (b + ((a' × c) + c)) (add_associative _ _ _) •
-    -- (a' × b) _+ (b + ((a × c)) + c))
+    ap ((myAdd (myMult a' b)) ∘ (myAdd_right c)) ((a' * c) + b) (b + (a' * c)) (add_commutative _ _) •
+    -- (a' * b) _+ ((b + (a * c)) + c)
+    ap (myAdd (a' * b)) ((b + (a' * c)) + c) (b + ((a' * c) + c)) (add_associative _ _ _) •
+    -- (a' * b) _+ (b + ((a * c)) + c))
     myEq_symm (add_associative _ _ _) •
-    -- ((a' × b) + b) + ((a × c)) + c))
-    ap (myAdd_right ((a' × c) + c)) ((a' × b) + b) (a'.succ × b) (myEq_symm (mult_successor_left _ _)) •
-    -- a × b + ((a × c)) + c))
-    ap (myAdd (a'.succ × b))  ((a' × c) + c) (a'.succ × c) (myEq_symm (mult_successor_left _ _))
+    -- ((a' * b) + b) + ((a * c)) + c))
+    ap (myAdd_right ((a' * c) + c)) ((a' * b) + b) (a'.succ * b) (myEq_symm (mult_successor_left _ _)) •
+    -- a * b + ((a * c)) + c))
+    ap (myAdd (a'.succ * b))  ((a' * c) + c) (a'.succ * c) (myEq_symm (mult_successor_left _ _))
 
 
-def mult_distributive_right (a b c : myN) : ((a + b) × c) ≡ (a × c) + (b × c) :=
+def mult_distributive_right (a b c : myN) : ((a + b) * c) ≡ (a * c) + (b * c) :=
   match c with
   | myN.one =>
     (mult_one_right _) • (myEq_symm (mult_one_right _))
@@ -173,45 +171,41 @@ def mult_distributive_right (a b c : myN) : ((a + b) × c) ≡ (a × c) + (b × 
     -- (a + b) * S(b') = (a + b) * b' + (a + b)
     mult_successor_right _ _ •
     -- (a + b) * b' + (a + b) = (a*b' + b*b') + (a + b)
-    ap (myAdd_right (a + b)) ((a + b) × b') ((a × b') + (b × b')) (mult_distributive_right a b b') •
+    ap (myAdd_right (a + b)) ((a + b) * b') ((a * b') + (b * b')) (mult_distributive_right a b b') •
     -- (a*b' + b*b') + (a + b)
     add_associative _ _ _ •
     -- a*b' + (b*b' + (a + b))
-    ap (myAdd (a × b')) ((b × b') + (a + b)) (((b × b') + a) + b) (myEq_symm (add_associative _ _ _)) •
+    ap (myAdd (a * b')) ((b * b') + (a + b)) (((b * b') + a) + b) (myEq_symm (add_associative _ _ _)) •
     -- a*b' + ((b*b' + a) + b)
-    ap ((myAdd (a × b')) ∘ (myAdd_right b)) ((b × b') + a) (a + (b × b')) (add_commutative _ _) •
+    ap ((myAdd (a * b')) ∘ (myAdd_right b)) ((b * b') + a) (a + (b * b')) (add_commutative _ _) •
     -- a*b' + ((a + b*b') + b)
     myEq_symm (add_associative _ _ _) •
     -- (a*b' + (a + b*b')) + b
-    ap (myAdd_right b) ((a × b') + (a + (b × b'))) (((a × b') + a) + (b × b')) (myEq_symm (add_associative _ _ _)) •
+    ap (myAdd_right b) ((a * b') + (a + (b * b'))) (((a * b') + a) + (b * b')) (myEq_symm (add_associative _ _ _)) •
     -- ((a*b' + a) + b*b') + b
-    ap (fun x => (x + (b × b')) + b) ((a × b') + a) (a × b'.succ) (myEq_symm (mult_successor_right _ _)) •
+    ap (fun x => (x + (b * b')) + b) ((a * b') + a) (a * b'.succ) (myEq_symm (mult_successor_right _ _)) •
     -- (a*S(b') + b*b') + b
     add_associative _ _ _ •
     -- a*S(b') + (b*b' + b)
-    ap (myAdd (a × b'.succ)) ((b × b') + b) (b × b'.succ) (myEq_symm (mult_successor_right _ _))
+    ap (myAdd (a * b'.succ)) ((b * b') + b) (b * b'.succ) (myEq_symm (mult_successor_right _ _))
   -- (a+b)S(c) = (a+b)c + (a+b) = (ac + bc) + (a + b) = ac + (bc + (a + b)) =
   -- ac + ((bc + a) + b) = ac + ((a + bc) + b) = (ac + (a+bc)) + b =
   -- ((ac + a) + bc) + b = (aS(c) + bc) + b = aS(c) + (bc + b) = aS(c) + bS(c)
 
 
-def mult_associative (a b c : myN) : ((a × b) × c) ≡ (a × (b × c)) :=
+def mult_associative (a b c : myN) : ((a * b) * c) ≡ (a * (b * c)) :=
   match c with
   | myN.one => (mult_one_right _)
   | myN.succ c' =>
   -- (ab)c = (ab)c' + ab = a(bc')+ab = a(bc'+b) = a(bc)
     mult_successor_right _ _ •
-    ap (myAdd_right (a × b)) ((a × b) × c') (a × (b × c')) (mult_associative _ _ _) •
+    ap (myAdd_right (a * b)) ((a * b) * c') (a * (b * c')) (mult_associative _ _ _) •
     myEq_symm (mult_distributive_left _ _ _) •
-    ap (myMult a) ((b × c') + b) (b × c'.succ) (myEq_symm (mult_successor_right _ _))
+    ap (myMult a) ((b * c') + b) (b * c'.succ) (myEq_symm (mult_successor_right _ _))
 
 end Naturals
 
 namespace Integers
-
-
-notation:40 a " + " b => chapter4_integers.myAddZ a b
-notation:60 a " × " b => chapter4_integers.myMultZ a b
 
 
 def right_equiv_add (x : myZ) (p : a ≡ b) : myAddZ x a ≡ myAddZ x b :=
@@ -248,23 +242,24 @@ def succ_pred_symm (z : myZ) := succ_pred_elim z • myEq_symm (pred_succ_elim z
 
 def right_add_zero (x : myZ) : (myAddZ x Zzero) ≡ x := MyEq.refl _
 
-def zero_add_left_neg (n : myN) : (Zzero + Sum.inl n) ≡ Sum.inl n :=
+
+def zero_add_left_neg (n : myN) : (Zzero + (Zneg n)) ≡ (Zneg n) :=
   match n with
   | myN.one => MyEq.refl _
   | myN.succ n' =>
       calc
-        (Zzero + Sum.inl (myN.succ n')) ≡ predZ (Zzero + Sum.inl n') := MyEq.refl _
-        _ ≡ predZ (Sum.inl n') := ap predZ (Zzero + Sum.inl n') (Sum.inl n') (zero_add_left_neg n')
+        (Zzero + Zneg (myN.succ n')) ≡ predZ (Zzero + Zneg n') := MyEq.refl _
+        _ ≡ predZ (Sum.inl n') := ap predZ (Zzero + Zneg n') (Zneg n') (zero_add_left_neg n')
         _ ≡ Sum.inl (myN.succ n') := MyEq.refl _
 
 
-def zero_add_left_pos (n : myN) : (Zzero + Sum.inr (Sum.inr n)) ≡ Sum.inr (Sum.inr n) :=
+def zero_add_left_pos (n : myN) : (Zzero + (Zpos n)) ≡ (Zpos n) :=
   match n with
   | myN.one => MyEq.refl _
   | myN.succ n' =>
       calc
-        (Zzero + Sum.inr (Sum.inr (myN.succ n'))) ≡ succZ (Zzero + Sum.inr (Sum.inr n')) := MyEq.refl _
-        _ ≡ succZ (Sum.inr (Sum.inr n')) := ap succZ (Zzero + Sum.inr (Sum.inr n')) (Sum.inr (Sum.inr n')) (zero_add_left_pos n')
+        (Zzero + Zpos (myN.succ n')) ≡ succZ (Zzero + Zpos n') := MyEq.refl _
+        _ ≡ succZ (Sum.inr (Sum.inr n')) := ap succZ (Zzero + Zpos n') (Zpos n') (zero_add_left_pos n')
         _ ≡ Sum.inr (Sum.inr (myN.succ n')) := MyEq.refl _
 
 
@@ -454,42 +449,42 @@ def add_left_inverse  (a : myZ) : ((negative a) + a) ≡ Zzero :=
     _ ≡ Zzero := add_right_inverse _
 
 
-def mult_left_zero  (a : myZ) : (Zzero × a) ≡ Zzero :=
+def mult_left_zero  (a : myZ) : (Zzero * a) ≡ Zzero :=
     match a with
   | Sum.inl a' =>
     calc
-      negative (multNaturalWithZ Zzero a') ≡ negative Zzero := ap negative (multNaturalWithZ Zzero a') Zzero (multNatWithZero a')
+      negative (multNaturalWithZ Zzero a') ≡ Zzero := ap negative (multNaturalWithZ Zzero a') Zzero (multNatWithZero a')
       _ ≡ Zzero := MyEq.refl _
   | Sum.inr (Sum.inl _) => MyEq.refl _
   | Sum.inr (Sum.inr a') => multNatWithZero a'
 
 
-def mult_right_zero (a : myZ) : (a × Zzero) ≡ Zzero := MyEq.refl _
+def mult_right_zero (a : myZ) : (a * Zzero) ≡ Zzero := MyEq.refl _
 
-def mult_right_unit (a : myZ) : (a × _1) ≡ a :=
+def mult_right_unit (a : myZ) : (a * _1) ≡ a :=
   calc
-    (a × _1) ≡ (multNaturalWithZ a _1) := MyEq.refl _
+    (a * _1) ≡ (multNaturalWithZ a _1) := MyEq.refl _
     _ ≡ a := MyEq.refl _
 
 #print myMultZ
 
-def mult_left_unit  (a : myZ) : (_1 × a) ≡ a :=
+def mult_left_unit  (a : myZ) : (_1 * a) ≡ a :=
   match a with
   | Sum.inl a' =>
     calc
-     (_1 × Sum.inl a') ≡ negative (multNaturalWithZ _1 a') := MyEq.refl _
+     (_1 * Zneg a') ≡ negative (multNaturalWithZ _1 a') := MyEq.refl _
      _ ≡ negative  a' := ap negative (multNaturalWithZ _1 a') a' (multNatWithOne a')
      _ ≡ Sum.inl a' := MyEq.refl _
   | Sum.inr (Sum.inl _) => MyEq.refl _
   | Sum.inr (Sum.inr a') =>
     calc
-      (_1 × Sum.inr (Sum.inr a')) ≡ multNaturalWithZ _1 a' := MyEq.refl _
+      (_1 * Zpos a') ≡ multNaturalWithZ _1 a' := MyEq.refl _
       _ ≡ Sum.inr (Sum.inr a') := multNatWithOne a'
 
 def multNaturalWithZ_comm (a b : myN) : multNaturalWithZ a b ≡ multNaturalWithZ b a := sorry
 
 
-def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) :=
+def mult_commutative (a b : myZ) : (a * b) ≡ (b * a) :=
     match b with
   | Sum.inl b' =>
       match a with
@@ -498,9 +493,9 @@ def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) :=
       | Sum.inr (Sum.inr a') => sorry
   | Sum.inr (Sum.inl _) =>
     calc
-      (a × (Sum.inr (Sum.inl _))) ≡ a × Zzero := MyEq.refl _
-      _ ≡ (Zzero × a) := (mult_right_zero a) • (myEq_symm (mult_left_zero a))
-      _ ≡ (Sum.inr (Sum.inl _)) × a := MyEq.refl _
+      (a * Zzero ) ≡ a * Zzero := MyEq.refl _
+      _ ≡ (Zzero * a) := (mult_right_zero a) • (myEq_symm (mult_left_zero a))
+      _ ≡ Zzero  * a := MyEq.refl _
   | Sum.inr (Sum.inr b') =>
       match a with
       | Sum.inl a' => sorry
@@ -508,8 +503,8 @@ def mult_commutative (a b : myZ) : (a × b) ≡ (b × a) :=
       | Sum.inr (Sum.inr a') => multNaturalWithZ_comm _ _
 
 
-def mult_associative (a b c : myZ) : ((a × b) × c) ≡ a × (b × c) := sorry
-def add_mult_right_distributive (a b c : myZ) : ((a + b) × c)  ≡ ((a × c) + (b × c)) := sorry
-def add_mult_left_distributive  (a b c : myZ) : (a × (b + c) × c)  ≡ ((a × b) + (a × c)) := sorry
+def mult_associative (a b c : myZ) : ((a * b) * c) ≡ a * (b * c) := sorry
+def add_mult_right_distributive (a b c : myZ) : ((a + b) * c)  ≡ ((a * c) + (b * c)) := sorry
+def add_mult_left_distributive  (a b c : myZ) : (a * (b + c) * c)  ≡ ((a * b) + (a * c)) := sorry
 
 end Integers

@@ -166,4 +166,20 @@ def mult_associative (a b c : myN) : myMult (myMult a b) c ≡ myMult a (myMult 
         _ ≡ a * ((b * c') + b) := myEq_symm (mult_distributive_left _ _ _)
         _ ≡ a * (b * myN.succ c') := ap (myMult a) _ _ (myEq_symm (mult_successor_right _ _))
 
+def dist_equals_0 (n : myN) : dist n n ≡ _0 :=
+  match n with
+  | myN.zero => MyEq.refl _
+  | myN.succ n' =>dist_equals_0 n'
+
+def dist_symm (n1 n2 : myN) : dist n1 n2 ≡ dist n2 n1 :=
+  match n1, n2 with
+  | myN.zero, myN.zero => MyEq.refl _
+  | myN.zero, myN.succ _ => MyEq.refl _
+  | myN.succ _, myN.zero => MyEq.refl _
+  | myN.succ n1', myN.succ n2' =>
+      calc
+        dist (myN.succ n1') (myN.succ n2') ≡ dist n1' n2' := MyEq.refl _
+        _ ≡ dist n2' n1' := dist_symm n1' n2'
+        _ ≡ dist (myN.succ n2') (myN.succ n1') := MyEq.refl _
+
 end props_naturals_with_zero

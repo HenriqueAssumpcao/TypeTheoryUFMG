@@ -12,25 +12,24 @@ namespace chapter6_Universes
 
 -- Observational Equality
 
-def E_0 (n : N) : Type :=   -- (0 = n)
+def E0 (n : N) : Type :=   -- (0 = n)
   match n with
   | N.zero => Unit
   | N.succ _ => Empty
 
--- Diferente que no livro?
--- Q: No livro esta função é mais complicada. Porque?
-
-def E_S (_ : N) (X : (N → Type)) (m : N) : Type :=    -- (S(n) = m)
-  match m with
-  | N.zero => Empty
-  | N.succ m' => X m'
-
--- Q: porque precisa (_ : N)?
+def ES (n : N) (X : N → Type) (m : N) : Type :=    -- (S(n) = m)
+  match n, m with
+  | _, N.zero => Empty
+  | _, N.succ m' => X m'
 
 def Eq_N (n m : N): Type :=
   match n with
-  | N.zero => E_0 m
-  | N.succ n' => E_S n' (Eq_N n') m
+  | N.zero => E0 m
+  | N.succ n' => ES n' (Eq_N n') m
+
+-- Rijke writes `E0 : Nat -> U` and `ES : N -> (N -> U) -> (N -> U)`.
+-- In this file the ambient universe `U` is represented by `Type`, and the
+-- first `N` argument of `ES` is kept explicit to match that presentation.
 
 -- Lemma 6.3.2
 -- Eq_N is reflexive

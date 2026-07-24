@@ -363,62 +363,67 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>add_commutative_Z</td>
 <td><code>(a b : myZ) → (a + b) ≡ (b + a)</code></td>
-<td>Integer addition commutativity theorem, currently partial (uses sorry).</td>
+<td>Integer addition commutativity, proved by case analysis and the <code>addNtoZ</code>/<code>subNfromZ</code> rewrite lemmas.</td>
 </tr>
 <tr class="even">
 <td>add_associative_Z</td>
 <td><code>(a b c : myZ) → (a + (b + c)) ≡ ((a + b) + c)</code></td>
-<td>Integer addition associativity theorem, placeholder (sorry).</td>
+<td>Integer addition associativity, reduced to the corresponding <code>addNtoZ_associative</code> and <code>subNfromZ_associative</code> lemmas.</td>
 </tr>
 <tr class="odd">
 <td>add_right_inverse</td>
 <td><code>(a : myZ) → (a + (negative a)) ≡ Zzero</code></td>
-<td>Right additive inverse theorem, placeholder (sorry).</td>
+<td>Right additive inverse for integers.</td>
 </tr>
 <tr class="even">
 <td>add_left_inverse</td>
 <td><code>(a : myZ) → ((negative a) + a) ≡ Zzero</code></td>
-<td>Left additive inverse theorem, placeholder (sorry).</td>
+<td>Left additive inverse, derived from commutativity and <code>add_right_inverse</code>.</td>
 </tr>
 <tr class="odd">
-<td>mult_right_zero</td>
-<td><code>(a : myZ) → (a × Zzero) ≡ Zzero</code></td>
-<td>Right zero law for integer multiplication, placeholder (sorry).</td>
-</tr>
-<tr class="even">
 <td>mult_left_zero</td>
 <td><code>(a : myZ) → (Zzero × a) ≡ Zzero</code></td>
-<td>Left zero law for integer multiplication, placeholder (sorry).</td>
+<td>Left zero law for integer multiplication.</td>
+</tr>
+<tr class="even">
+<td>mult_right_zero</td>
+<td><code>(a : myZ) → (a × Zzero) ≡ Zzero</code></td>
+<td>Right zero law for integer multiplication.</td>
 </tr>
 <tr class="odd">
 <td>mult_right_unit</td>
 <td><code>(a : myZ) → (a × _1) ≡ a</code></td>
-<td>Right unit law for integer multiplication, placeholder (sorry).</td>
+<td>Right multiplicative unit for integers.</td>
 </tr>
 <tr class="even">
 <td>mult_left_unit</td>
 <td><code>(a : myZ) → (_1 × a) ≡ a</code></td>
-<td>Left unit law for integer multiplication, placeholder (sorry).</td>
+<td>Left multiplicative unit for integers.</td>
 </tr>
 <tr class="odd">
+<td>multNaturalWithZ_comm</td>
+<td><code>(a b : myN) → multNaturalWithZ a b ≡ multNaturalWithZ b a</code></td>
+<td>Intended commutativity lemma for <code>multNaturalWithZ</code>; currently left as <code>sorry</code>.</td>
+</tr>
+<tr class="even">
 <td>mult_commutative</td>
 <td><code>(a b : myZ) → (a × b) ≡ (b × a)</code></td>
-<td>Integer multiplication commutativity theorem, placeholder (sorry).</td>
-</tr>
-<tr class="even">
-<td>mult_associative</td>
-<td><code>(a b c : myZ) → ((a × b) × c) ≡ a × (b × c)</code></td>
-<td>Integer multiplication associativity theorem, placeholder (sorry).</td>
+<td>Integer multiplication commutativity theorem, partially implemented with several remaining <code>sorry</code> branches.</td>
 </tr>
 <tr class="odd">
-<td>add_mult_right_distributive</td>
-<td><code>(a b c : myZ) → ((a + b) × c) ≡ ((a × c) + (b × c))</code></td>
-<td>Right distributivity theorem, placeholder (sorry).</td>
+<td>mult_associative</td>
+<td><code>(a b c : myZ) → ((a × b) × c) ≡ a × (b × c)</code></td>
+<td>Integer multiplication associativity theorem, currently <code>sorry</code>.</td>
 </tr>
 <tr class="even">
+<td>add_mult_right_distributive</td>
+<td><code>(a b c : myZ) → ((a + b) × c) ≡ ((a × c) + (b × c))</code></td>
+<td>Right distributivity of integer multiplication over addition, currently <code>sorry</code>.</td>
+</tr>
+<tr class="odd">
 <td>add_mult_left_distributive</td>
 <td><code>(a b c : myZ) → (a × (b + c) × c) ≡ ((a × b) + (a × c))</code></td>
-<td>Left distributivity-shaped theorem, placeholder (sorry).</td>
+<td>Left-distributivity-shaped statement as written in the source; currently <code>sorry</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -426,11 +431,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="possible-issues" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Possible Issues</h1>
 <ol type="1">
-<li>Multiple placeholders remain in namespace Integers using sorry.</li>
-<li>Statement shape of add_mult_left_distributive includes an extra trailing × c on the left side:<code>(a × (b + c) × c)</code>; this differs from standard left distributivity.</li>
-<li>The declaration variable (U : Unit) appears unused.</li>
-<li>#check myAdd is a debugging check and may be unnecessary in final coursework code.</li>
-<li>Names addNtoZ_commutative and subNfromZ_commutative are potentially misleading: they express rewrite/equivalence with myAddZ, not commutativity between two independent operands.</li>
+<li>Remaining <code>sorry</code> placeholders are now confined to <code>multNaturalWithZ_comm</code>, several branches of <code>mult_commutative</code>, <code>mult_associative</code>, <code>add_mult_right_distributive</code>, and <code>add_mult_left_distributive</code>.</li>
+<li>The statement of <code>add_mult_left_distributive</code> still has the non-standard left-hand side <code>(a × (b + c) × c)</code>, so the documentation preserves that exact source statement rather than normalizing it.</li>
+<li>The declaration <code>variable (U : Unit)</code> appears unused.</li>
+<li>The file contains both <code>#check myAdd</code> near the top and <code>#print myMultZ</code> near the end, which look like interactive debugging aids rather than theorem content.</li>
+<li>Names <code>addNtoZ_commutative</code> and <code>subNfromZ_commutative</code> are potentially misleading: they express equivalence with <code>myAddZ</code>, not commutativity between two symmetric operands.</li>
 </ol>
 </section>
 <section id="duplicate-and-similar-functions" class="level1" data-number="6">
@@ -464,7 +469,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="notes" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> Notes</h1>
 <ul>
-<li>This summary is aligned with the current file content in <a href="../HoTTRijke/chapter5_ints.lean">HoTTRijke/chapter5_ints.lean</a>.</li>
+<li>This summary is aligned with the current file content in <a href="../HoTTRijke/chapter5_ints.lean">HoTTRijke/chapter5_ints.lean</a>, including the completed integer addition proofs and the remaining multiplication placeholders.</li>
 <li>Notation in the Lean source uses + and × inside local namespaces for readability of theorem statements.</li>
 </ul>
 </section>

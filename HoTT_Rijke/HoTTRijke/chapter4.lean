@@ -312,4 +312,11 @@ def myMultZ (a b : myZ) : myZ :=
   | Sum.inr (Sum.inr n) => multNaturalWithZ a n
   | Sum.inl n =>  negative (multNaturalWithZ a n)
 
+instance : Add myZ where
+  add := myAddZ
+
+instance : Mul myZ where
+  mul := myMultZ
+
+
 end chapter4_integers

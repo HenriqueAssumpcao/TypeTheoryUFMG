@@ -48,6 +48,11 @@ def myMult (a b : myN) : myN :=
   | myN.one => a                 -- multiplying by 1
   | myN.succ b' => myAdd (myMult a b') a
 
+instance : Add myN where
+  add := myAdd
+
+instance : Mul myN where
+  mul := myMult
 
 def myExp (a b : myN) : myN :=
   match b with

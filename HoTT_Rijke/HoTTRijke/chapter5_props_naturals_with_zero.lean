@@ -182,4 +182,12 @@ def dist_symm (n1 n2 : myN) : dist n1 n2 ≡ dist n2 n1 :=
         _ ≡ dist n2' n1' := dist_symm n1' n2'
         _ ≡ dist (myN.succ n2') (myN.succ n1') := MyEq.refl _
 
+
+
+def dist_one_of_three (x y z : myN) :
+  Sum (((dist x y) + (dist y z)) ≡ (dist x z))
+      (Sum (((dist y z) + (dist x z)) ≡ (dist x y))
+          (((dist x z) + (dist x y)) ≡ (dist y z)))
+  := sorry
+
 end props_naturals_with_zero

@@ -1,3 +1,5 @@
+import HoTTRijke.chapter5_eq
+
 namespace chapter3_naturals_with_zero
 
 -- Naturals now start at 1 (base constructor), so `myN.zero` represents 1.
@@ -140,5 +142,8 @@ def dist (m n : myN) : myN :=
   | myN.succ m, myN.zero => myN.succ m
   | myN.succ m, myN.succ n => dist m n
 
+#check dist myN.zero myN.zero
+
+open chapter5_myeq
 
 end chapter3_naturals_with_zero

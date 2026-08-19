@@ -6,6 +6,7 @@ import HoTTRijke.chapter5_props_naturals_with_zero
 open props_naturals_with_zero
 open chapter5_myeq
 open chapter3_naturals_with_zero
+open chapter3_propositions
 
 
 def divides (d n : myN) : Prop := Nonempty (Σ k : myN, (d * k) ≡ n)
@@ -26,6 +27,9 @@ def divides_sum (a n1 n2 : myN) (p : divides a n1) (q : divides a n2) : (divides
 
 def divides_first_summand (a n1 n2 : myN) (p : divides a n2) (q : divides a (n1 + n2)) : divides a n1 := sorry
 def divides_second_summand (a n1 n2 : myN) (p : divides a n1) (q : divides a (n1 + n2)) : divides a n2 := sorry
+
+
+-- The Congruence Relation on N
 
 def cong (x y k : myN) : Prop := divides k (dist x y)
 
@@ -59,7 +63,30 @@ def cong_trans (x y z k : myN) (p : cong x y k) (q : cong y z k) : (cong x z k) 
       (transport_prop (fun n => divides k n) (myEq_symm c) q)
 
 
+-- The Standard Finite Types
+
 def myFin (n : myN) : Type :=
   match n with
     | myN.zero => Empty
     | myN.succ n' => Sum (myFin n') Unit
+
+
+def inclusion (n : myN) (x : myFin n) : myN :=
+  match n with
+    | myN.zero => Empty.elim x
+    | myN.succ n' =>
+      match x with
+        | Sum.inl x' => inclusion n' x'
+        | Sum.inr _ => n'
+
+theorem inclusion_is_bounded (k : myN) : (x : myFin k) → less_than (inclusion k x) k := by
+  intro x
+  cases k with
+  | zero => exact False.elim (Empty.elim x)
+  | succ n' =>
+    cases x with
+    | inl x' =>
+      have h : less_than (inclusion n'.succ (Sum.inl x')) n' := by
+        exact inclusion_is_bounded n' x'
+      exact less_than_trans (inclusion n'.succ (Sum.inl x')) n' n'.succ h (less_than_succ n')
+    | inr _ => exact less_than_succ n'

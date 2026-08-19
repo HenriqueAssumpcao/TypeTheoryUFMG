@@ -6,58 +6,87 @@ import HoTTRijke.chapter5_props_naturals_with_zero
 open props_naturals_with_zero
 open chapter5_myeq
 open chapter3_naturals_with_zero
+open chapter3_propositions
 
-#check myN
 
 def divides (d n : myN) : Prop := Nonempty (Σ k : myN, (d * k) ≡ n)
 
 def one_divides_all_n : ∀ n : myN, divides _1 n :=
   fun n => ⟨n, mult_one_left n⟩
 
-def all_n_divides_zero : ∀ n : myN, divides n _0 :=
-  fun n => ⟨_0, mult_zero_right n⟩
+def n_divides_zero : ∀ n : myN, divides n myN.zero := sorry
 
-def sum_divides_n (a n1 n2 : myN) (p : divides a n1) (q : divides a n2) : (divides a (n1 + n2)) := by
+def divides_sum (a n1 n2 : myN) (p : divides a n1) (q : divides a n2) : (divides a (n1 + n2)) := by
   rcases p with ⟨q1,hq1⟩
   rcases q with ⟨q2,hq2⟩
   have t : (a*(q1 + q2)) ≡ (n1 + n2) := by
-    calc
-    (a*(q1 + q2)) ≡ ((a*q1) + (a*q2)) := mult_distributive_left a q1 q2
+    calc (a*(q1 + q2)) ≡ ((a*q1) + (a*q2)) := mult_distributive_left a q1 q2
     _ ≡ n1 + (a*q2) := ap (fun x => (x + (a*q2))) (a*q1) n1 hq1
     _  ≡ n1 + n2 := ap (fun x => (n1 + x)) (a*q2) n2 hq2
   exact ⟨q1 + q2, t⟩
 
+def divides_first_summand (a n1 n2 : myN) (p : divides a n2) (q : divides a (n1 + n2)) : divides a n1 := sorry
+def divides_second_summand (a n1 n2 : myN) (p : divides a n1) (q : divides a (n1 + n2)) : divides a n2 := sorry
 
 
--- The congruence relations on ℕ
+-- The Congruence Relation on N
 
-def congruence (n1 n2 k : myN) : Prop := divides k (dist n1 n2)
+def cong (x y k : myN) : Prop := divides k (dist x y)
 
-def congruent_to_0 (k : myN) : congruence k _0 k :=
-  match k with
-  | myN.zero => ⟨_0, mult_zero_right _0⟩
-  | myN.succ k' => ⟨_1, mult_one_right (myN.succ k')⟩
+def transport_prop {α : Type} {x y : α} (β : (x' : α) → Prop) : (x ≡ y) → (β x → β y) :=
+  by
+    intro p q
+    cases p
+    exact q
 
-def congruence_refl (n k : myN) : congruence n n k :=
-  have h : (k * _0) ≡ dist n n :=  mult_zero_right k • myEq_symm (dist_equals_0 n)
-  ⟨_0, h⟩
+def cong_refl (x k : myN) : cong x x k := by
+  have t : dist x x ≡ myN.zero := dist_equals_0 x
+  exact transport_prop (fun n => divides k n) (myEq_symm t) (n_divides_zero k)
 
-def congruence_symm (n1 n2 k : myN) : congruence n1 n2 k → congruence n2 n1 k :=
-  fun h => match h with
-  | ⟨q, hq⟩ => ⟨q, hq • dist_symm n1 n2⟩
+def cong_symm (x y k : myN) (p : cong x y k) : cong y x k := by
+  have t : dist x y ≡ dist y x := dist_symm x y
+  -- divides k dist (x y) -> divides k dist (y x)
+  exact transport_prop (fun n => divides k n) t p
+
+def cong_trans (x y z k : myN) (p : cong x y k) (q : cong y z k) : (cong x z k) := by
+  rcases (dist_one_of_three x y z) with a | b | c
+  -- divides k d(x,y) and divides k d(y,z)  => divides k d(x,y) + d(y,z) => divides k d(x,z)
+  · have t : divides k ((dist x y) + (dist y z)) := divides_sum k (dist x y) (dist y z) p q
+    exact transport_prop (fun n => divides k n) a t
+  ·
+    -- b : (dist y z + dist x z) ≡ dist x y
+    -- k div d(x,y) = d(y,z) + d(x,z) and k div d(y,z) = > k div(x,z)
+    exact divides_second_summand k (dist y z) (dist x z) q
+          (transport_prop (fun n => divides k n) (myEq_symm b) p)
+  · -- c : (dist x z + dist x y) ≡ dist y z
+    exact divides_first_summand k (dist x z) (dist x y) p
+      (transport_prop (fun n => divides k n) (myEq_symm c) q)
 
 
+-- The Standard Finite Types
+
+def myFin (n : myN) : Type :=
+  match n with
+    | myN.zero => Empty
+    | myN.succ n' => Sum (myFin n') Unit
 
 
+def inclusion (n : myN) (x : myFin n) : myN :=
+  match n with
+    | myN.zero => Empty.elim x
+    | myN.succ n' =>
+      match x with
+        | Sum.inl x' => inclusion n' x'
+        | Sum.inr _ => n'
 
--- def congruence_trans (n1 n2 n3 k : myN) : congruence n1 n2 k → congruence n2 n3 k → congruence n1 n3 k :=
---   fun h1 h2 => match h1 with
---   | ⟨q1, hq1⟩ => match h2 with
---     | ⟨q2, hq2⟩ =>
---       have t : (k * (q1 + q2)) ≡ dist n1 n3 := by
---         calc
---         (k * (q1 + q2)) ≡ ((k * q1) + (k * q2)) := mult_distributive_left k q1 q2
---         _ ≡ dist n1 n2 + (k * q2) := ap (fun x => x + (k * q2)) (k * q1) (dist n1 n2) hq1
---         _ ≡ dist n1 n2 + dist n2 n3 := ap (fun x => dist n1 n2 + x) (k * q2) (dist n2 n3) hq2
---         _ ≡ dist n1 n3 := sorry
---       ⟨q1 + q2, t⟩
+theorem inclusion_is_bounded (k : myN) : (x : myFin k) → less_than (inclusion k x) k := by
+  intro x
+  cases k with
+  | zero => exact False.elim (Empty.elim x)
+  | succ n' =>
+    cases x with
+    | inl x' =>
+      have h : less_than (inclusion n'.succ (Sum.inl x')) n' := by
+        exact inclusion_is_bounded n' x'
+      exact less_than_trans (inclusion n'.succ (Sum.inl x')) n' n'.succ h (less_than_succ n')
+    | inr _ => exact less_than_succ n'

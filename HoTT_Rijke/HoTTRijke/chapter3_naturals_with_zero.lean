@@ -1,3 +1,5 @@
+import HoTTRijke.chapter5_eq
+
 namespace chapter3_naturals_with_zero
 
 -- Naturals now start at 1 (base constructor), so `myN.zero` represents 1.
@@ -140,5 +142,48 @@ def dist (m n : myN) : myN :=
   | myN.succ m, myN.zero => myN.succ m
   | myN.succ m, myN.succ n => dist m n
 
+#check dist myN.zero myN.zero
 
 end chapter3_naturals_with_zero
+
+
+
+namespace chapter3_propositions
+
+open chapter3_naturals_with_zero
+
+
+def less_than (m n : myN) : Prop :=
+  match m, n with
+  | myN.zero, myN.zero => False
+  | myN.zero, myN.succ _ => True
+  | myN.succ _, myN.zero => False
+  | myN.succ m, myN.succ n => less_than m n
+
+def less_than_succ (n : myN) : less_than n n.succ := by
+  cases n with
+  | zero => exact True.intro
+  | succ n' => exact less_than_succ n'
+
+def less_than_trans (m n p : myN) (h1 : less_than m n) (h2 : less_than n p) : less_than m p := by
+  cases m with
+  | zero =>
+    cases n with
+    | zero => exact False.elim h1
+    | succ _ =>
+      cases p with
+      | zero => exact False.elim h2
+      | succ _ => exact True.intro
+
+  | succ m' =>
+    cases n with
+    | zero => exact False.elim h1
+    | succ n' =>
+      cases p with
+      | zero => exact False.elim h2
+      | succ p' =>
+        have h3 : less_than m' n' := h1
+        have h4 : less_than n' p' := h2
+        exact less_than_trans m' n' p' h3 h4
+
+end chapter3_propositions

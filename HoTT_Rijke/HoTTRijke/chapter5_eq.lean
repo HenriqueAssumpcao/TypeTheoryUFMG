@@ -9,6 +9,7 @@ universe u v w
 
 -/
 
+
 -- We define our own identity type (e.g., for Type Theory exercises):
 
 inductive MyEq {α : Type} : α → α → Type where

@@ -299,7 +299,6 @@ def myAddZ (a b : myZ) : myZ :=
   | Sum.inr (Sum.inr n) => addNaturalToZ n a
   | Sum.inl n => subtractNaturalFromZ n a
 
-
 def multNaturalWithZ (a : myZ) (b : myN) : myZ :=
   match b with
   | myN.one => a

@@ -9,6 +9,8 @@ open chapter3_naturals_with_zero
 open chapter3_propositions
 
 
+#check Nonempty 
+
 def divides (d n : myN) : Prop := Nonempty (Σ k : myN, (d * k) ≡ n)
 
 def one_divides_all_n : ∀ n : myN, divides _1 n :=
@@ -70,6 +72,8 @@ def myFin (n : myN) : Type :=
     | myN.zero => Empty
     | myN.succ n' => Sum (myFin n') Unit
 
+ 
+
 
 def inclusion (n : myN) (x : myFin n) : myN :=
   match n with
@@ -90,3 +94,4 @@ theorem inclusion_is_bounded (k : myN) : (x : myFin k) → less_than (inclusion 
         exact inclusion_is_bounded n' x'
       exact less_than_trans (inclusion n'.succ (Sum.inl x')) n' n'.succ h (less_than_succ n')
     | inr _ => exact less_than_succ n'
+

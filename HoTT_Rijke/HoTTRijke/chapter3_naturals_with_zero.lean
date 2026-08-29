@@ -1,5 +1,7 @@
 import HoTTRijke.chapter5_eq
 
+open chapter5_myeq
+
 namespace chapter3_naturals_with_zero
 
 -- Naturals now start at 1 (base constructor), so `myN.zero` represents 1.
@@ -153,19 +155,19 @@ namespace chapter3_propositions
 open chapter3_naturals_with_zero
 
 
-def less_than (m n : myN) : Prop :=
+def Less_than (m n : myN) : Prop :=
   match m, n with
   | myN.zero, myN.zero => False
   | myN.zero, myN.succ _ => True
   | myN.succ _, myN.zero => False
-  | myN.succ m, myN.succ n => less_than m n
+  | myN.succ m, myN.succ n => Less_than m n
 
-def less_than_succ (n : myN) : less_than n n.succ := by
+def Less_than_succ (n : myN) : Less_than n n.succ := by
   cases n with
   | zero => exact True.intro
-  | succ n' => exact less_than_succ n'
+  | succ n' => exact Less_than_succ n'
 
-def less_than_trans (m n p : myN) (h1 : less_than m n) (h2 : less_than n p) : less_than m p := by
+def Less_than_trans (m n p : myN) (h1 : Less_than m n) (h2 : Less_than n p) : Less_than m p := by
   cases m with
   | zero =>
     cases n with
@@ -182,8 +184,21 @@ def less_than_trans (m n p : myN) (h1 : less_than m n) (h2 : less_than n p) : le
       cases p with
       | zero => exact False.elim h2
       | succ p' =>
-        have h3 : less_than m' n' := h1
-        have h4 : less_than n' p' := h2
-        exact less_than_trans m' n' p' h3 h4
+        have h3 : Less_than m' n' := h1
+        have h4 : Less_than n' p' := h2
+        exact Less_than_trans m' n' p' h3 h4
+
+def Less_than_irrefl (n : myN) : ¬ Less_than n n := by
+  intro h
+  cases n with
+  | zero => exact False.elim h
+  | succ n' =>
+    have h1 : Less_than n' n' := h
+    exact Less_than_irrefl n' h1
+
+def Less_than_on_equals (m n : myN) (p : m ≡ n) : ¬ Less_than m n := by
+  intro h                       -- When Goal is A → B, intro h assumes A and adds it to the context, then tries to prove B.
+  cases p                       -- Cases for inductive types. MyEq has only one constructor refl.
+  exact Less_than_irrefl m h    -- Goal now is Less_than m m, which is exactly what Less_than_irrefl m h proves.
 
 end chapter3_propositions

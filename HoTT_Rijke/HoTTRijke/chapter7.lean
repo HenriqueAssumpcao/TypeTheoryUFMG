@@ -1,3 +1,6 @@
+-- This file contains implementations of congruences and finite types
+-- following Chapter 7
+
 import HoTTRijke.chapter2
 import HoTTRijke.chapter3_naturals_with_zero
 import HoTTRijke.chapter5_eq
@@ -10,8 +13,6 @@ open chapter3_naturals_with_zero
 open chapter3_propositions
 open chapter6_Universes
 
-
-#check Nonempty
 
 def divides (d n : myN) : Prop := Nonempty (Σ k : myN, (d * k) ≡ n)
 
@@ -151,10 +152,10 @@ def succ_fin (k : myN) (x : myFin k) : myFin k :=
     | Sum.inl x' => skip_zero k' x'
     | Sum.inr _ => zero k'
 
-def quocient_map (k : myN) (n : myN) : myFin k.succ := by
+def quotient_map (k : myN) (n : myN) : myFin k.succ := by
   match n with
   | myN.zero => exact zero k
-  | myN.succ n' => exact succ_fin k.succ (quocient_map k n')
+  | myN.succ n' => exact succ_fin k.succ (quotient_map k n')
 
 
 -- Lemma 7.4.4 (i)

@@ -5,13 +5,43 @@ format:
     theme: cosmo
     toc: true
     number-sections: true
-  
 ---
 
 # Overview
 
-This document summarizes the functions defined in `chapter4.lean`.  
+This document summarizes the functions defined in [HoTTRijke/chapter4.lean](../HoTTRijke/chapter4.lean).
 Each entry includes the function name, its Lean signature, and a short description.
+
+The file imports `HoTTRijke.chapter3` and is organized into four namespaces:
+`chapter4_coproducts`, `chapter4_booleans`, `chapter4_lists`, and `chapter4_integers`.
+
+::: {.callout-note}
+**A note on implicit/section-variable arguments.** The exercises `_3_c_ii` through `_3_f_iii` in
+`chapter4_booleans` do not declare their own `P`/`Q` arguments. They pick them up from the
+`variable (P Q : Type)` declaration in scope (`chapter4.lean:18`): Lean auto-prepends any section
+variable actually used in a definition's type as an **explicit** leading argument. This is
+confirmed by the source itself — e.g. `_3_d_ii` and `_3_f_i` call `LEM P ...` and `LEM Q ...`
+directly, which only type-checks if `LEM` takes `P` as an explicit argument. The signatures below
+include these leading arguments.
+
+Separately, `mySum_ind` in `chapter4_coproducts` uses `A`, `B`, `C` without declaring or importing
+them at all; Lean's `autoImplicit` mechanism auto-generalizes these as implicit type arguments.
+:::
+
+# Namespace `chapter4_coproducts`
+
+## Types
+
+| Name | Signature | Description |
+|---|---|---|
+| `mySum.inl` | `{A B : Type} → A → mySum A B` | Left injection into the custom coproduct type. |
+| `mySum.inr` | `{A B : Type} → B → mySum A B` | Right injection into the custom coproduct type. |
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `mySum_ind` | `{A B C : Type} → (f : A → C) → (g : B → C) → (mySum A B) → C` | Eliminator/induction principle for `mySum`, case-splitting into `f` or `g` depending on the injection. `A`, `B`, `C` are auto-bound implicits (see note above). |
 
 # Namespace `chapter4_booleans`
 
@@ -19,38 +49,41 @@ Each entry includes the function name, its Lean signature, and a short descripti
 
 | Function | Signature | Description |
 |---|---|---|
-| `proj_rightEmpty` | `(A B : Type) → myNegType B → ((A ⊕ B) → A)` | Builds a projection from `A ⊕ B` to `A`, assuming `B` is impossible. |
-| `proj_leftEmpty` | `(A B : Type) → myNegType A → ((A ⊕ B) → B)` | Builds a projection from `A ⊕ B` to `B`, assuming `A` is impossible. |
-| `_3_c_ii` | `myNegType (myNegType (((P → Q) → P) → P))` | Proves double-negated Peirce-like principle constructively. |
-| `LEM` | `myNegType (myNegType (P ⊕ (myNegType P)))` | Constructive double-negated law of excluded middle for `P`. |
-| `_3_d_i` | `(P ⊕ myNegType P) → (myNegType (myNegType P) → P)` | Uses excluded-middle witness to eliminate double negation of `P`. |
-| `_3_d_ii` | `myEquiv (myNegType (myNegType (Q → P))) ((Sum P (myNegType P)) → (Q → P))` | Gives an equivalence between double-negated implication and case-based function construction. |
-| `_3_e_i` | `myNegType (myNegType (myNegType P)) → myNegType P` | Triple-negation elimination into single negation. |
-| `_3_e_ii` | `myNegType (myNegType (P → myNegType (myNegType Q))) → (P → myNegType (myNegType Q))` | Eliminates double negation at a function type into a direct function. |
-| `_3_e_iii` | `myNegType (myNegType (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))) → (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))` | Extracts a pair of double-negated components from a double-negated product. |
-| `_3_f_i` | `myEquiv (myNegType (myNegType (myProd P Q))) (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))` | Equivalence between double-negated product and product of double-negations. |
-| `_3_f_ii` | `myEquiv (myNegType (myNegType (Sum P Q))) (myNegType (myProd (myNegType P) (myNegType Q)))` | Equivalence between double-negated sum and negation of pair of negations. |
-| `_3_f_iii` | `myEquiv (myNegType (myNegType (P → Q))) ((myNegType (myNegType P)) → (myNegType (myNegType Q)))` | Equivalence relating double-negated implication and map on double-negations. |
+| `proj_rightEmpty` | `(A B : Type) → myNegType B → ((A ⊕ B) → A)` | Builds a projection from `A ⊕ B` to `A`, assuming `B` is uninhabited. |
+| `proj_leftEmpty` | `(A B : Type) → myNegType A → ((A ⊕ B) → B)` | Builds a projection from `A ⊕ B` to `B`, assuming `A` is uninhabited. |
+| `_3_c_ii` | `(P Q : Type) → myNegType (myNegType (((P → Q) → P) → P))` | Proves a double-negated Peirce-like principle constructively. |
+| `LEM` | `(P : Type) → myNegType (myNegType (P ⊕ (myNegType P)))` | Constructive double-negated law of excluded middle for `P`. |
+| `_3_d_i` | `(P : Type) → (P ⊕ myNegType P) → (myNegType (myNegType P) → P)` | Uses an excluded-middle witness to eliminate double negation of `P`. |
+| `_3_d_ii` | `(P Q : Type) → myEquiv (myNegType (myNegType (Q → P))) ((Sum P (myNegType P)) → (Q → P))` | Equivalence between double-negated implication and case-based function construction. |
+| `_3_e_i` | `(P : Type) → myNegType (myNegType (myNegType P)) → myNegType P` | Triple-negation elimination into single negation. |
+| `_3_e_ii` | `(P Q : Type) → myNegType (myNegType (P → myNegType (myNegType Q))) → (P → myNegType (myNegType Q))` | Eliminates double negation at a function type into a direct function. |
+| `_3_e_iii` | `(P Q : Type) → myNegType (myNegType (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))) → (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))` | Extracts a pair of double-negated components from a double-negated product. |
+| `_3_f_i` | `(P Q : Type) → myEquiv (myNegType (myNegType (myProd P Q))) (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))` | Equivalence between double-negated product and product of double-negations. |
+| `_3_f_ii` | `(P Q : Type) → myEquiv (myNegType (myNegType (Sum P Q))) (myNegType (myProd (myNegType P) (myNegType Q)))` | Equivalence between double-negated sum and negation of a pair of negations. |
+| `_3_f_iii` | `(P Q : Type) → myEquiv (myNegType (myNegType (P → Q))) ((myNegType (myNegType P)) → (myNegType (myNegType Q)))` | Equivalence relating double-negated implication and a map on double-negations. |
 
 # Namespace `chapter4_lists`
 
 ## Types
 
-- `myList (A : Type)`: custom list type with constructors `nil` and `cons`.
+| Name | Signature | Description |
+|---|---|---|
+| `myList.nil` | `{A : Type} → myList A` | Empty list. |
+| `myList.cons` | `{A : Type} → A → myList A → myList A` | Prepends an element to a list. |
 
 ## Function Summary
 
 | Function | Signature | Description |
 |---|---|---|
-| `list_string` | `myList Nat → String` | Serializes a `Nat` list into a concatenated string of element values. |
+| `list_string` | `(myList Nat) → String` | Serializes a `Nat` list into a concatenated string of element values (no separators). |
 | `list_length` | `{A : Type} → myList A → Nat` | Computes the length of a list. |
 | `nth_list` | `{A : Type} → myList A → Nat → Option A` | Returns the element at index `i` if present, otherwise `none`. |
-| `fold_list` | `(mu : A → (B → B)) → (b : B) → myList A → B` | Right fold over a list using step function `mu` and base `b`. |
+| `fold_list` | `{A B : Type} → (μ : A → (B → B)) → (b : B) → myList A → B` | Right fold over a list using step function `μ` and base value `b`. |
 | `map_list` | `{A B : Type} → (A → B) → (myList A → myList B)` | Applies a function to every element of a list. |
 | `sum_list` | `myList Nat → Nat` | Computes the sum of all `Nat` elements in a list. |
 | `prod_list` | `myList Nat → Nat` | Computes the product of all `Nat` elements in a list. |
-| `concat_list` | `{A : Type} → myList A → myList A → myList A` | Appends the second list onto the first parameterized prefix behavior in this definition order. |
-| `flatten_list` | `{A : Type} → myList (myList A) → myList A` | Flattens a list of lists into a single list. |
+| `concat_list` | `{A : Type} → myList A → myList A → myList A` | `concat_list l l1` appends **`l1` first, then `l`** — i.e. it returns `l1 ++ l`, not `l ++ l1`. The recursion walks `l1`, and `l` (the *first* argument) only appears once `l1` is exhausted. See *Possible Issues* below. |
+| `flatten_list` | `{A : Type} → myList (myList A) → myList A` | Flattens a list of lists — see *Possible Issues* for a note on sublist ordering. |
 | `reverse_list` | `{A : Type} → myList A → myList A` | Reverses a list recursively using `concat_list`. |
 
 ## Defined Example Values
@@ -59,7 +92,21 @@ Each entry includes the function name, its Lean signature, and a short descripti
 |---|---|---|
 | `l` | `myList Nat` | Example list: `5, 4, 3, 2, 1`. |
 | `l2` | `myList Nat` | Example list: `7, 9, 11`. |
-| `ll` | `myList (myList Nat)` | Example nested list made from `l2` and `l`. |
+| `ll` | `myList (myList Nat)` | Example nested list `[l2, l]`, i.e. `cons l2 (cons l nil)`. |
+
+## Possible Issues
+
+1. `concat_list`'s argument order is easy to misread: `concat_list l l1` evaluates to `l1 ++ l`
+   (the first argument ends up *after* the second), not `l ++ l1`. This is confirmed by its use
+   inside `reverse_list`: `concat_list (cons a nil) (reverse_list l1)` correctly computes
+   `reverse_list l1 ++ [a]`, the standard recursive definition of list reversal, only because of
+   this argument order.
+2. Because `flatten_list` is implemented as
+   `concat_list a (flatten_list ll1)` for `cons a ll1`, and `concat_list x y = y ++ x`,
+   `flatten_list` actually concatenates the *later* sublists first: `flatten_list [l2, l]`
+   reduces to `l ++ l2`, not `l2 ++ l`. So `flatten_list` reverses the order of the sublists
+   relative to what a reader would normally expect from a "flatten" function, while preserving
+   the order of elements *within* each sublist.
 
 # Namespace `chapter4_integers`
 
@@ -67,14 +114,26 @@ Each entry includes the function name, its Lean signature, and a short descripti
 
 | Function | Signature | Description |
 |---|---|---|
-| `addNaturalToZ` | `myN → myZ → myZ` | Adds a positive natural amount to an integer by repeated successor. |
-| `subtractNaturalFromZ` | `myN → myZ → myZ` | Subtracts a positive natural amount from an integer by repeated predecessor. |
-| `myAddZ` | `myZ → myZ → myZ` | Integer addition by case analysis on the second argument. |
-| `multNaturalWithZ` | `myZ → myN → myZ` | Multiplies an integer by a positive natural through repeated addition. |
-| `myMultZ` | `myZ → myZ → myZ` | Integer multiplication by reducing to natural multiplication and sign handling. |
+| `addNaturalToZ` | `(n : myN) → (z : myZ) → myZ` | Adds a positive natural amount to an integer by repeated `succZ`. |
+| `subtractNaturalFromZ` | `(n : myN) → (z : myZ) → myZ` | Subtracts a positive natural amount from an integer by repeated `predZ`. |
+| `myAddZ` | `(a b : myZ) → myZ` | Integer addition by case analysis on the second argument. |
+| `multNaturalWithZ` | `(a : myZ) → (b : myN) → myZ` | Multiplies an integer by a positive natural through repeated `myAddZ`. |
+| `myMultZ` | `(a b : myZ) → myZ` | Integer multiplication by reducing to `multNaturalWithZ` and applying sign handling via `negative`. |
+
+## Instances
+
+| Name | Signature | Description |
+|---|---|---|
+| `Add myZ` | `instance : Add myZ` | Registers `myAddZ` for the `+` operator. |
+| `Mul myZ` | `instance : Mul myZ` | Registers `myMultZ` for the `*` operator. |
 
 # Notes
 
-- The booleans section mostly develops constructive logic transformations using `myNegType` and `myEquiv` from `chapter3`.
-- The list type uses a custom inductive encoding where `cons` takes an element and then a list constructor argument.
-- Integer operations rely on predecessor and successor machinery defined in `chapter3`.
+- The booleans section develops constructive logic transformations using `myNegType` and
+  `myEquiv` from `chapter3.lean`, and several of its definitions rely on section-variable
+  auto-binding — see the callout at the top of this document.
+- The list type uses a custom inductive encoding where `cons` takes an element and then a list.
+- Integer operations rely on the predecessor/successor machinery (`predZ`, `succZ`) defined in
+  `chapter3.lean`.
+- `chapter4_coproducts` (`mySum`, `mySum_ind`) was previously undocumented; it is now covered
+  above.

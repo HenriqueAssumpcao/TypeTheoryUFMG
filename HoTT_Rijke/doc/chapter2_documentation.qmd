@@ -1,0 +1,63 @@
+---
+title: "Chapter 2 Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/chapter2.lean](../HoTTRijke/chapter2.lean), which has no
+imports and develops small function-type exercises (identity, constant, and swap functions)
+across four namespaces, using Lean's built-in `Eq` (`=`) rather than the project's own `MyEq`.
+
+# Namespace `ex_2_1`
+
+No named declarations — a single `example` demonstrating function extensionality (`funext`) on
+two dependent functions `f g : (a : A) → B a` given a proof `t` that they agree pointwise.
+
+```lean
+example : f = g := funext t
+```
+
+# Namespace `ex_2_2`
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `id` | `(A : Type) → A → A` | The identity function, explicit in its type argument `A`. |
+
+Also contains two `example`s showing `id B ∘ f = f` and `f ∘ id A = f` by `Eq.refl`, for
+`f : A → B`.
+
+# Namespace `ex_2_3`
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `const` | `(A C : Type) → (c : C) → A → C` | The constant function; returns `c` regardless of its argument. Declared as `def const (c : C) : A → C`, so `A` and `C` are not written explicitly at the definition site — they come from the ambient `variable (A B C : Type)` (`chapter2.lean:25`) and are auto-prepended, **explicitly** (matching how `variable` bound them) and in declaration order, since both are actually used in `const`'s stated type. `B` is declared in the same `variable` line but is not used by `const`, so it is *not* included. This matches the `example`s below, which apply `const` to two explicit type arguments (`const B C c`, `const A C c`). |
+
+Also contains two `example`s: `(const B C c) ∘ f = (const A C c)` and
+`f ∘ (const C A a) = (const C B (f a))`, both proved by `rfl`.
+
+# Namespace `ex_2_4`
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `swap` | `{A B : Type} → (f : A → B → Type) → B → A → Type` | Flips the argument order of a two-argument type-valued function. |
+
+Also contains an `example` showing `swap (swap f) = f` by `rfl` (swap is an involution).
+
+# Notes
+
+- This file, like `chapter1.lean`, uses Lean's built-in `=`/`Eq.refl`/`rfl`/`funext` rather than
+  the project's own `MyEq`/`≡` (introduced later in `chapter5_eq.lean`), and its `def`s (`id`,
+  `const`, `swap`) are small standalone utilities not depended on by later chapters.
+- See the `const` entry above for how Lean's section-`variable` auto-binding changes its
+  effective signature from what is written at the definition site.

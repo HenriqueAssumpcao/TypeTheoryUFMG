@@ -1,14 +1,14 @@
+/-
+   This file contains our implementation of the equality type MyEq
+   following the description in Chapter 5 in the HoTT book (Rijke).
+-/
+
+
 import HoTTRijke.chapter3
 import HoTTRijke.chapter4
 
 namespace chapter5_myeq
 universe u v w
-
-/- This file contains our implementation of the equality type MyEq
-   following the description in Chapter 5 in the HoTT book (Rijke).
-
--/
-
 
 -- We define our own identity type (e.g., for Type Theory exercises):
 
@@ -30,7 +30,6 @@ inductive MyEq {α : Type} : α → α → Type where
   in this case.
 -/
 
-#check MyEq.rec
 
 -- You can add notation
 notation:100 a " ≡ " b => MyEq a b
@@ -98,12 +97,13 @@ def ap {α : Type} {β : Type} (f : α → β) (x y : α) (p : x ≡ y) : (f x �
   exact ind_eq (α:=α) (a:=x) P (MyEq.refl (f x)) y p
 
 
+
 def left_unit  {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := (MyEq.refl a) • p
 def right_unit {α : Type} {a b : α} (p : a ≡ b) : (a ≡ b) := p • MyEq.refl b
 
 -- Exercise 5.1
 
-def sym_contat_distributive {α : Type} {x y z : α} (p1 : x ≡ y ) (p2 : y ≡ z ) :
+def sym_coctat_distributive {α : Type} {x y z : α} (p1 : x ≡ y ) (p2 : y ≡ z ) :
       myEq_symm (p1 • p2) ≡ (myEq_symm p2) • (myEq_symm p1) := by
         cases p1
         cases p2
@@ -168,42 +168,46 @@ def lift_β (α : Type) (β : (a : α) → Type) (a x : α) (b : β a) (p : a �
     MyEq.refl b
   exact  ap (fun c => (⟨a, c⟩ : Σ a, β a)) (transport β (MyEq.refl a) b) b q
 
--- Exercise 5.4
+-- Exercise 5.4: Mac Lane's pentagon
 
-def maclane_pentagon {α : Type} (a b c d e : α) (p : a ≡ b) (q : b ≡ c) (r : c ≡ d) (s : d ≡ e) : Type := by
-  have α₁ : (((p • q) • r) • s) ≡ ((p • (q • r)) • s) := by
-    have h := myEq_symm (concat_assoc p q r)
-    let rs (p' : a ≡ d) : a ≡ e := concat_eq p' s
-    have h' := ap rs ((p • q) • r) (p • (q • r)) h
-    exact h'
+section MacLanePentagon
+variable {α : Type} {a b c d e : α} (p : a ≡ b) (q : b ≡ c) (r : c ≡ d) (s : d ≡ e)
 
-  have α₂ : ((p • (q • r)) • s) ≡ (p • (q • r) • s) := by
-    have h := myEq_symm (concat_assoc p (q • r) s)
-    exact h
+def pentagon_α1 : (((p • q) • r) • s) ≡ ((p • (q • r)) • s) := by
+  let rs (p' : a ≡ d) : a ≡ e := concat_eq p' s
+  exact ap rs ((p • q) • r) (p • (q • r)) (myEq_symm (concat_assoc p q r))
 
-  have α₃ : (p • ((q • r) • s)) ≡ (p • (q • (r • s))) := by
-    have h := myEq_symm (concat_assoc q r s)
-    let rs (p' : b ≡ e) : a ≡ e := concat_eq p p'
-    have h' := ap rs ((q • r) • s) (q • (r • s)) h
-    exact h'
+def pentagon_α2 : ((p • (q • r)) • s) ≡ (p • (q • r) • s) :=
+  myEq_symm (concat_assoc p (q • r) s)
 
-  have α₄ : (((p • q) • r) • s) ≡ ((p • q) • (r • s)) := by
-    have h := myEq_symm (concat_assoc (p • q) r s)
-    exact h
+def pentagon_α3 : (p • ((q • r) • s)) ≡ (p • (q • (r • s))) := by
+  let lp (p' : b ≡ e) : a ≡ e := concat_eq p p'
+  exact ap lp ((q • r) • s) (q • (r • s)) (myEq_symm (concat_assoc q r s))
 
-  have α₅ : ((p • q) • (r • s)) ≡ (p • (q • (r • s))) := by
-    have h := myEq_symm (concat_assoc p q (r • s))
-    exact h
+def pentagon_α4 : (((p • q) • r) • s) ≡ ((p • q) • (r • s)) :=
+  myEq_symm (concat_assoc (p • q) r s)
 
-  have t : ((α₁ • α₂) • α₃) ≡ (α₄ • α₅) := by
-    induction s
-    induction r
-    induction q
-    induction p
-    cases ((α₁ • α₂) • α₃)
-    cases α₄ • α₅
-    exact MyEq.refl (MyEq.refl (((MyEq.refl a • MyEq.refl a) • MyEq.refl a) • MyEq.refl a))
+def pentagon_α5 : ((p • q) • (r • s)) ≡ (p • (q • (r • s))) :=
+  myEq_symm (concat_assoc p q (r • s))
 
-  exact α
+/-- The pentagon-coherence statement: the two composite reassociations of
+    `((p • q) • r) • s` down to `p • (q • (r • s))` agree. -/
+def maclane_pentagon : Type :=
+  ((pentagon_α1 p q r s • pentagon_α2 p q r s) • pentagon_α3 p q r s)
+    ≡ (pentagon_α4 p q r s • pentagon_α5 p q r s)
+
+
+/-- Exercise 5.4: the pentagon coherence statement is provable. -/
+theorem maclane_pentagon_proof : maclane_pentagon p q r s := by
+  sorry
+  induction s
+  induction r
+  induction q
+  induction p
+  cases ((pentagon_α1 p q r s • pentagon_α2 p q r s) • pentagon_α3 p q r s)
+  cases (pentagon_α4 p q r s • pentagon_α5 p q r s)
+  exact MyEq.refl (MyEq.refl (((MyEq.refl a • MyEq.refl a) • MyEq.refl a) • MyEq.refl a))
+
+end MacLanePentagon
 
 end chapter5_myeq

@@ -1,0 +1,39 @@
+---
+title: "Chapter 1 Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/chapter1.lean](../HoTTRijke/chapter1.lean). The file has no
+imports and contains only two short anonymous `example` blocks — there are no named `def` or
+`theorem` declarations here, so there is nothing to list in a function table.
+
+# Namespace `ex_1_1`
+
+Demonstrates `cast`: given `A A' : Type`, `a : A`, and a proof `t : A = A'`, `cast t a : A'`
+transports the term `a` across the type equality `t`.
+
+```lean
+example : A' := cast t a
+```
+
+# Namespace `ex_1_2`
+
+Demonstrates `congrArg`: given `t : A = A'` and `s : a = b` (with `a b : A`), it shows
+`cast t a = cast t b` by applying `congrArg (fun x => cast t x) s`.
+
+```lean
+example : (cast t a = cast t b) := congrArg (fun x => cast t x) s
+```
+
+# Notes
+
+- This is the shortest file in the project (15 lines) and appears to be a warm-up/scratch file
+  for exploring `cast` and `congrArg` before the project's own `MyEq`-based development begins in
+  `chapter5_eq.lean`. It uses Lean's built-in `Eq` (`=`), not the project's custom `MyEq` (`≡`).
+- No functions are exported from this file for later chapters to depend on.

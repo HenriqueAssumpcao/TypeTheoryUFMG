@@ -1,0 +1,142 @@
+---
+title: "Chapter 6 Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/chapter6.lean](../HoTTRijke/chapter6.lean), namespace
+`chapter6_Universes`. It imports `Inductive_Int.lean`, `chapter5_eq.lean`, `chapter3.lean`, and
+`chapter4.lean`, and works with `Inductive_Int.lean`'s standalone `N` type (**not** `chapter3.lean`'s
+`myN`, nor `chapter3_naturals_with_zero.lean`'s `myN`) — see that file's documentation. The
+chapter develops observational (Brouwer/Coquand-style) equality on `N`, decidable equality on
+`myBool`, and the order relations `leq`/`less_than` on `N`, ending with a natural-number `dist`
+and its properties.
+
+The file's header comment describes it as covering "natural/integer arithmetic for zero-based
+naturals using observational equality" — note that this refers informally to `Inductive_Int.lean`'s
+`N` (whose base constructor is indeed zero), not to `chapter3_naturals_with_zero.lean`'s `myN`;
+the two are separate types, as detailed above.
+
+::: {.callout-note}
+**Conventions used below.**
+
+- Several definitions in the "Injectivity, Cancellation, and Zero-Divisor Exercises" section use
+  lowercase identifiers (`m`, `n`, `k`) that are **not** declared as explicit parameters and have
+  no `variable` command binding them. Lean's `autoImplicit` mechanism auto-generalizes these as
+  implicit arguments of type `N`. The signatures below make these implicit arguments explicit
+  (as `{m n : N}` etc.) so they reflect what Lean actually elaborates.
+- `Eq_N` (`chapter6.lean:25-28`) is defined **once**. A second-looking definition
+  immediately below it (`chapter6.lean:32-38`) is inside a `/- ... -/` block comment (an
+  alternative formulation the author chose not to use) and is not live code — it does not
+  actually redefine `Eq_N`.
+:::
+
+# Observational Equality on `N`
+
+| Function | Signature | Description |
+|---|---|---|
+| `E0` | `(n : N) → Type` | The proposition "`0 = n`", encoded observationally: `Unit` if `n = N.zero`, `Empty` otherwise. |
+| `ES` | `(n : N) → (X : N → Type) → (m : N) → Type` | The proposition "`S(n) = m`" relative to a family `X` standing in for "`n = ·`": `Empty` if `m = N.zero`, `X m'` if `m = N.succ m'`. |
+| `Eq_N` | `(n m : N) → Type` | Observational equality on `N`, defined by recursion on `n` via `E0`/`ES`. This is the `Type`-valued analogue of `MyEq`/`≡` specialized to `N`, used to get a computationally well-behaved case analysis on equality proofs. |
+| `refl_Eq_N` | `(n : N) → Eq_N n n` | Reflexivity of `Eq_N` (Lemma 6.3.2). |
+| `Equality_Equiv` | `(m n : N) → (p : m ≡ n) → Eq_N m n` | Converts a `MyEq` proof into an `Eq_N` proof, via `ind_eq` (Proposition 6.3.3, forward direction). |
+| `Equality_Equiv_conv` | `{m n : N} → (p : Eq_N m n) → m ≡ n` | Converts an `Eq_N` proof back into a `MyEq` proof (Proposition 6.3.3, converse direction); `m`, `n` are auto-bound implicits. |
+| `P7` | `(m n : N) → (p : m ≡ n) → m.succ ≡ n.succ` | Peano's seventh axiom, forward direction: equality is preserved by `succ` (Theorem 6.4.1). |
+| `P7_conv` | `(m n : N) → (p : m.succ ≡ n.succ) → m ≡ n` | Peano's seventh axiom, converse direction: `succ` is injective. |
+| `P8` | `(n : N) → (p : N.zero ≡ n.succ) → Empty` | Peano's eighth axiom: zero is not a successor (Theorem 6.4.2). |
+
+# Injectivity, Cancellation, and Zero-Divisor Exercises (Exercise 6.1)
+
+| Function | Signature | Description |
+|---|---|---|
+| `add_natural_to_equals` | `{m n : N} → (k : N) → (p : m ≡ n) → (myAdd m k) ≡ (myAdd n k)` | Adding the same value to both sides of an equality preserves it. |
+| `add_nat_injective` | `{m n k : N} → (p : (myAdd m k) ≡ (myAdd n k)) → m ≡ n` | Addition is right-cancellative (converse of `add_natural_to_equals`). |
+| `mult_succ_injective` | `{m n k : N} → (p : (m × (N.succ k)) ≡ (n × (N.succ k))) → m ≡ n` | Multiplication by a nonzero value (`N.succ k`) is cancellative. |
+| `sum_equals_zero` | `{m n : N} → (p : (myAdd m n) ≡ N.zero) → myProd (m ≡ N.zero) (n ≡ N.zero)` | `m + n = 0` implies both `m = 0` and `n = 0`. |
+| `mult_equals_zero` | `{m n : N} → (p : (m × n) ≡ N.zero) → mySum (m ≡ N.zero) (n ≡ N.zero)` | `m × n = 0` implies `m = 0` or `n = 0` (zero-divisor freeness). |
+| `mult_by_zero` | `{m n : N} → (x : mySum (m ≡ N.zero) (n ≡ N.zero)) → (m × n) ≡ N.zero` | Converse of `mult_equals_zero`: if either factor is zero, the product is zero. |
+| `mult_one_by_one` | `{m n : N} → (p : myProd (m ≡ N.zero.succ) (n ≡ N.zero.succ)) → (m × n) ≡ N.zero.succ` | If both factors are 1, the product is 1. |
+| `mult_equals_one` | `{m n : N} → (p : (m × n) ≡ N.zero.succ) → myProd (m ≡ N.zero.succ) (n ≡ N.zero.succ)` | Converse of `mult_one_by_one`: `m × n = 1` implies both factors are 1. |
+| `add_dont_fix` | `{m n : N} → (p : m ≡ myAdd m (N.succ n)) → Empty` | No natural is a fixed point of "add a successor" — `m ≠ m + (n+1)`. |
+| `mult_dont_fix` | `{m n : N} → (p : (N.succ m) ≡ (N.succ m) × (N.succ (N.succ n))) → Empty` | `m + 1 ≠ (m+1)·(n+2)`. |
+
+Two anonymous `example`s appear alongside these (`chapter6.lean:104`, `chapter6.lean:135`) — they
+are not named declarations.
+
+# Boolean Equality (Exercise 6.2)
+
+| Function | Signature | Description |
+|---|---|---|
+| `Eq_bool` | `(b1 b2 : myBool) → Type` | Observational equality on `myBool`: `Unit` if `b1` and `b2` agree, `Empty` otherwise. |
+| `Eq_bool_refl` | `(b : myBool) → Eq_bool b b` | Reflexivity of `Eq_bool`. |
+| `Eq_bool_equiv` | `(b1 b2 : myBool) → (p : Eq_bool b1 b2) → (b1 ≡ b2)` | Converts `Eq_bool` to `MyEq`. |
+| `Eq_bool_equiv_conv` | `(b1 b2 : myBool) → (p : b1 ≡ b2) → Eq_bool b1 b2` | Converts `MyEq` to `Eq_bool`, via `ind_eq`. |
+| `neg_injective` | `(b : myBool) → (p : Eq_bool b (myNeg b)) → Empty` | No boolean equals its own negation. |
+
+# The Order Relation `≤` (Exercise 6.3)
+
+| Function | Signature | Description |
+|---|---|---|
+| `leq` | `(m n : N) → Type` | `m ≤ n`, defined recursively (`Unit` when `m = 0`, structural recursion otherwise). |
+| `leq_refl` | `(n : N) → leq n n` | Reflexivity. |
+| `leq_antisymm` | `(m n : N) → (p : leq m n) → (q : leq n m) → m ≡ n` | Antisymmetry. |
+| `leq_trans` | `(m n k : N) → (p : leq m n) → (q : leq n k) → leq m k` | Transitivity. |
+| `leq_total` | `(m n : N) → mySum (leq m n) (leq n m)` | Totality: any two naturals are comparable. |
+| `add_leq` | `(m n k : N) → (p : leq m n) → leq (myAdd m k) (myAdd n k)` | Addition preserves `≤`. |
+| `add_leq_conv` | `(m n k : N) → (p : leq (myAdd m k) (myAdd n k)) → leq m n` | Addition is cancellative for `≤`. |
+| `leq_equals` | `(m n : N) → (p : m ≡ n) → leq m n` | Equality implies `≤`. |
+| `mult_succ_leq` | `(m n k : N) → (p : leq m n) → leq (m × k) (n × k)` | `≤` is preserved by multiplying both sides by the same value. |
+| `mult_succ_leq_conv` | `(m n k : N) → (p : leq (m × k.succ) (n × k.succ)) → leq m n` | Multiplication by a nonzero value (`k.succ`) is cancellative for `≤`. |
+| `leq_min` | `(k m n : N) → (p : leq k (N_min m n)) → myProd (leq k m) (leq k n)` | `k ≤ min(m,n)` implies `k ≤ m` and `k ≤ n`. |
+| `leq_min_conv` | `(k m n : N) → (p : myProd (leq k m) (leq k n)) → leq k (N_min m n)` | Converse of `leq_min`. |
+| `leq_zero` | `(n : N) → (p : leq n N.zero) → n ≡ N.zero` | Only zero is `≤` zero. |
+| `max_equals_zero` | `(m n : N) → (p : (N_max m n) ≡ N.zero) → myProd (m ≡ N.zero) (n ≡ N.zero)` | `max(m,n) = 0` implies both are zero. |
+| `leq_max` | `(k m n : N) → (p : leq (N_max m n) k) → myProd (leq m k) (leq n k)` | `max(m,n) ≤ k` implies `m ≤ k` and `n ≤ k`. |
+| `leq_max_conv` | `(k m n : N) → (p : myProd (leq m k) (leq n k)) → leq (N_max m n) k` | Converse of `leq_max`. |
+
+# The Strict Order `<` (Exercise 6.4)
+
+| Function | Signature | Description |
+|---|---|---|
+| `less_than` | `(m n : N) → Type` | `m < n`, defined recursively. |
+| `less_than_antiref` | `(n : N) → (p : less_than n n) → Empty` | Irreflexivity. |
+| `less_than_nonsymm` | `(m n : N) → (p : less_than m n) → (q : less_than n m) → Empty` | Asymmetry. |
+| `less_than_trans` | `(m n k : N) → (p : less_than m n) → (q : less_than n k) → less_than m k` | Transitivity. |
+| `less_than_succ` | `(n : N) → less_than n n.succ` | Every natural is less than its successor. |
+| `less_than_sum_succ` | `(m n : N) → (p : less_than m n) → less_than m n.succ` | `<` is preserved by taking a successor on the right. |
+| `less_than_leq` | `(m n : N) → (p : less_than m n) → leq m n` | `<` implies `≤`. |
+| `less_than_leq_conv` | `(m n : N) → (p : leq m.succ n) → less_than m n` | `m+1 ≤ n` implies `m < n`. |
+| `less_than_leq_law` | `(m n : N) → (p : less_than m n) → myProd (leq m n) ((m ≡ n) → Empty)` | `m < n` iff `m ≤ n` and `m ≠ n` (forward direction). |
+| `less_than_leq_law_conv` | `(m n : N) → (p : myProd (leq m n) ((m ≡ n) → Empty)) → less_than m n` | Converse direction of `less_than_leq_law`. |
+
+# Distance (Exercise 6.5)
+
+| Function | Signature | Description |
+|---|---|---|
+| `dist` | `(m n : N) → N` | Absolute difference on `N`. |
+| `dist_equals` | `(m n : N) → (p : m ≡ n) → (dist m n) ≡ N.zero` | Equal values have zero distance. |
+| `dist_equals_conv` | `(m n : N) → (p : (dist m n) ≡ N.zero) → m ≡ n` | Converse: zero distance implies equal values. |
+| `dist_commutative` | `(m n : N) → (dist m n) ≡ (dist n m)` | Symmetry of `dist`. |
+| `dist_triangle_inequality` | `(m n k : N) → leq (dist m n) (myAdd (dist m k) (dist k n))` | **Incomplete (`sorry`).** The triangle inequality for `dist`. |
+
+## Possible Issues
+
+1. `dist_triangle_inequality` is a `sorry` — the only incomplete proof in this file.
+2. This file's own `N`, `leq`, `less_than`, and `dist` are distinct from — and not interchangeable
+   with — the similarly-named or similarly-purposed constructs elsewhere in the project
+   (`chapter3_naturals_with_zero.lean`'s `Less_than` on its own `myN`, and `chapter5_props_naturals_with_zero.lean`'s
+   `dist`). They happen to share a name but operate on different underlying natural-number types.
+
+# Notes
+
+- `chapter6.lean` is not imported by `HoTTRijke.lean`'s aggregator directly, but is pulled in
+  transitively through `chapter7.lean`, which does import it and is itself imported by the root
+  file.
+- The file relies on `Inductive_Int.lean`'s `N`, `myAdd`, `myMult`/`×`, `N_min`, `N_max` — see
+  that file's documentation — rather than either of the two `myN` developments used elsewhere
+  in the project.

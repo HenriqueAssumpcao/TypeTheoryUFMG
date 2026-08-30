@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Chapter 4 Function Summary</title>
+<title>Chapter 6 Function Summary</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,17 +26,17 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="chapter4_documentation_files/libs/clipboard/clipboard.min.js"></script>
-<script src="chapter4_documentation_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="chapter4_documentation_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="chapter4_documentation_files/libs/quarto-html/popper.min.js"></script>
-<script src="chapter4_documentation_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="chapter4_documentation_files/libs/quarto-html/anchor.min.js"></script>
-<link href="chapter4_documentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="chapter4_documentation_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="chapter4_documentation_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="chapter4_documentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="chapter4_documentation_files/libs/bootstrap/bootstrap-2059b0d4022dda55b6094bf281f8a650.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="chapter6_documentation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chapter6_documentation_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="chapter6_documentation_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="chapter6_documentation_files/libs/quarto-html/popper.min.js"></script>
+<script src="chapter6_documentation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="chapter6_documentation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="chapter6_documentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chapter6_documentation_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="chapter6_documentation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="chapter6_documentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="chapter6_documentation_files/libs/bootstrap/bootstrap-2059b0d4022dda55b6094bf281f8a650.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -50,28 +50,16 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
-  <li><a href="#namespace-chapter4_coproducts" id="toc-namespace-chapter4_coproducts" class="nav-link" data-scroll-target="#namespace-chapter4_coproducts"><span class="header-section-number">2</span> Namespace <code>chapter4_coproducts</code></a>
+  <li><a href="#observational-equality-on-n" id="toc-observational-equality-on-n" class="nav-link" data-scroll-target="#observational-equality-on-n"><span class="header-section-number">2</span> Observational Equality on <code>N</code></a></li>
+  <li><a href="#injectivity-cancellation-and-zero-divisor-exercises-exercise-6.1" id="toc-injectivity-cancellation-and-zero-divisor-exercises-exercise-6.1" class="nav-link" data-scroll-target="#injectivity-cancellation-and-zero-divisor-exercises-exercise-6.1"><span class="header-section-number">3</span> Injectivity, Cancellation, and Zero-Divisor Exercises (Exercise 6.1)</a></li>
+  <li><a href="#boolean-equality-exercise-6.2" id="toc-boolean-equality-exercise-6.2" class="nav-link" data-scroll-target="#boolean-equality-exercise-6.2"><span class="header-section-number">4</span> Boolean Equality (Exercise 6.2)</a></li>
+  <li><a href="#the-order-relation-exercise-6.3" id="toc-the-order-relation-exercise-6.3" class="nav-link" data-scroll-target="#the-order-relation-exercise-6.3"><span class="header-section-number">5</span> The Order Relation <code>≤</code> (Exercise 6.3)</a></li>
+  <li><a href="#the-strict-order-exercise-6.4" id="toc-the-strict-order-exercise-6.4" class="nav-link" data-scroll-target="#the-strict-order-exercise-6.4"><span class="header-section-number">6</span> The Strict Order <code>&lt;</code> (Exercise 6.4)</a></li>
+  <li><a href="#distance-exercise-6.5" id="toc-distance-exercise-6.5" class="nav-link" data-scroll-target="#distance-exercise-6.5"><span class="header-section-number">7</span> Distance (Exercise 6.5)</a>
   <ul class="collapse">
-  <li><a href="#types" id="toc-types" class="nav-link" data-scroll-target="#types"><span class="header-section-number">2.1</span> Types</a></li>
-  <li><a href="#function-summary" id="toc-function-summary" class="nav-link" data-scroll-target="#function-summary"><span class="header-section-number">2.2</span> Function Summary</a></li>
+  <li><a href="#possible-issues" id="toc-possible-issues" class="nav-link" data-scroll-target="#possible-issues"><span class="header-section-number">7.1</span> Possible Issues</a></li>
   </ul></li>
-  <li><a href="#namespace-chapter4_booleans" id="toc-namespace-chapter4_booleans" class="nav-link" data-scroll-target="#namespace-chapter4_booleans"><span class="header-section-number">3</span> Namespace <code>chapter4_booleans</code></a>
-  <ul class="collapse">
-  <li><a href="#function-summary-1" id="toc-function-summary-1" class="nav-link" data-scroll-target="#function-summary-1"><span class="header-section-number">3.1</span> Function Summary</a></li>
-  </ul></li>
-  <li><a href="#namespace-chapter4_lists" id="toc-namespace-chapter4_lists" class="nav-link" data-scroll-target="#namespace-chapter4_lists"><span class="header-section-number">4</span> Namespace <code>chapter4_lists</code></a>
-  <ul class="collapse">
-  <li><a href="#types-1" id="toc-types-1" class="nav-link" data-scroll-target="#types-1"><span class="header-section-number">4.1</span> Types</a></li>
-  <li><a href="#function-summary-2" id="toc-function-summary-2" class="nav-link" data-scroll-target="#function-summary-2"><span class="header-section-number">4.2</span> Function Summary</a></li>
-  <li><a href="#defined-example-values" id="toc-defined-example-values" class="nav-link" data-scroll-target="#defined-example-values"><span class="header-section-number">4.3</span> Defined Example Values</a></li>
-  <li><a href="#possible-issues" id="toc-possible-issues" class="nav-link" data-scroll-target="#possible-issues"><span class="header-section-number">4.4</span> Possible Issues</a></li>
-  </ul></li>
-  <li><a href="#namespace-chapter4_integers" id="toc-namespace-chapter4_integers" class="nav-link" data-scroll-target="#namespace-chapter4_integers"><span class="header-section-number">5</span> Namespace <code>chapter4_integers</code></a>
-  <ul class="collapse">
-  <li><a href="#function-summary-3" id="toc-function-summary-3" class="nav-link" data-scroll-target="#function-summary-3"><span class="header-section-number">5.1</span> Function Summary</a></li>
-  <li><a href="#instances" id="toc-instances" class="nav-link" data-scroll-target="#instances"><span class="header-section-number">5.2</span> Instances</a></li>
-  </ul></li>
-  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes"><span class="header-section-number">6</span> Notes</a></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes"><span class="header-section-number">8</span> Notes</a></li>
   </ul>
 </nav>
 </div>
@@ -79,7 +67,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Chapter 4 Function Summary</h1>
+<h1 class="title">Chapter 6 Function Summary</h1>
 </div>
 
 
@@ -98,8 +86,8 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="overview" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
-<p>This document summarizes the functions defined in <a href="../HoTTRijke/chapter4.lean">HoTTRijke/chapter4.lean</a>. Each entry includes the function name, its Lean signature, and a short description.</p>
-<p>The file imports <code>HoTTRijke.chapter3</code> and is organized into four namespaces: <code>chapter4_coproducts</code>, <code>chapter4_booleans</code>, <code>chapter4_lists</code>, and <code>chapter4_integers</code>.</p>
+<p>This document summarizes <a href="../HoTTRijke/chapter6.lean">HoTTRijke/chapter6.lean</a>, namespace <code>chapter6_Universes</code>. It imports <code>Inductive_Int.lean</code>, <code>chapter5_eq.lean</code>, <code>chapter3.lean</code>, and <code>chapter4.lean</code>, and works with <code>Inductive_Int.lean</code>’s standalone <code>N</code> type (<strong>not</strong> <code>chapter3.lean</code>’s <code>myN</code>, nor <code>chapter3_naturals_with_zero.lean</code>’s <code>myN</code>) — see that file’s documentation. The chapter develops observational (Brouwer/Coquand-style) equality on <code>N</code>, decidable equality on <code>myBool</code>, and the order relations <code>leq</code>/<code>less_than</code> on <code>N</code>, ending with a natural-number <code>dist</code> and its properties.</p>
+<p>The file’s header comment describes it as covering “natural/integer arithmetic for zero-based naturals using observational equality” — note that this refers informally to <code>Inductive_Int.lean</code>’s <code>N</code> (whose base constructor is indeed zero), not to <code>chapter3_naturals_with_zero.lean</code>’s <code>myN</code>; the two are separate types, as detailed above.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -110,44 +98,16 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>A note on implicit/section-variable arguments.</strong> The exercises <code>_3_c_ii</code> through <code>_3_f_iii</code> in <code>chapter4_booleans</code> do not declare their own <code>P</code>/<code>Q</code> arguments. They pick them up from the <code>variable (P Q : Type)</code> declaration in scope (<code>chapter4.lean:18</code>): Lean auto-prepends any section variable actually used in a definition’s type as an <strong>explicit</strong> leading argument. This is confirmed by the source itself — e.g.&nbsp;<code>_3_d_ii</code> and <code>_3_f_i</code> call <code>LEM P ...</code> and <code>LEM Q ...</code> directly, which only type-checks if <code>LEM</code> takes <code>P</code> as an explicit argument. The signatures below include these leading arguments.</p>
-<p>Separately, <code>mySum_ind</code> in <code>chapter4_coproducts</code> uses <code>A</code>, <code>B</code>, <code>C</code> without declaring or importing them at all; Lean’s <code>autoImplicit</code> mechanism auto-generalizes these as implicit type arguments.</p>
+<p><strong>Conventions used below.</strong></p>
+<ul>
+<li>Several definitions in the “Injectivity, Cancellation, and Zero-Divisor Exercises” section use lowercase identifiers (<code>m</code>, <code>n</code>, <code>k</code>) that are <strong>not</strong> declared as explicit parameters and have no <code>variable</code> command binding them. Lean’s <code>autoImplicit</code> mechanism auto-generalizes these as implicit arguments of type <code>N</code>. The signatures below make these implicit arguments explicit (as <code>{m n : N}</code> etc.) so they reflect what Lean actually elaborates.</li>
+<li><code>Eq_N</code> (<code>chapter6.lean:25-28</code>) is defined <strong>once</strong>. A second-looking definition immediately below it (<code>chapter6.lean:32-38</code>) is inside a <code>/- ... -/</code> block comment (an alternative formulation the author chose not to use) and is not live code — it does not actually redefine <code>Eq_N</code>.</li>
+</ul>
 </div>
 </div>
 </section>
-<section id="namespace-chapter4_coproducts" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Namespace <code>chapter4_coproducts</code></h1>
-<section id="types" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="types"><span class="header-section-number">2.1</span> Types</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Signature</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>mySum.inl</code></td>
-<td><code>{A B : Type} → A → mySum A B</code></td>
-<td>Left injection into the custom coproduct type.</td>
-</tr>
-<tr class="even">
-<td><code>mySum.inr</code></td>
-<td><code>{A B : Type} → B → mySum A B</code></td>
-<td>Right injection into the custom coproduct type.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="function-summary" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="function-summary"><span class="header-section-number">2.2</span> Function Summary</h2>
+<section id="observational-equality-on-n" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Observational Equality on <code>N</code></h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -163,18 +123,55 @@ Note
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>mySum_ind</code></td>
-<td><code>{A B C : Type} → (f : A → C) → (g : B → C) → (mySum A B) → C</code></td>
-<td>Eliminator/induction principle for <code>mySum</code>, case-splitting into <code>f</code> or <code>g</code> depending on the injection. <code>A</code>, <code>B</code>, <code>C</code> are auto-bound implicits (see note above).</td>
+<td><code>E0</code></td>
+<td><code>(n : N) → Type</code></td>
+<td>The proposition “<code>0 = n</code>”, encoded observationally: <code>Unit</code> if <code>n = N.zero</code>, <code>Empty</code> otherwise.</td>
+</tr>
+<tr class="even">
+<td><code>ES</code></td>
+<td><code>(n : N) → (X : N → Type) → (m : N) → Type</code></td>
+<td>The proposition “<code>S(n) = m</code>” relative to a family <code>X</code> standing in for “<code>n = ·</code>”: <code>Empty</code> if <code>m = N.zero</code>, <code>X m'</code> if <code>m = N.succ m'</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>Eq_N</code></td>
+<td><code>(n m : N) → Type</code></td>
+<td>Observational equality on <code>N</code>, defined by recursion on <code>n</code> via <code>E0</code>/<code>ES</code>. This is the <code>Type</code>-valued analogue of <code>MyEq</code>/<code>≡</code> specialized to <code>N</code>, used to get a computationally well-behaved case analysis on equality proofs.</td>
+</tr>
+<tr class="even">
+<td><code>refl_Eq_N</code></td>
+<td><code>(n : N) → Eq_N n n</code></td>
+<td>Reflexivity of <code>Eq_N</code> (Lemma 6.3.2).</td>
+</tr>
+<tr class="odd">
+<td><code>Equality_Equiv</code></td>
+<td><code>(m n : N) → (p : m ≡ n) → Eq_N m n</code></td>
+<td>Converts a <code>MyEq</code> proof into an <code>Eq_N</code> proof, via <code>ind_eq</code> (Proposition 6.3.3, forward direction).</td>
+</tr>
+<tr class="even">
+<td><code>Equality_Equiv_conv</code></td>
+<td><code>{m n : N} → (p : Eq_N m n) → m ≡ n</code></td>
+<td>Converts an <code>Eq_N</code> proof back into a <code>MyEq</code> proof (Proposition 6.3.3, converse direction); <code>m</code>, <code>n</code> are auto-bound implicits.</td>
+</tr>
+<tr class="odd">
+<td><code>P7</code></td>
+<td><code>(m n : N) → (p : m ≡ n) → m.succ ≡ n.succ</code></td>
+<td>Peano’s seventh axiom, forward direction: equality is preserved by <code>succ</code> (Theorem 6.4.1).</td>
+</tr>
+<tr class="even">
+<td><code>P7_conv</code></td>
+<td><code>(m n : N) → (p : m.succ ≡ n.succ) → m ≡ n</code></td>
+<td>Peano’s seventh axiom, converse direction: <code>succ</code> is injective.</td>
+</tr>
+<tr class="odd">
+<td><code>P8</code></td>
+<td><code>(n : N) → (p : N.zero ≡ n.succ) → Empty</code></td>
+<td>Peano’s eighth axiom: zero is not a successor (Theorem 6.4.2).</td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="namespace-chapter4_booleans" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Namespace <code>chapter4_booleans</code></h1>
-<section id="function-summary-1" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="function-summary-1"><span class="header-section-number">3.1</span> Function Summary</h2>
+<section id="injectivity-cancellation-and-zero-divisor-exercises-exercise-6.1" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Injectivity, Cancellation, and Zero-Divisor Exercises (Exercise 6.1)</h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -190,102 +187,61 @@ Note
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>proj_rightEmpty</code></td>
-<td><code>(A B : Type) → myNegType B → ((A ⊕ B) → A)</code></td>
-<td>Builds a projection from <code>A ⊕ B</code> to <code>A</code>, assuming <code>B</code> is uninhabited.</td>
+<td><code>add_natural_to_equals</code></td>
+<td><code>{m n : N} → (k : N) → (p : m ≡ n) → (myAdd m k) ≡ (myAdd n k)</code></td>
+<td>Adding the same value to both sides of an equality preserves it.</td>
 </tr>
 <tr class="even">
-<td><code>proj_leftEmpty</code></td>
-<td><code>(A B : Type) → myNegType A → ((A ⊕ B) → B)</code></td>
-<td>Builds a projection from <code>A ⊕ B</code> to <code>B</code>, assuming <code>A</code> is uninhabited.</td>
+<td><code>add_nat_injective</code></td>
+<td><code>{m n k : N} → (p : (myAdd m k) ≡ (myAdd n k)) → m ≡ n</code></td>
+<td>Addition is right-cancellative (converse of <code>add_natural_to_equals</code>).</td>
 </tr>
 <tr class="odd">
-<td><code>_3_c_ii</code></td>
-<td><code>(P Q : Type) → myNegType (myNegType (((P → Q) → P) → P))</code></td>
-<td>Proves a double-negated Peirce-like principle constructively.</td>
+<td><code>mult_succ_injective</code></td>
+<td><code>{m n k : N} → (p : (m × (N.succ k)) ≡ (n × (N.succ k))) → m ≡ n</code></td>
+<td>Multiplication by a nonzero value (<code>N.succ k</code>) is cancellative.</td>
 </tr>
 <tr class="even">
-<td><code>LEM</code></td>
-<td><code>(P : Type) → myNegType (myNegType (P ⊕ (myNegType P)))</code></td>
-<td>Constructive double-negated law of excluded middle for <code>P</code>.</td>
+<td><code>sum_equals_zero</code></td>
+<td><code>{m n : N} → (p : (myAdd m n) ≡ N.zero) → myProd (m ≡ N.zero) (n ≡ N.zero)</code></td>
+<td><code>m + n = 0</code> implies both <code>m = 0</code> and <code>n = 0</code>.</td>
 </tr>
 <tr class="odd">
-<td><code>_3_d_i</code></td>
-<td><code>(P : Type) → (P ⊕ myNegType P) → (myNegType (myNegType P) → P)</code></td>
-<td>Uses an excluded-middle witness to eliminate double negation of <code>P</code>.</td>
+<td><code>mult_equals_zero</code></td>
+<td><code>{m n : N} → (p : (m × n) ≡ N.zero) → mySum (m ≡ N.zero) (n ≡ N.zero)</code></td>
+<td><code>m × n = 0</code> implies <code>m = 0</code> or <code>n = 0</code> (zero-divisor freeness).</td>
 </tr>
 <tr class="even">
-<td><code>_3_d_ii</code></td>
-<td><code>(P Q : Type) → myEquiv (myNegType (myNegType (Q → P))) ((Sum P (myNegType P)) → (Q → P))</code></td>
-<td>Equivalence between double-negated implication and case-based function construction.</td>
+<td><code>mult_by_zero</code></td>
+<td><code>{m n : N} → (x : mySum (m ≡ N.zero) (n ≡ N.zero)) → (m × n) ≡ N.zero</code></td>
+<td>Converse of <code>mult_equals_zero</code>: if either factor is zero, the product is zero.</td>
 </tr>
 <tr class="odd">
-<td><code>_3_e_i</code></td>
-<td><code>(P : Type) → myNegType (myNegType (myNegType P)) → myNegType P</code></td>
-<td>Triple-negation elimination into single negation.</td>
+<td><code>mult_one_by_one</code></td>
+<td><code>{m n : N} → (p : myProd (m ≡ N.zero.succ) (n ≡ N.zero.succ)) → (m × n) ≡ N.zero.succ</code></td>
+<td>If both factors are 1, the product is 1.</td>
 </tr>
 <tr class="even">
-<td><code>_3_e_ii</code></td>
-<td><code>(P Q : Type) → myNegType (myNegType (P → myNegType (myNegType Q))) → (P → myNegType (myNegType Q))</code></td>
-<td>Eliminates double negation at a function type into a direct function.</td>
+<td><code>mult_equals_one</code></td>
+<td><code>{m n : N} → (p : (m × n) ≡ N.zero.succ) → myProd (m ≡ N.zero.succ) (n ≡ N.zero.succ)</code></td>
+<td>Converse of <code>mult_one_by_one</code>: <code>m × n = 1</code> implies both factors are 1.</td>
 </tr>
 <tr class="odd">
-<td><code>_3_e_iii</code></td>
-<td><code>(P Q : Type) → myNegType (myNegType (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))) → (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))</code></td>
-<td>Extracts a pair of double-negated components from a double-negated product.</td>
+<td><code>add_dont_fix</code></td>
+<td><code>{m n : N} → (p : m ≡ myAdd m (N.succ n)) → Empty</code></td>
+<td>No natural is a fixed point of “add a successor” — <code>m ≠ m + (n+1)</code>.</td>
 </tr>
 <tr class="even">
-<td><code>_3_f_i</code></td>
-<td><code>(P Q : Type) → myEquiv (myNegType (myNegType (myProd P Q))) (myProd (myNegType (myNegType P)) (myNegType (myNegType Q)))</code></td>
-<td>Equivalence between double-negated product and product of double-negations.</td>
-</tr>
-<tr class="odd">
-<td><code>_3_f_ii</code></td>
-<td><code>(P Q : Type) → myEquiv (myNegType (myNegType (Sum P Q))) (myNegType (myProd (myNegType P) (myNegType Q)))</code></td>
-<td>Equivalence between double-negated sum and negation of a pair of negations.</td>
-</tr>
-<tr class="even">
-<td><code>_3_f_iii</code></td>
-<td><code>(P Q : Type) → myEquiv (myNegType (myNegType (P → Q))) ((myNegType (myNegType P)) → (myNegType (myNegType Q)))</code></td>
-<td>Equivalence relating double-negated implication and a map on double-negations.</td>
+<td><code>mult_dont_fix</code></td>
+<td><code>{m n : N} → (p : (N.succ m) ≡ (N.succ m) × (N.succ (N.succ n))) → Empty</code></td>
+<td><code>m + 1 ≠ (m+1)·(n+2)</code>.</td>
 </tr>
 </tbody>
 </table>
+<p>Two anonymous <code>example</code>s appear alongside these (<code>chapter6.lean:104</code>, <code>chapter6.lean:135</code>) — they are not named declarations.</p>
 </section>
-</section>
-<section id="namespace-chapter4_lists" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Namespace <code>chapter4_lists</code></h1>
-<section id="types-1" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="types-1"><span class="header-section-number">4.1</span> Types</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Signature</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>myList.nil</code></td>
-<td><code>{A : Type} → myList A</code></td>
-<td>Empty list.</td>
-</tr>
-<tr class="even">
-<td><code>myList.cons</code></td>
-<td><code>{A : Type} → A → myList A → myList A</code></td>
-<td>Prepends an element to a list.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="function-summary-2" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="function-summary-2"><span class="header-section-number">4.2</span> Function Summary</h2>
+<section id="boolean-equality-exercise-6.2" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Boolean Equality (Exercise 6.2)</h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -301,60 +257,35 @@ Note
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>list_string</code></td>
-<td><code>(myList Nat) → String</code></td>
-<td>Serializes a <code>Nat</code> list into a concatenated string of element values (no separators).</td>
+<td><code>Eq_bool</code></td>
+<td><code>(b1 b2 : myBool) → Type</code></td>
+<td>Observational equality on <code>myBool</code>: <code>Unit</code> if <code>b1</code> and <code>b2</code> agree, <code>Empty</code> otherwise.</td>
 </tr>
 <tr class="even">
-<td><code>list_length</code></td>
-<td><code>{A : Type} → myList A → Nat</code></td>
-<td>Computes the length of a list.</td>
+<td><code>Eq_bool_refl</code></td>
+<td><code>(b : myBool) → Eq_bool b b</code></td>
+<td>Reflexivity of <code>Eq_bool</code>.</td>
 </tr>
 <tr class="odd">
-<td><code>nth_list</code></td>
-<td><code>{A : Type} → myList A → Nat → Option A</code></td>
-<td>Returns the element at index <code>i</code> if present, otherwise <code>none</code>.</td>
+<td><code>Eq_bool_equiv</code></td>
+<td><code>(b1 b2 : myBool) → (p : Eq_bool b1 b2) → (b1 ≡ b2)</code></td>
+<td>Converts <code>Eq_bool</code> to <code>MyEq</code>.</td>
 </tr>
 <tr class="even">
-<td><code>fold_list</code></td>
-<td><code>{A B : Type} → (μ : A → (B → B)) → (b : B) → myList A → B</code></td>
-<td>Right fold over a list using step function <code>μ</code> and base value <code>b</code>.</td>
+<td><code>Eq_bool_equiv_conv</code></td>
+<td><code>(b1 b2 : myBool) → (p : b1 ≡ b2) → Eq_bool b1 b2</code></td>
+<td>Converts <code>MyEq</code> to <code>Eq_bool</code>, via <code>ind_eq</code>.</td>
 </tr>
 <tr class="odd">
-<td><code>map_list</code></td>
-<td><code>{A B : Type} → (A → B) → (myList A → myList B)</code></td>
-<td>Applies a function to every element of a list.</td>
-</tr>
-<tr class="even">
-<td><code>sum_list</code></td>
-<td><code>myList Nat → Nat</code></td>
-<td>Computes the sum of all <code>Nat</code> elements in a list.</td>
-</tr>
-<tr class="odd">
-<td><code>prod_list</code></td>
-<td><code>myList Nat → Nat</code></td>
-<td>Computes the product of all <code>Nat</code> elements in a list.</td>
-</tr>
-<tr class="even">
-<td><code>concat_list</code></td>
-<td><code>{A : Type} → myList A → myList A → myList A</code></td>
-<td><code>concat_list l l1</code> appends <strong><code>l1</code> first, then <code>l</code></strong> — i.e.&nbsp;it returns <code>l1 ++ l</code>, not <code>l ++ l1</code>. The recursion walks <code>l1</code>, and <code>l</code> (the <em>first</em> argument) only appears once <code>l1</code> is exhausted. See <em>Possible Issues</em> below.</td>
-</tr>
-<tr class="odd">
-<td><code>flatten_list</code></td>
-<td><code>{A : Type} → myList (myList A) → myList A</code></td>
-<td>Flattens a list of lists — see <em>Possible Issues</em> for a note on sublist ordering.</td>
-</tr>
-<tr class="even">
-<td><code>reverse_list</code></td>
-<td><code>{A : Type} → myList A → myList A</code></td>
-<td>Reverses a list recursively using <code>concat_list</code>.</td>
+<td><code>neg_injective</code></td>
+<td><code>(b : myBool) → (p : Eq_bool b (myNeg b)) → Empty</code></td>
+<td>No boolean equals its own negation.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="defined-example-values" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="defined-example-values"><span class="header-section-number">4.3</span> Defined Example Values</h2>
+<section id="the-order-relation-exercise-6.3" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> The Order Relation <code>≤</code> (Exercise 6.3)</h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -363,121 +294,220 @@ Note
 </colgroup>
 <thead>
 <tr class="header">
-<th>Name</th>
+<th>Function</th>
 <th>Signature</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>l</code></td>
-<td><code>myList Nat</code></td>
-<td>Example list: <code>5, 4, 3, 2, 1</code>.</td>
+<td><code>leq</code></td>
+<td><code>(m n : N) → Type</code></td>
+<td><code>m ≤ n</code>, defined recursively (<code>Unit</code> when <code>m = 0</code>, structural recursion otherwise).</td>
 </tr>
 <tr class="even">
-<td><code>l2</code></td>
-<td><code>myList Nat</code></td>
-<td>Example list: <code>7, 9, 11</code>.</td>
+<td><code>leq_refl</code></td>
+<td><code>(n : N) → leq n n</code></td>
+<td>Reflexivity.</td>
 </tr>
 <tr class="odd">
-<td><code>ll</code></td>
-<td><code>myList (myList Nat)</code></td>
-<td>Example nested list <code>[l2, l]</code>, i.e.&nbsp;<code>cons l2 (cons l nil)</code>.</td>
+<td><code>leq_antisymm</code></td>
+<td><code>(m n : N) → (p : leq m n) → (q : leq n m) → m ≡ n</code></td>
+<td>Antisymmetry.</td>
+</tr>
+<tr class="even">
+<td><code>leq_trans</code></td>
+<td><code>(m n k : N) → (p : leq m n) → (q : leq n k) → leq m k</code></td>
+<td>Transitivity.</td>
+</tr>
+<tr class="odd">
+<td><code>leq_total</code></td>
+<td><code>(m n : N) → mySum (leq m n) (leq n m)</code></td>
+<td>Totality: any two naturals are comparable.</td>
+</tr>
+<tr class="even">
+<td><code>add_leq</code></td>
+<td><code>(m n k : N) → (p : leq m n) → leq (myAdd m k) (myAdd n k)</code></td>
+<td>Addition preserves <code>≤</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>add_leq_conv</code></td>
+<td><code>(m n k : N) → (p : leq (myAdd m k) (myAdd n k)) → leq m n</code></td>
+<td>Addition is cancellative for <code>≤</code>.</td>
+</tr>
+<tr class="even">
+<td><code>leq_equals</code></td>
+<td><code>(m n : N) → (p : m ≡ n) → leq m n</code></td>
+<td>Equality implies <code>≤</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>mult_succ_leq</code></td>
+<td><code>(m n k : N) → (p : leq m n) → leq (m × k) (n × k)</code></td>
+<td><code>≤</code> is preserved by multiplying both sides by the same value.</td>
+</tr>
+<tr class="even">
+<td><code>mult_succ_leq_conv</code></td>
+<td><code>(m n k : N) → (p : leq (m × k.succ) (n × k.succ)) → leq m n</code></td>
+<td>Multiplication by a nonzero value (<code>k.succ</code>) is cancellative for <code>≤</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>leq_min</code></td>
+<td><code>(k m n : N) → (p : leq k (N_min m n)) → myProd (leq k m) (leq k n)</code></td>
+<td><code>k ≤ min(m,n)</code> implies <code>k ≤ m</code> and <code>k ≤ n</code>.</td>
+</tr>
+<tr class="even">
+<td><code>leq_min_conv</code></td>
+<td><code>(k m n : N) → (p : myProd (leq k m) (leq k n)) → leq k (N_min m n)</code></td>
+<td>Converse of <code>leq_min</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>leq_zero</code></td>
+<td><code>(n : N) → (p : leq n N.zero) → n ≡ N.zero</code></td>
+<td>Only zero is <code>≤</code> zero.</td>
+</tr>
+<tr class="even">
+<td><code>max_equals_zero</code></td>
+<td><code>(m n : N) → (p : (N_max m n) ≡ N.zero) → myProd (m ≡ N.zero) (n ≡ N.zero)</code></td>
+<td><code>max(m,n) = 0</code> implies both are zero.</td>
+</tr>
+<tr class="odd">
+<td><code>leq_max</code></td>
+<td><code>(k m n : N) → (p : leq (N_max m n) k) → myProd (leq m k) (leq n k)</code></td>
+<td><code>max(m,n) ≤ k</code> implies <code>m ≤ k</code> and <code>n ≤ k</code>.</td>
+</tr>
+<tr class="even">
+<td><code>leq_max_conv</code></td>
+<td><code>(k m n : N) → (p : myProd (leq m k) (leq n k)) → leq (N_max m n) k</code></td>
+<td>Converse of <code>leq_max</code>.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="possible-issues" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="possible-issues"><span class="header-section-number">4.4</span> Possible Issues</h2>
+<section id="the-strict-order-exercise-6.4" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> The Strict Order <code>&lt;</code> (Exercise 6.4)</h1>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Signature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>less_than</code></td>
+<td><code>(m n : N) → Type</code></td>
+<td><code>m &lt; n</code>, defined recursively.</td>
+</tr>
+<tr class="even">
+<td><code>less_than_antiref</code></td>
+<td><code>(n : N) → (p : less_than n n) → Empty</code></td>
+<td>Irreflexivity.</td>
+</tr>
+<tr class="odd">
+<td><code>less_than_nonsymm</code></td>
+<td><code>(m n : N) → (p : less_than m n) → (q : less_than n m) → Empty</code></td>
+<td>Asymmetry.</td>
+</tr>
+<tr class="even">
+<td><code>less_than_trans</code></td>
+<td><code>(m n k : N) → (p : less_than m n) → (q : less_than n k) → less_than m k</code></td>
+<td>Transitivity.</td>
+</tr>
+<tr class="odd">
+<td><code>less_than_succ</code></td>
+<td><code>(n : N) → less_than n n.succ</code></td>
+<td>Every natural is less than its successor.</td>
+</tr>
+<tr class="even">
+<td><code>less_than_sum_succ</code></td>
+<td><code>(m n : N) → (p : less_than m n) → less_than m n.succ</code></td>
+<td><code>&lt;</code> is preserved by taking a successor on the right.</td>
+</tr>
+<tr class="odd">
+<td><code>less_than_leq</code></td>
+<td><code>(m n : N) → (p : less_than m n) → leq m n</code></td>
+<td><code>&lt;</code> implies <code>≤</code>.</td>
+</tr>
+<tr class="even">
+<td><code>less_than_leq_conv</code></td>
+<td><code>(m n : N) → (p : leq m.succ n) → less_than m n</code></td>
+<td><code>m+1 ≤ n</code> implies <code>m &lt; n</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>less_than_leq_law</code></td>
+<td><code>(m n : N) → (p : less_than m n) → myProd (leq m n) ((m ≡ n) → Empty)</code></td>
+<td><code>m &lt; n</code> iff <code>m ≤ n</code> and <code>m ≠ n</code> (forward direction).</td>
+</tr>
+<tr class="even">
+<td><code>less_than_leq_law_conv</code></td>
+<td><code>(m n : N) → (p : myProd (leq m n) ((m ≡ n) → Empty)) → less_than m n</code></td>
+<td>Converse direction of <code>less_than_leq_law</code>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="distance-exercise-6.5" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Distance (Exercise 6.5)</h1>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Signature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>dist</code></td>
+<td><code>(m n : N) → N</code></td>
+<td>Absolute difference on <code>N</code>.</td>
+</tr>
+<tr class="even">
+<td><code>dist_equals</code></td>
+<td><code>(m n : N) → (p : m ≡ n) → (dist m n) ≡ N.zero</code></td>
+<td>Equal values have zero distance.</td>
+</tr>
+<tr class="odd">
+<td><code>dist_equals_conv</code></td>
+<td><code>(m n : N) → (p : (dist m n) ≡ N.zero) → m ≡ n</code></td>
+<td>Converse: zero distance implies equal values.</td>
+</tr>
+<tr class="even">
+<td><code>dist_commutative</code></td>
+<td><code>(m n : N) → (dist m n) ≡ (dist n m)</code></td>
+<td>Symmetry of <code>dist</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>dist_triangle_inequality</code></td>
+<td><code>(m n k : N) → leq (dist m n) (myAdd (dist m k) (dist k n))</code></td>
+<td><strong>Incomplete (<code>sorry</code>).</strong> The triangle inequality for <code>dist</code>.</td>
+</tr>
+</tbody>
+</table>
+<section id="possible-issues" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="possible-issues"><span class="header-section-number">7.1</span> Possible Issues</h2>
 <ol type="1">
-<li><code>concat_list</code>’s argument order is easy to misread: <code>concat_list l l1</code> evaluates to <code>l1 ++ l</code> (the first argument ends up <em>after</em> the second), not <code>l ++ l1</code>. This is confirmed by its use inside <code>reverse_list</code>: <code>concat_list (cons a nil) (reverse_list l1)</code> correctly computes <code>reverse_list l1 ++ [a]</code>, the standard recursive definition of list reversal, only because of this argument order.</li>
-<li>Because <code>flatten_list</code> is implemented as <code>concat_list a (flatten_list ll1)</code> for <code>cons a ll1</code>, and <code>concat_list x y = y ++ x</code>, <code>flatten_list</code> actually concatenates the <em>later</em> sublists first: <code>flatten_list [l2, l]</code> reduces to <code>l ++ l2</code>, not <code>l2 ++ l</code>. So <code>flatten_list</code> reverses the order of the sublists relative to what a reader would normally expect from a “flatten” function, while preserving the order of elements <em>within</em> each sublist.</li>
+<li><code>dist_triangle_inequality</code> is a <code>sorry</code> — the only incomplete proof in this file.</li>
+<li>This file’s own <code>N</code>, <code>leq</code>, <code>less_than</code>, and <code>dist</code> are distinct from — and not interchangeable with — the similarly-named or similarly-purposed constructs elsewhere in the project (<code>chapter3_naturals_with_zero.lean</code>’s <code>Less_than</code> on its own <code>myN</code>, and <code>chapter5_props_naturals_with_zero.lean</code>’s <code>dist</code>). They happen to share a name but operate on different underlying natural-number types.</li>
 </ol>
 </section>
 </section>
-<section id="namespace-chapter4_integers" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Namespace <code>chapter4_integers</code></h1>
-<section id="function-summary-3" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="function-summary-3"><span class="header-section-number">5.1</span> Function Summary</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Function</th>
-<th>Signature</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>addNaturalToZ</code></td>
-<td><code>(n : myN) → (z : myZ) → myZ</code></td>
-<td>Adds a positive natural amount to an integer by repeated <code>succZ</code>.</td>
-</tr>
-<tr class="even">
-<td><code>subtractNaturalFromZ</code></td>
-<td><code>(n : myN) → (z : myZ) → myZ</code></td>
-<td>Subtracts a positive natural amount from an integer by repeated <code>predZ</code>.</td>
-</tr>
-<tr class="odd">
-<td><code>myAddZ</code></td>
-<td><code>(a b : myZ) → myZ</code></td>
-<td>Integer addition by case analysis on the second argument.</td>
-</tr>
-<tr class="even">
-<td><code>multNaturalWithZ</code></td>
-<td><code>(a : myZ) → (b : myN) → myZ</code></td>
-<td>Multiplies an integer by a positive natural through repeated <code>myAddZ</code>.</td>
-</tr>
-<tr class="odd">
-<td><code>myMultZ</code></td>
-<td><code>(a b : myZ) → myZ</code></td>
-<td>Integer multiplication by reducing to <code>multNaturalWithZ</code> and applying sign handling via <code>negative</code>.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="instances" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="instances"><span class="header-section-number">5.2</span> Instances</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Signature</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Add myZ</code></td>
-<td><code>instance : Add myZ</code></td>
-<td>Registers <code>myAddZ</code> for the <code>+</code> operator.</td>
-</tr>
-<tr class="even">
-<td><code>Mul myZ</code></td>
-<td><code>instance : Mul myZ</code></td>
-<td>Registers <code>myMultZ</code> for the <code>*</code> operator.</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="notes" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Notes</h1>
+<section id="notes" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Notes</h1>
 <ul>
-<li>The booleans section develops constructive logic transformations using <code>myNegType</code> and <code>myEquiv</code> from <code>chapter3.lean</code>, and several of its definitions rely on section-variable auto-binding — see the callout at the top of this document.</li>
-<li>The list type uses a custom inductive encoding where <code>cons</code> takes an element and then a list.</li>
-<li>Integer operations rely on the predecessor/successor machinery (<code>predZ</code>, <code>succZ</code>) defined in <code>chapter3.lean</code>.</li>
-<li><code>chapter4_coproducts</code> (<code>mySum</code>, <code>mySum_ind</code>) was previously undocumented; it is now covered above.</li>
+<li><code>chapter6.lean</code> is not imported by <code>HoTTRijke.lean</code>’s aggregator directly, but is pulled in transitively through <code>chapter7.lean</code>, which does import it and is itself imported by the root file.</li>
+<li>The file relies on <code>Inductive_Int.lean</code>’s <code>N</code>, <code>myAdd</code>, <code>myMult</code>/<code>×</code>, <code>N_min</code>, <code>N_max</code> — see that file’s documentation — rather than either of the two <code>myN</code> developments used elsewhere in the project.</li>
 </ul>
 </section>
 

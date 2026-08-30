@@ -1,0 +1,64 @@
+---
+title: "Chapter 5 (Naturals-With-Zero Properties): Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/chapter5_props_naturals_with_zero.lean](../HoTTRijke/chapter5_props_naturals_with_zero.lean),
+namespace `props_naturals_with_zero`.
+
+It proves the same family of arithmetic laws (addition/multiplication unit, successor,
+associativity, commutativity, distributivity laws, plus `dist` lemmas) that
+`chapter5_ints.lean`'s `Naturals` namespace proves — but for `chapter3_naturals_with_zero.lean`'s
+**0-based** `myN` instead of `chapter3.lean`'s 1-based one. It imports
+`chapter3_naturals_with_zero.lean` and `chapter5_eq.lean`. This is the file that
+`chapter7.lean` builds on for its arithmetic reasoning.
+
+# Namespace `props_naturals_with_zero`
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `right_one_add_N` | `(a : myN) → myAdd a _1 ≡ myN.succ a` | Adding 1 on the right is successor. |
+| `left_zero_add_N` | `(a : myN) → myAdd _0 a ≡ a` | Left additive identity. |
+| `right_successor_law_add` | `(a b : myN) → myAdd a (myN.succ b) ≡ myN.succ (myAdd a b)` | Successor rule in the right argument of addition. |
+| `left_successor_law_add` | `(a b : myN) → myAdd (myN.succ a) b ≡ myN.succ (myAdd a b)` | Successor rule in the left argument of addition. |
+| `left_one_add_N` | `(a : myN) → myAdd _1 a ≡ myN.succ a` | Adding 1 on the left is successor; proved via `calc` from `left_successor_law_add` and `left_zero_add_N`. |
+| `add_associative` | `(a b c : myN) → myAdd (myAdd a b) c ≡ myAdd a (myAdd b c)` | Associativity of addition. |
+| `add_commutative` | `(a b : myN) → myAdd a b ≡ myAdd b a` | Commutativity of addition. |
+| `mult_zero_right` | `(a : myN) → myMult a _0 ≡ _0` | Right zero law for multiplication. |
+| `mult_zero_left` | `(a : myN) → myMult _0 a ≡ _0` | Left zero law for multiplication. |
+| `mult_one_left` | `(a : myN) → myMult _1 a ≡ a` | Left multiplicative unit. |
+| `mult_one_right` | `(a : myN) → myMult a _1 ≡ a` | Right multiplicative unit. |
+| `mult_successor_right` | `(a b : myN) → myMult a (myN.succ b) ≡ myAdd (myMult a b) a` | Successor rule in the right argument of multiplication. |
+| `myAdd_right` | `(a b : myN) → myN` | Helper that swaps arguments of `myAdd` (returns `myAdd b a`). |
+| `mult_successor_left` | `(a b : myN) → myMult (myN.succ a) b ≡ myAdd (myMult a b) b` | Successor rule in the left argument of multiplication. |
+| `mult_commutative` | `(a b : myN) → myMult a b ≡ myMult b a` | Commutativity of multiplication. |
+| `mult_distributive_left` | `(a b c : myN) → myMult a (myAdd b c) ≡ myAdd (myMult a b) (myMult a c)` | Left distributivity of multiplication over addition. |
+| `mult_distributive_right` | `(a b c : myN) → myMult (a + b) c ≡ myAdd (myMult a c) (myMult b c)` | Right distributivity of multiplication over addition. |
+| `mult_associative` | `(a b c : myN) → myMult (myMult a b) c ≡ myMult a (myMult b c)` | Associativity of multiplication. |
+| `dist_from_zero` | `(n : myN) → dist n _0 ≡ n` | Distance from zero is the value itself. |
+| `dist_equals_0` | `(n : myN) → dist n n ≡ _0` | Distance from a value to itself is zero. |
+| `dist_of_equals` | `(m n : myN) → (p : m ≡ n) → (dist m n) ≡ myN.zero` | Equal values have zero distance. |
+| `dist_symm` | `(n1 n2 : myN) → dist n1 n2 ≡ dist n2 n1` | Symmetry of `dist`. |
+| `dist_one_of_three` | `(x y z : myN) → Sum (((dist x y) + (dist y z)) ≡ (dist x z)) (Sum (((dist y z) + (dist x z)) ≡ (dist x y)) (((dist x z) + (dist x y)) ≡ (dist y z)))` | **Incomplete (`sorry`).** Intended to show that, of the three pairwise distances among `x`, `y`, `z`, the largest equals the sum of the other two (a triangle-equality trichotomy). Used by `cong_trans` in `chapter7.lean`. |
+
+## Possible Issues
+
+1. `dist_one_of_three` is a `sorry` — any proof depending on it (currently `cong_trans` in
+   `chapter7.lean`) is only as complete as this placeholder.
+
+# Notes
+
+- This namespace mirrors `chapter5_ints.lean`'s `Naturals` namespace function-for-function
+  (same names, same statements up to `_0`/`myN.one` base-case differences), just proved against
+  `chapter3_naturals_with_zero.lean`'s 0-based `myN`. See the project-level duplicate-function
+  summary for the full comparison.
+- Unlike `chapter5_ints.lean`, this file has no unresolved merge conflicts and (aside from
+  `dist_one_of_three`) has no remaining `sorry`s.

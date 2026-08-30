@@ -1,0 +1,109 @@
+---
+title: "Inductive_Int Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/Inductive_Int.lean](../HoTTRijke/Inductive_Int.lean). Unlike
+every other chapter file, its declarations are **not** wrapped in a `namespace` — `N`, `Z`,
+`myAdd`, `myMult`, etc. are all top-level names. It imports only `chapter5_eq.lean` (for
+`≡`/`MyEq`).
+
+This is a **third, independent** development of the natural numbers and integers, separate from
+both `chapter3.lean`'s 1-based `myN`/`myZ` and `chapter3_naturals_with_zero.lean`'s 0-based
+`myN`. It predates and is largely superseded by those two, but it is not dead code:
+`chapter6.lean` imports this file and builds its observational-equality and order theory
+directly on top of this file's `N` type (not on either `myN`). See the project-level
+duplicate-function summary for how the three developments relate.
+
+# Types
+
+| Name | Signature | Description |
+|---|---|---|
+| `N.zero` | `N` | Base constructor for the naturals. |
+| `N.succ` | `N → N` | Successor constructor. |
+| `Z.pos` | `N → Z` | Non-negative integers, `Z.pos n` representing `n`. |
+| `Z.neg` | `N → Z` | Negative integers, `Z.neg n` representing `-(n+1)` (so `Z.neg N.zero = -1`). |
+
+# Notation
+
+| Notation | Meaning |
+|---|---|
+| `-z` | `Negative z` (`notation:50`). |
+| `a × b` | `myMult a b` (`notation:70`). |
+| `a + b` | `Zsum a b` (`notation:100`) — note this overloads `+` for `Z`, not `N` (`N` addition is only ever written as `myAdd` in this file). |
+| `a * b` | `Zmult a b` (`notation:40`). |
+
+# Function Summary
+
+## Core Operations
+
+| Function | Signature | Description |
+|---|---|---|
+| `Negative` | `(z : Z) → Z` | Integer negation; `Z.pos N.zero` (zero) maps to itself. |
+| `myAdd` | `(a b : N) → N` | Addition on `N`, recursing on `b`. |
+| `myMult` | `(a b : N) → N` | Multiplication on `N`, recursing on `b`. |
+| `dif` | `(m n : N) → Z` | Truncated-subtraction-as-integer helper: interprets `m - n` as a `Z`. |
+| `Zsum` | `(a b : Z) → Z` | Addition on `Z`, built from `myAdd` and `dif`. |
+| `Z_multby_N` | `N → Z → Z` | Multiplies an integer `z` by a natural `n` (`n` copies of `z` summed). |
+| `Zmult` | `(a b : Z) → Z` | Multiplication on `Z`, built from `Z_multby_N` and `Negative`. |
+
+## Properties of `N`-Addition
+
+| Function | Signature | Description |
+|---|---|---|
+| `left_zero_add_N` | `(a : N) → myAdd N.zero a ≡ a` | Left additive identity. |
+| `left_successor_law_add` | `(a b : N) → myAdd (N.succ a) b ≡ N.succ (myAdd a b)` | Successor rule in the left argument. |
+| `add_commutative` | `(a b : N) → myAdd a b ≡ myAdd b a` | Commutativity of addition. |
+| `myAdd_assoc` | `(a b c : N) → myAdd (myAdd a b) c ≡ myAdd a (myAdd b c)` | Associativity of addition. |
+| `myAdd_succ_right_comm` | `(x n m : N) → myAdd (myAdd x n) (N.succ m) ≡ myAdd (myAdd x m) (N.succ n)` | A commuting-successor helper lemma used in `Z_multby_N_nat_succ_right`. |
+
+## Properties of `Z`-Addition
+
+| Function | Signature | Description |
+|---|---|---|
+| `Zsum_commutative` | `(a b : Z) → (a + b) ≡ (b + a)` | Commutativity of integer addition. |
+
+## `Z_multby_N` Helper Lemmas
+
+| Function | Signature | Description |
+|---|---|---|
+| `Z_multby_N_nat` | `N → N → N` | Auxiliary: `n`-fold repeated addition of `m` on `N` (used to relate `Z_multby_N` on `Z.pos` inputs back to plain `N` multiplication). |
+| `Z_multby_N_pos_nat` | `(n m : N) → Z_multby_N n (Z.pos m) ≡ Z.pos (Z_multby_N_nat n m)` | `Z_multby_N` on a positive integer reduces to `Z_multby_N_nat`. |
+| `Z_multby_N_nat_succ_right` | `(n m : N) → Z_multby_N_nat n (N.succ m) ≡ myAdd (Z_multby_N_nat n m) n` | Successor rule (right) for `Z_multby_N_nat`. |
+| `Z_multby_N_nat_zero_right` | `(n : N) → Z_multby_N_nat n N.zero ≡ N.zero` | Right zero law for `Z_multby_N_nat`. |
+| `Z_multby_N_nat_comm` | `(n m : N) → Z_multby_N_nat n m ≡ Z_multby_N_nat m n` | Commutativity of `Z_multby_N_nat` — establishes it coincides with ordinary `N` multiplication. |
+| `Z_multby_N_pos_nat_comm` | `(n m : N) → Z_multby_N n (Z.pos m) ≡ Z_multby_N m (Z.pos n)` | Commutativity of `Z_multby_N` restricted to positive integer arguments. |
+| `Zpos_neg_add_neg` | `(p n : N) → (Negative (Z.pos p) + Z.neg n) ≡ Negative (Z.pos (myAdd p (N.succ n)))` | Helper identity for negative-integer addition. |
+| `Z_multby_N_neg_pos` | `(a n : N) → Z_multby_N a (Z.neg n) ≡ Negative (Z_multby_N a (Z.pos (N.succ n)))` | Relates `Z_multby_N` on a negative integer to the positive case via `Negative`. |
+
+## Integer Multiplication Properties
+
+| Function | Signature | Description |
+|---|---|---|
+| `Neg_rule` | `(z : Z) → Negative (Negative z) ≡ z` | Double negation is the identity (involutivity of `Negative`). |
+| `Zmult_commutative` | `(a b : Z) → Zmult a b ≡ Zmult b a` | Commutativity of integer multiplication, by cases on the sign of `a` and `b`. |
+| `myMult_zero_left` | `(a : N) → myMult N.zero a ≡ N.zero` | Left zero law for `N` multiplication. |
+| `myMult_succ_left` | `(a b : N) → (a.succ × b) ≡ (myAdd (a × b) b)` | Successor rule (left) for `N` multiplication. |
+| `myMult_comm` | `(a b : N) → (a × b) ≡ (b × a)` | Commutativity of `N` multiplication. |
+
+## Min/Max
+
+| Function | Signature | Description |
+|---|---|---|
+| `N_min` | `(a b : N) → N` | Minimum of two naturals. |
+| `N_max` | `(a b : N) → N` | Maximum of two naturals. |
+
+# Notes
+
+- Despite the filename, this file's naturals/integers are *not* the ones used by
+  `chapter3.lean`, `chapter3_naturals_with_zero.lean`, `chapter4.lean`, `chapter5_ints.lean`, or
+  `chapter5_props_naturals_with_zero.lean` — it is a self-contained third development, whose only
+  downstream consumer is `chapter6.lean`.
+- `Z.neg n` represents `-(n+1)`, not `-n` — there is no separate zero constructor for `Z`; zero
+  is `Z.pos N.zero`. This offset is easy to miss when reading `Negative`, `dif`, or `Zsum`.

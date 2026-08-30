@@ -3,16 +3,13 @@ import HoTTRijke.chapter4
 import HoTTRijke.chapter5_eq
 
 /- This file contains the implementation of natural and integer
-   arithmetic from Chapter 5 of the HoTT book. -/
-
-
+   arithmetic for one-based naturals from Chapter 5 of the HoTT book. -/
 
 open chapter3_integers
 open chapter3_naturals
 open chapter5_myeq
 open chapter4_integers
 
-#check myAdd
 
 
 
@@ -418,8 +415,6 @@ def multNatWithOne (n : myN) : multNaturalWithZ (Sum.inr (Sum.inr myN.one)) n �
   (ap succZ _ _ (multNatWithOne n'))
 
 
-variable (U : Unit)
-
 -- Exercise 5.6
 -- see succ_pred_elim
 
@@ -466,8 +461,6 @@ def mult_right_unit (a : myZ) : (a * _1) ≡ a :=
     (a * _1) ≡ (multNaturalWithZ a _1) := MyEq.refl _
     _ ≡ a := MyEq.refl _
 
-#print myMultZ
-
 def mult_left_unit  (a : myZ) : (_1 * a) ≡ a :=
   match a with
   | Sum.inl a' =>
@@ -491,15 +484,11 @@ def mult_commutative (a b : myZ) : (a * b) ≡ (b * a) :=
       | Sum.inl a' => sorry
       | Sum.inr (Sum.inl _) => sorry
       | Sum.inr (Sum.inr a') => sorry
-<<<<<<< HEAD
-  | Sum.inr (Sum.inl _) =>  (mult_right_zero a) • (myEq_symm (mult_left_zero a))
-=======
   | Sum.inr (Sum.inl _) =>
     calc
       (a * Zzero ) ≡ a * Zzero := MyEq.refl _
       _ ≡ (Zzero * a) := (mult_right_zero a) • (myEq_symm (mult_left_zero a))
       _ ≡ Zzero  * a := MyEq.refl _
->>>>>>> 18daeabbfb2613079d432a5b79911e937188be51
   | Sum.inr (Sum.inr b') =>
       match a with
       | Sum.inl a' => sorry
@@ -509,6 +498,6 @@ def mult_commutative (a b : myZ) : (a * b) ≡ (b * a) :=
 
 def mult_associative (a b c : myZ) : ((a * b) * c) ≡ a * (b * c) := sorry
 def add_mult_right_distributive (a b c : myZ) : ((a + b) * c)  ≡ ((a * c) + (b * c)) := sorry
-def add_mult_left_distributive  (a b c : myZ) : (a * (b + c) * c)  ≡ ((a * b) + (a * c)) := sorry
+def add_mult_left_distributive  (a b c : myZ) : (a * (b + c))  ≡ ((a * b) + (a * c)) := sorry
 
 end Integers

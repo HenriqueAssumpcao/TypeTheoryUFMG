@@ -1,3 +1,7 @@
+-- This file contains implementation for universes and
+-- natural/integer arithmetc for zero-based naturals using observational
+-- equality.
+
 import HoTTRijke.Inductive_Int
 import HoTTRijke.chapter5_eq
 import HoTTRijke.chapter3

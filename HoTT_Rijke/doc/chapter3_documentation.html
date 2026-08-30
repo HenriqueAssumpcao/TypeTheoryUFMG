@@ -7,11 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="HoTT in Lean">
-<<<<<<< HEAD
-<meta name="dcterms.date" content="2026-06-03">
-=======
-<meta name="dcterms.date" content="2026-07-02">
->>>>>>> 18daeabbfb2613079d432a5b79911e937188be51
+<meta name="dcterms.date" content="2026-08-29">
 
 <title>Chapter 3: Natural Numbers, Integers, and Booleans</title>
 <style>
@@ -62,6 +58,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#numeric-constants" id="toc-numeric-constants" class="nav-link" data-scroll-target="#numeric-constants"><span class="header-section-number">2.2</span> Numeric Constants</a></li>
   <li><a href="#function-summary" id="toc-function-summary" class="nav-link" data-scroll-target="#function-summary"><span class="header-section-number">2.3</span> Function Summary</a></li>
   <li><a href="#instances" id="toc-instances" class="nav-link" data-scroll-target="#instances"><span class="header-section-number">2.4</span> Instances</a></li>
+  <li><a href="#possible-issues" id="toc-possible-issues" class="nav-link" data-scroll-target="#possible-issues"><span class="header-section-number">2.5</span> Possible Issues</a></li>
   </ul></li>
   <li><a href="#namespace-chapter3_integers" id="toc-namespace-chapter3_integers" class="nav-link" data-scroll-target="#namespace-chapter3_integers"><span class="header-section-number">3</span> Namespace <code>chapter3_integers</code></a>
   <ul class="collapse">
@@ -99,11 +96,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-<<<<<<< HEAD
-      <p class="date">June 3, 2026</p>
-=======
-      <p class="date">July 2, 2026</p>
->>>>>>> 18daeabbfb2613079d432a5b79911e937188be51
+      <p class="date">August 29, 2026</p>
     </div>
   </div>
   
@@ -117,7 +110,22 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="overview" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
-<p>This document summarizes the functions defined in <code>chapter3.lean</code>. Each entry includes the function name, its Lean signature, and a short description.</p>
+<p>This document summarizes the functions defined in <a href="../HoTTRijke/chapter3.lean">HoTTRijke/chapter3.lean</a>. Each entry includes the function name, its Lean signature, and a short description.</p>
+<p>The file is organized into three namespaces: <code>chapter3_naturals</code> (a <strong>1-based</strong> encoding of the natural numbers), <code>chapter3_integers</code> (integers built on top of those naturals), and <code>chapter3_booleans</code> (booleans plus small constructive-logic combinators).</p>
+<p>The file’s header comment notes that starting the naturals from one, rather than zero, “seemed better” at first for a natural correspondence between naturals and positive/negative integers, “but this approach has some serious drawbacks and was probably abandoned” — consistent with the 0-based encoding developed in parallel in <code>chapter3_naturals_with_zero.lean</code> (see <a href="chapter3_naturals_with_zero_documentation.qmd">its documentation</a>), which is the encoding used by the later <code>chapter5_props_naturals_with_zero.lean</code>, <code>chapter6.lean</code>, and <code>chapter7.lean</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>A note on implicit/section-variable arguments.</strong> Several definitions below (<code>myNegType</code>, <code>double_neg</code>, <code>double_contrapositive</code>, <code>double_contrapositive_ii</code>, <code>double_contrapositive_iii</code>) do not list their own <code>(P Q : Type)</code> arguments. They instead pick up <code>P</code>/<code>Q</code>/<code>R</code> from the <code>variable (P Q R : Type)</code> declaration in scope (<code>chapter3.lean:255</code>): Lean automatically prepends any section variable that is actually used in a definition’s stated type as an <strong>explicit</strong> leading argument (matching how <code>variable</code> declared it). The signatures below make this explicit so they match what Lean actually elaborates, rather than the possibly-misleading form written at the definition site.</p>
+</div>
+</div>
 </section>
 <section id="namespace-chapter3_naturals" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Namespace <code>chapter3_naturals</code></h1>
@@ -233,22 +241,22 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>toStringMyN</code></td>
 <td><code>myN → String</code></td>
-<td>Converts naturals to strings (<code>1</code> through <code>10</code>, and <code>&gt;=11</code> fallback).</td>
+<td>Converts naturals to strings (<code>"1"</code> through <code>"10"</code>, and <code>"≥11"</code> for anything larger).</td>
 </tr>
 <tr class="even">
 <td><code>myAdd</code></td>
 <td><code>(a b : myN) → myN</code></td>
-<td>Recursive addition on 1-based naturals.</td>
+<td>Recursive addition on 1-based naturals; recurses on <code>b</code>.</td>
 </tr>
 <tr class="odd">
 <td><code>myMult</code></td>
 <td><code>(a b : myN) → myN</code></td>
-<td>Recursive multiplication via repeated addition.</td>
+<td>Recursive multiplication via repeated addition; recurses on <code>b</code>.</td>
 </tr>
 <tr class="even">
 <td><code>myExp</code></td>
 <td><code>(a b : myN) → myN</code></td>
-<td>Exponentiation via repeated multiplication.</td>
+<td>Exponentiation (<code>a^b</code>) via repeated multiplication; recurses on <code>b</code>.</td>
 </tr>
 <tr class="odd">
 <td><code>myMin</code></td>
@@ -273,27 +281,27 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>binomial</code></td>
 <td><code>(a b : myN) → myN</code></td>
-<td>Binomial coefficient recurrence (with 1-based limitation for <code>a &lt; b</code>).</td>
+<td>Binomial-coefficient-style recurrence; see <em>Possible Issues</em> below for its 1-based limitation.</td>
 </tr>
 <tr class="even">
 <td><code>binomial_v2</code></td>
-<td><code>(a b : myN) [DecidableEq myN] → myN</code></td>
-<td>Alternative binomial using equality decisions and <code>myMin</code>.</td>
+<td><code>(a b : myN) → [DecidableEq myN] → myN</code></td>
+<td>Alternative binomial using <code>myMin</code> and a decidable equality check instead of pure pattern matching.</td>
 </tr>
 <tr class="odd">
 <td><code>fibonacci</code></td>
 <td><code>(n : myN) → myN</code></td>
-<td>Fibonacci numbers with base cases <code>F1 = 1</code>, <code>F2 = 1</code>.</td>
+<td>Fibonacci numbers with base cases <code>F(1) = 1</code>, <code>F(2) = 1</code>.</td>
 </tr>
 <tr class="even">
 <td><code>div2</code></td>
 <td><code>(n : myN) → myN</code></td>
-<td>Integer division by 2 in the 1-based natural setting.</td>
+<td>Integer division by 2 in the 1-based natural setting (rounds down, with 1 as the floor — see <em>Possible Issues</em>).</td>
 </tr>
 <tr class="odd">
 <td><code>dist</code></td>
 <td><code>(m n : myN) → myN</code></td>
-<td>Distance-like recursive difference function on naturals.</td>
+<td>Distance-like recursive difference function on naturals — see <em>Possible Issues</em> for its behavior on equal inputs.</td>
 </tr>
 </tbody>
 </table>
@@ -319,8 +327,25 @@ ul.task-list li input[type="checkbox"] {
 <td><code>instance : ToString myN</code></td>
 <td>Uses <code>toStringMyN</code> for string rendering.</td>
 </tr>
+<tr class="even">
+<td><code>Add myN</code></td>
+<td><code>instance : Add myN</code></td>
+<td>Registers <code>myAdd</code> for the <code>+</code> operator.</td>
+</tr>
+<tr class="odd">
+<td><code>Mul myN</code></td>
+<td><code>instance : Mul myN</code></td>
+<td>Registers <code>myMult</code> for the <code>*</code> operator.</td>
+</tr>
 </tbody>
 </table>
+</section>
+<section id="possible-issues" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="possible-issues"><span class="header-section-number">2.5</span> Possible Issues</h2>
+<ol type="1">
+<li>There is no zero in this 1-based <code>myN</code>. As the source itself notes (<code>chapter3.lean:90-96</code>), this means <code>binomial a b</code> returns <code>_1</code> whenever <code>a &lt; b</code>, instead of the mathematically expected <code>0</code> — the same limitation affects <code>binomial_v2</code>.</li>
+<li>For the same reason, <code>div2 n</code> for <code>n = 1</code> or <code>n = 2</code> both round down to <code>myN.one</code> (there is no <code>0</code> result to represent “less than one”), and <code>dist m n</code> returns <code>myN.one</code> (not a zero) when <code>m</code> and <code>n</code> denote the same number greater than 1 — e.g.&nbsp;<code>dist _2 _2</code> reduces to <code>myN.one</code>, not to any representation of “no distance”. Callers relying on <code>dist m n = m</code> iff <code>m = n</code> should be aware of this.</li>
+</ol>
 </section>
 </section>
 <section id="namespace-chapter3_integers" class="level1" data-number="3">
@@ -328,6 +353,11 @@ ul.task-list li input[type="checkbox"] {
 <section id="types-and-constructors" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="types-and-constructors"><span class="header-section-number">3.1</span> Types and Constructors</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -339,7 +369,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>myZ</code></td>
 <td><code>Type</code></td>
-<td>Integer type encoded as <code>myN ⊕ (Unit ⊕ myN)</code>.</td>
+<td>Integer type encoded as <code>myN ⊕ (Unit ⊕ myN)</code> (negative / zero / positive).</td>
 </tr>
 <tr class="even">
 <td><code>Zneg</code></td>
@@ -358,8 +388,8 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><code>__0</code></td>
-<td><code>myZ</code></td>
-<td>Alternative explicit zero term.</td>
+<td><code>(U : Unit) → myZ</code></td>
+<td>Alternative zero term. <strong>Note:</strong> despite looking like a bare constant, <code>__0</code> actually takes an explicit <code>Unit</code> argument — it is defined after <code>variable (U : Unit)</code> (<code>chapter3.lean:174</code>) and its body references <code>U</code>, so Lean auto-prepends <code>(U : Unit)</code> to its signature. In practice it must be called as <code>__0 ()</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -383,7 +413,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>myNatToInt</code></td>
 <td><code>(n : myN) → myZ</code></td>
-<td>Injects naturals into positive integers.</td>
+<td>Injects naturals into positive integers (alias for <code>Zpos</code>).</td>
 </tr>
 <tr class="even">
 <td><code>negative</code></td>
@@ -393,7 +423,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>showMyZ</code></td>
 <td><code>(z : myZ) → String</code></td>
-<td>String view of integers (<code>-n</code>, <code>0</code>, <code>n</code>).</td>
+<td>String view of integers (<code>"-n"</code>, <code>"0"</code>, <code>"n"</code>).</td>
 </tr>
 <tr class="even">
 <td><code>predZ</code></td>
@@ -463,18 +493,18 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><code>myProd.mk</code></td>
-<td><code>(x : P) → (y : Q) → myProd P Q</code></td>
-<td>Constructor for custom product type.</td>
+<td><code>{P Q : Type} → (x : P) → (y : Q) → myProd P Q</code></td>
+<td>Constructor for the custom product type. <code>P</code>, <code>Q</code> are implicit, as Lean makes inductive-family parameters implicit in every constructor.</td>
 </tr>
 <tr class="even">
 <td><code>myEquiv</code></td>
 <td><code>(P Q : Type) → Type</code></td>
-<td>Type equivalence as a pair of maps <code>P → Q</code> and <code>Q → P</code>.</td>
+<td>Type equivalence as a pair of maps <code>P → Q</code> and <code>Q → P</code> (defined as <code>myProd (P → Q) (Q → P)</code>).</td>
 </tr>
 <tr class="odd">
 <td><code>myNegType</code></td>
-<td><code>Type</code></td>
-<td>Negation type alias (<code>P → Empty</code>).</td>
+<td><code>(P : Type) → Type</code></td>
+<td>Negation type (<code>P → Empty</code>). Picks up its <code>P</code> argument from the section <code>variable (P Q R : Type)</code> — see the note at the top of this document.</td>
 </tr>
 </tbody>
 </table>
@@ -523,26 +553,26 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td><code>myProdFunc</code></td>
 <td><code>{P Q R : Type} → (f : P → Q → R) → (myProd P Q → R)</code></td>
-<td>Converts curried binary function to product-input function.</td>
+<td>Converts a curried binary function into a function on a product input.</td>
 </tr>
 <tr class="odd">
 <td><code>double_neg</code></td>
-<td><code>P → myNegType (myNegType P)</code></td>
-<td>Introduction of double negation.</td>
+<td><code>(P : Type) → P → myNegType (myNegType P)</code></td>
+<td>Introduction of double negation. Leading <code>(P : Type)</code> comes from the section variable (see note above).</td>
 </tr>
 <tr class="even">
 <td><code>double_contrapositive</code></td>
-<td><code>(P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q))</code></td>
-<td>Double-negation contrapositive transport across implication.</td>
+<td><code>(P Q : Type) → (P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q))</code></td>
+<td>Double-negation contrapositive transport across an implication.</td>
 </tr>
 <tr class="odd">
 <td><code>double_contrapositive_ii</code></td>
-<td><code>(P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q))</code></td>
+<td><code>(P Q : Type) → (P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q))</code></td>
 <td>Variant of double-negation transport with a double-negated codomain.</td>
 </tr>
 <tr class="even">
 <td><code>double_contrapositive_iii</code></td>
-<td><code>myNegType (myNegType (myNegType (myNegType P) → P))</code></td>
+<td><code>(P : Type) → myNegType (myNegType (myNegType (myNegType P) → P))</code></td>
 <td>Higher-order negation principle over a classical-style implication.</td>
 </tr>
 </tbody>
@@ -552,8 +582,9 @@ ul.task-list li input[type="checkbox"] {
 <section id="notes" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Notes</h1>
 <ul>
-<li>This chapter uses 1-based naturals (<code>myN.one</code> is the smallest natural).</li>
-<li>Several constructions in the boolean namespace are logic/proof combinators over types.</li>
+<li>This chapter uses 1-based naturals (<code>myN.one</code> is the smallest natural) — there is no zero constructor, which is the root cause of the issues listed above. A separate, 0-based development lives in <code>chapter3_naturals_with_zero.lean</code>; see that file’s documentation.</li>
+<li>Several constructions in the boolean namespace (<code>double_neg</code>, <code>double_contrapositive*</code>, <code>myNegType</code>) rely on Lean’s section-<code>variable</code> auto-binding rather than declaring their type parameters locally — see the callout at the top of this document.</li>
+<li><code>example</code> blocks in the source (<code>chapter3.lean:276-283</code>) are anonymous checks, not named declarations, so they are not listed as functions above.</li>
 </ul>
 </section>
 

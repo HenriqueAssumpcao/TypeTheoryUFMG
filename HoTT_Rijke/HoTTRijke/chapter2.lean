@@ -1,3 +1,6 @@
+-- Exercises from Chapter 2.
+-- These are some basic exercises to illustrate the dependend type theory described in the book
+
 namespace ex_2_1
 universe u v
 variable (A : Type) (B : A → Type)

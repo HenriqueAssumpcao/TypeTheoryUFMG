@@ -3,11 +3,17 @@ project:
   output-dir: .
   render:
     - index.qmd
+    - chapter1_documentation.qmd
+    - chapter2_documentation.qmd
     - chapter3_documentation.qmd
+    - chapter3_naturals_with_zero_documentation.qmd
     - chapter4_documentation.qmd
     - chapter5_eq_documentation.qmd
     - chapter5_ints_documentation.qmd
+    - chapter5_props_naturals_with_zero_documentation.qmd
     - chapter6_documentation.qmd
+    - chapter7_documentation.qmd
+    - inductive_int_documentation.qmd
 
 format:
   html:

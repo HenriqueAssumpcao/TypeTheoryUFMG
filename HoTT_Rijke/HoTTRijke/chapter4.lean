@@ -1,3 +1,13 @@
+-- This file impelents Chapter 4
+
+/-
+  We implement some functionality related to inductive types
+  and logic.
+
+  We also implement the operations for integers that were defined from
+  one-based naturals.
+-/
+
 import HoTTRijke.chapter3
 
 namespace chapter4_coproducts

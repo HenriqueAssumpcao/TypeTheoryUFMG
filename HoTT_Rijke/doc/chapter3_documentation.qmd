@@ -2,7 +2,7 @@
 title: "Chapter 3: Natural Numbers, Integers, and Booleans"
 author: "HoTT in Lean"
 date: today
-format: 
+format:
   html:
     theme: cosmo
     toc: true
@@ -11,8 +11,30 @@ format:
 
 # Overview
 
-This document summarizes the functions defined in `chapter3.lean`.
+This document summarizes the functions defined in [HoTTRijke/chapter3.lean](../HoTTRijke/chapter3.lean).
 Each entry includes the function name, its Lean signature, and a short description.
+
+The file is organized into three namespaces: `chapter3_naturals` (a **1-based** encoding of the
+natural numbers), `chapter3_integers` (integers built on top of those naturals), and
+`chapter3_booleans` (booleans plus small constructive-logic combinators).
+
+The file's header comment notes that starting the naturals from one, rather than zero, "seemed
+better" at first for a natural correspondence between naturals and positive/negative integers,
+"but this approach has some serious drawbacks and was probably abandoned" — consistent with the
+0-based encoding developed in parallel in `chapter3_naturals_with_zero.lean` (see
+[its documentation](chapter3_naturals_with_zero_documentation.qmd)), which is the encoding used by
+the later `chapter5_props_naturals_with_zero.lean`, `chapter6.lean`, and `chapter7.lean`.
+
+::: {.callout-note}
+**A note on implicit/section-variable arguments.** Several definitions below (`myNegType`,
+`double_neg`, `double_contrapositive`, `double_contrapositive_ii`, `double_contrapositive_iii`)
+do not list their own `(P Q : Type)` arguments. They instead pick up `P`/`Q`/`R` from the
+`variable (P Q R : Type)` declaration in scope (`chapter3.lean:255`): Lean automatically
+prepends any section variable that is actually used in a definition's stated type as an
+**explicit** leading argument (matching how `variable` declared it). The signatures below make
+this explicit so they match what Lean actually elaborates, rather than the possibly-misleading
+form written at the definition site.
+:::
 
 # Namespace `chapter3_naturals`
 
@@ -42,25 +64,38 @@ Each entry includes the function name, its Lean signature, and a short descripti
 
 | Function | Signature | Description |
 |---|---|---|
-| `toStringMyN` | `myN → String` | Converts naturals to strings (`1` through `10`, and `>=11` fallback). |
-| `myAdd` | `(a b : myN) → myN` | Recursive addition on 1-based naturals. |
-| `myMult` | `(a b : myN) → myN` | Recursive multiplication via repeated addition. |
-| `myExp` | `(a b : myN) → myN` | Exponentiation via repeated multiplication. |
+| `toStringMyN` | `myN → String` | Converts naturals to strings (`"1"` through `"10"`, and `"≥11"` for anything larger). |
+| `myAdd` | `(a b : myN) → myN` | Recursive addition on 1-based naturals; recurses on `b`. |
+| `myMult` | `(a b : myN) → myN` | Recursive multiplication via repeated addition; recurses on `b`. |
+| `myExp` | `(a b : myN) → myN` | Exponentiation (`a^b`) via repeated multiplication; recurses on `b`. |
 | `myMin` | `(a b : myN) → myN` | Minimum of two naturals. |
 | `myMax` | `(a b : myN) → myN` | Maximum of two naturals. |
 | `triangular_number` | `(a : myN) → myN` | Computes the triangular number of `a`. |
 | `factorial` | `(a : myN) → myN` | Computes factorial recursively. |
-| `binomial` | `(a b : myN) → myN` | Binomial coefficient recurrence (with 1-based limitation for `a < b`). |
-| `binomial_v2` | `(a b : myN) [DecidableEq myN] → myN` | Alternative binomial using equality decisions and `myMin`. |
-| `fibonacci` | `(n : myN) → myN` | Fibonacci numbers with base cases `F1 = 1`, `F2 = 1`. |
-| `div2` | `(n : myN) → myN` | Integer division by 2 in the 1-based natural setting. |
-| `dist` | `(m n : myN) → myN` | Distance-like recursive difference function on naturals. |
+| `binomial` | `(a b : myN) → myN` | Binomial-coefficient-style recurrence; see *Possible Issues* below for its 1-based limitation. |
+| `binomial_v2` | `(a b : myN) → [DecidableEq myN] → myN` | Alternative binomial using `myMin` and a decidable equality check instead of pure pattern matching. |
+| `fibonacci` | `(n : myN) → myN` | Fibonacci numbers with base cases `F(1) = 1`, `F(2) = 1`. |
+| `div2` | `(n : myN) → myN` | Integer division by 2 in the 1-based natural setting (rounds down, with 1 as the floor — see *Possible Issues*). |
+| `dist` | `(m n : myN) → myN` | Distance-like recursive difference function on naturals — see *Possible Issues* for its behavior on equal inputs. |
 
 ## Instances
 
 | Name | Signature | Description |
 |---|---|---|
 | `ToString myN` | `instance : ToString myN` | Uses `toStringMyN` for string rendering. |
+| `Add myN` | `instance : Add myN` | Registers `myAdd` for the `+` operator. |
+| `Mul myN` | `instance : Mul myN` | Registers `myMult` for the `*` operator. |
+
+## Possible Issues
+
+1. There is no zero in this 1-based `myN`. As the source itself notes (`chapter3.lean:90-96`),
+   this means `binomial a b` returns `_1` whenever `a < b`, instead of the mathematically
+   expected `0` — the same limitation affects `binomial_v2`.
+2. For the same reason, `div2 n` for `n = 1` or `n = 2` both round down to `myN.one` (there is no
+   `0` result to represent "less than one"), and `dist m n` returns `myN.one` (not a zero) when
+   `m` and `n` denote the same number greater than 1 — e.g. `dist _2 _2` reduces to `myN.one`,
+   not to any representation of "no distance". Callers relying on `dist m n = m` iff `m = n`
+   should be aware of this.
 
 # Namespace `chapter3_integers`
 
@@ -68,19 +103,19 @@ Each entry includes the function name, its Lean signature, and a short descripti
 
 | Name | Signature | Description |
 |---|---|---|
-| `myZ` | `Type` | Integer type encoded as `myN ⊕ (Unit ⊕ myN)`. |
+| `myZ` | `Type` | Integer type encoded as `myN ⊕ (Unit ⊕ myN)` (negative / zero / positive). |
 | `Zneg` | `(n : myN) → myZ` | Builds a negative integer. |
 | `Zpos` | `(n : myN) → myZ` | Builds a positive integer. |
 | `Zzero` | `myZ` | Zero integer constructor. |
-| `__0` | `myZ` | Alternative explicit zero term. |
+| `__0` | `(U : Unit) → myZ` | Alternative zero term. **Note:** despite looking like a bare constant, `__0` actually takes an explicit `Unit` argument — it is defined after `variable (U : Unit)` (`chapter3.lean:174`) and its body references `U`, so Lean auto-prepends `(U : Unit)` to its signature. In practice it must be called as `__0 ()`. |
 
 ## Function Summary
 
 | Function | Signature | Description |
 |---|---|---|
-| `myNatToInt` | `(n : myN) → myZ` | Injects naturals into positive integers. |
+| `myNatToInt` | `(n : myN) → myZ` | Injects naturals into positive integers (alias for `Zpos`). |
 | `negative` | `(n : myZ) → myZ` | Integer negation. |
-| `showMyZ` | `(z : myZ) → String` | String view of integers (`-n`, `0`, `n`). |
+| `showMyZ` | `(z : myZ) → String` | String view of integers (`"-n"`, `"0"`, `"n"`). |
 | `predZ` | `(z : myZ) → myZ` | Integer predecessor operation. |
 | `succZ` | `(z : myZ) → myZ` | Integer successor operation. |
 
@@ -98,9 +133,9 @@ Each entry includes the function name, its Lean signature, and a short descripti
 |---|---|---|
 | `myBool.myTrue` | `myBool` | Boolean true constructor. |
 | `myBool.myFalse` | `myBool` | Boolean false constructor. |
-| `myProd.mk` | `(x : P) → (y : Q) → myProd P Q` | Constructor for custom product type. |
-| `myEquiv` | `(P Q : Type) → Type` | Type equivalence as a pair of maps `P → Q` and `Q → P`. |
-| `myNegType` | `Type` | Negation type alias (`P → Empty`). |
+| `myProd.mk` | `{P Q : Type} → (x : P) → (y : Q) → myProd P Q` | Constructor for the custom product type. `P`, `Q` are implicit, as Lean makes inductive-family parameters implicit in every constructor. |
+| `myEquiv` | `(P Q : Type) → Type` | Type equivalence as a pair of maps `P → Q` and `Q → P` (defined as `myProd (P → Q) (Q → P)`). |
+| `myNegType` | `(P : Type) → Type` | Negation type (`P → Empty`). Picks up its `P` argument from the section `variable (P Q R : Type)` — see the note at the top of this document. |
 
 ## Function Summary
 
@@ -111,13 +146,19 @@ Each entry includes the function name, its Lean signature, and a short descripti
 | `myDisj` | `(x y : myBool) → myBool` | Boolean disjunction (OR). |
 | `proj1` | `{P Q : Type} → (z : myProd P Q) → P` | First projection from `myProd`. |
 | `proj2` | `{P Q : Type} → (z : myProd P Q) → Q` | Second projection from `myProd`. |
-| `myProdFunc` | `{P Q R : Type} → (f : P → Q → R) → (myProd P Q → R)` | Converts curried binary function to product-input function. |
-| `double_neg` | `P → myNegType (myNegType P)` | Introduction of double negation. |
-| `double_contrapositive` | `(P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q))` | Double-negation contrapositive transport across implication. |
-| `double_contrapositive_ii` | `(P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q))` | Variant of double-negation transport with a double-negated codomain. |
-| `double_contrapositive_iii` | `myNegType (myNegType (myNegType (myNegType P) → P))` | Higher-order negation principle over a classical-style implication. |
+| `myProdFunc` | `{P Q R : Type} → (f : P → Q → R) → (myProd P Q → R)` | Converts a curried binary function into a function on a product input. |
+| `double_neg` | `(P : Type) → P → myNegType (myNegType P)` | Introduction of double negation. Leading `(P : Type)` comes from the section variable (see note above). |
+| `double_contrapositive` | `(P Q : Type) → (P → Q) → (myNegType (myNegType P) → myNegType (myNegType Q))` | Double-negation contrapositive transport across an implication. |
+| `double_contrapositive_ii` | `(P Q : Type) → (P → myNegType (myNegType Q)) → (myNegType (myNegType P) → myNegType (myNegType Q))` | Variant of double-negation transport with a double-negated codomain. |
+| `double_contrapositive_iii` | `(P : Type) → myNegType (myNegType (myNegType (myNegType P) → P))` | Higher-order negation principle over a classical-style implication. |
 
 # Notes
 
-- This chapter uses 1-based naturals (`myN.one` is the smallest natural).
-- Several constructions in the boolean namespace are logic/proof combinators over types.
+- This chapter uses 1-based naturals (`myN.one` is the smallest natural) — there is no zero
+  constructor, which is the root cause of the issues listed above. A separate, 0-based
+  development lives in `chapter3_naturals_with_zero.lean`; see that file's documentation.
+- Several constructions in the boolean namespace (`double_neg`, `double_contrapositive*`,
+  `myNegType`) rely on Lean's section-`variable` auto-binding rather than declaring their type
+  parameters locally — see the callout at the top of this document.
+- `example` blocks in the source (`chapter3.lean:276-283`) are anonymous checks, not named
+  declarations, so they are not listed as functions above.

@@ -5,11 +5,39 @@ format:
     toc: true
 ---
 
+::: {.callout-warning}
+**Known project-wide build issue.** [HoTTRijke.lean](../HoTTRijke.lean) (the library root, which
+imports every chapter file) contains a typo on its `Inductive_Int` import line:
+`import HottRijke.Inductive_Int` (missing the capital `T` in `HoTTRijke`). On a case-sensitive
+filesystem this import does not resolve to `HoTTRijke/Inductive_Int.lean`, which currently breaks
+`lake build` for the whole `HoTTRijke` library — independently of, and in addition to, any
+per-file issues noted on the individual pages below. The fix is to correct the import to
+`import HoTTRijke.Inductive_Int`.
+:::
+
 # Documentation Pages
 
+- [Chapter 1](chapter1_documentation.html)
+- [Chapter 2](chapter2_documentation.html)
+- [Chapter 3 (Naturals starting at 1, Integers, Booleans)](chapter3_documentation.html)
+- [Chapter 3 (Naturals With Zero)](chapter3_naturals_with_zero_documentation.html)
+- [Chapter 4](chapter4_documentation.html)
+- [Chapter 5 (Equality)](chapter5_eq_documentation.html)
+- [Chapter 5 (Integers, built on the 1-based naturals)](chapter5_ints_documentation.html)
+- [Chapter 5 (Properties of the 0-based naturals)](chapter5_props_naturals_with_zero_documentation.html)
+- [Chapter 6](chapter6_documentation.html)
+- [Chapter 7](chapter7_documentation.html)
+- [Inductive_Int (standalone third natural-number/integer development, used by Chapter 6)](inductive_int_documentation.html)
 
-- [Chapter 3 HTML](chapter3_documentation.html)
-- [Chapter 4 HTML](chapter4_documentation.html)
-- [Chapter 5 Equality HTML](chapter5_eq_documentation.html)
-- [Chapter 5 Integers HTML](chapter5_ints_documentation.html)
-- [Chapter 6 HTML](chapter6_documentation.html)
+# Reading Order
+
+The project develops **three separate, overlapping** natural-number/integer formalizations. If
+you are new to the codebase, this is the most important thing to understand before diving into
+any single chapter's page — see each page's "Notes" section for how it fits in:
+
+1. **1-based naturals**: `chapter3.lean` → `chapter5_eq.lean` → `chapter5_ints.lean` → `chapter4.lean`.
+2. **0-based naturals**: `chapter3_naturals_with_zero.lean` → `chapter5_props_naturals_with_zero.lean` → `chapter7.lean`.
+3. **Standalone `N`/`Z`**: `Inductive_Int.lean` → `chapter6.lean` → (transitively) `chapter7.lean`.
+
+`chapter1.lean` and `chapter2.lean` are short, self-contained warm-up exercises independent of
+all three lines above.

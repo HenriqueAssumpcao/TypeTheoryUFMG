@@ -1,3 +1,14 @@
+-- This file contains the implementation of naturals and integers
+
+/-
+  In this file, one-based naturals are implemented and also integers.
+  Intuitively, it seems better to implement naturals starting from one,
+  since this gives a more natural correspondence between naturals and positive/negative
+  integers.
+
+  However, this approach has some serious drawbacks and was probably abandoned.
+-/
+
 namespace chapter3_naturals
 
 -- Naturals now start at 1 (base constructor), so `myN.zero` represents 1.

@@ -1,0 +1,106 @@
+---
+title: "Chapter 3 (Naturals With Zero): Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/chapter3_naturals_with_zero.lean](../HoTTRijke/chapter3_naturals_with_zero.lean).
+
+This file is a **second, parallel** development of the natural numbers, alongside
+`chapter3.lean` (see [its documentation](chapter3_documentation.qmd)) — but here `myN`'s base
+constructor is `zero` rather than `one`, giving an ordinary **0-based** encoding
+(`_0 = myN.zero`, `_1 = succ _0`, …) instead of `chapter3.lean`'s 1-based one. It re-implements
+essentially the same function set as `chapter3.lean`'s `chapter3_naturals` namespace, and adds an
+ordering relation (`Less_than`) that `chapter3.lean` does not have. It imports `chapter5_eq.lean`
+(for `≡`/`MyEq`), which `chapter3.lean` does not need.
+
+The file has two namespaces: `chapter3_naturals_with_zero` and `chapter3_propositions`.
+
+# Namespace `chapter3_naturals_with_zero`
+
+## Types
+
+| Name | Signature | Description |
+|---|---|---|
+| `myN.zero` | `myN` | Base constructor, representing 0. |
+| `myN.succ` | `myN → myN` | Successor constructor for naturals. |
+
+## Numeric Constants
+
+| Function | Signature | Description |
+|---|---|---|
+| `_0` | `myN` | The number 0. |
+| `_1` … `_10` | `myN` | The numbers 1 through 10, each `succ` of the previous. |
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `toStringMyN` | `myN → String` | Converts naturals to strings (`"0"` through `"9"`, and `"≥10"` for anything larger). |
+| `myAdd` | `(a b : myN) → myN` | Recursive addition; recurses on `b`, base case `myAdd a myN.zero = a`. |
+| `myMult` | `(a b : myN) → myN` | Recursive multiplication via repeated addition; base case `myMult a myN.zero = _0`. |
+| `myExp` | `(a b : myN) → myN` | Exponentiation (`a^b`); base case `myExp a myN.zero = _1` (so `a^0 = 1`, as expected). |
+| `myMin` | `(a b : myN) → myN` | Minimum of two naturals. |
+| `myMax` | `(a b : myN) → myN` | Maximum of two naturals. |
+| `triangular_number` | `(a : myN) → myN` | Triangular number of `a`; `triangular_number _0 = myN.zero`. |
+| `factorial` | `(a : myN) → myN` | Factorial; `factorial _0 = _1` (correct, `0! = 1`). |
+| `binomial` | `(a b : myN) → myN` | Binomial-coefficient-style recurrence; correctly gives `binomial _0 _0 = _1`, matching `binomial_v2` (see *Possible Issues* for a residual documentation note). |
+| `binomial_v2` | `(a b : myN) → [DecidableEq myN] → myN` | Alternative binomial via `myMin` and a decidability check — also gives `binomial_v2 _0 _0 = _1`. |
+| `fibonacci` | `(n : myN) → myN` | Fibonacci with base cases `F(0) = 1`, `F(1) = 1` (note: indices shifted by one relative to the usual `F(0)=0, F(1)=1` convention). |
+| `div2` | `(n : myN) → myN` | Integer division by 2, rounding down; correctly gives `div2 _0 = _0`. |
+| `dist` | `(m n : myN) → myN` | Absolute difference; correctly satisfies `dist n n = myN.zero` for every `n` (unlike the 1-based `chapter3.lean` version — see its documentation). |
+
+## Instances
+
+| Name | Signature | Description |
+|---|---|---|
+| `ToString myN` | `instance : ToString myN` | Uses `toStringMyN`. |
+| `Add myN` | `instance : Add myN` | Registers `myAdd`. |
+| `Mul myN` | `instance : Mul myN` | Registers `myMult`. |
+
+## Possible Issues
+
+1. `binomial`'s zero-case was previously buggy (`binomial _0 _0` returned `_0` instead of `_1`);
+   this has been fixed in the source — `binomial`'s `myN.zero`/`myN.zero` case now returns `_1`,
+   matching `binomial_v2`.
+2. The comment immediately preceding `binomial` (`chapter3_naturals_with_zero.lean:103-109`)
+   states "there is no zero among naturals, `binomial a b` for `a < b` returns 1" — this reads
+   like a note carried over from the 1-based `chapter3.lean` version and does not accurately
+   describe the current 0-based code: here `binomial _0 (succ _)` (i.e. `a < b` with `a = 0`)
+   returns `_0`, not `_1`. Likewise, `binomial_v2`'s `myN.zero, _ => _0` branch (line 127) is
+   commented `-- No zero in 1-based naturals`, which is also inapplicable to this 0-based file.
+   Both comments look like leftovers from adapting `chapter3.lean` and may be worth revising or
+   removing.
+
+# Namespace `chapter3_propositions`
+
+Opens `chapter3_naturals_with_zero` and `chapter5_myeq` (from `chapter5_eq.lean`).
+
+## Function Summary
+
+| Function | Signature | Description |
+|---|---|---|
+| `Less_than` | `(m n : myN) → Prop` | Strict less-than as a `Prop`-valued recursive relation. |
+| `Less_than_succ` | `(n : myN) → Less_than n n.succ` | Every natural is less than its successor. |
+| `Less_than_trans` | `(m n p : myN) → Less_than m n → Less_than n p → Less_than m p` | Transitivity of `Less_than`. |
+| `Less_than_irrefl` | `(n : myN) → ¬ Less_than n n` | Irreflexivity of `Less_than`. |
+| `Less_than_on_equals` | `(m n : myN) → (p : m ≡ n) → ¬ Less_than m n` | Equal naturals cannot be strictly less than one another. |
+
+# Notes
+
+- This file, together with `chapter5_props_naturals_with_zero.lean` (which proves the
+  arithmetic laws for this `myN`) and `chapter7.lean` (which builds on both), forms the
+  **0-based** line of natural-number development, parallel to the **1-based** line
+  (`chapter3.lean` → `chapter5_ints.lean` `Naturals` namespace → `chapter4.lean`). See the
+  project-level duplicate-function summary for the full picture of how these two lines overlap.
+- `Less_than` here is `Prop`-valued, unlike the arithmetic functions above (which return `myN`,
+  a `Type`) and unlike `chapter6.lean`'s analogous `less_than`/`leq` relations on `Inductive_Int`'s
+  `N` (which are `Type`-valued). This is a genuine, if minor, inconsistency in how "is a
+  proposition" is encoded across the project's different natural-number developments.
+- Since the previous revision of this document, the `binomial _0 _0` off-by-one bug has been
+  fixed, and the `#check dist myN.zero myN.zero` debugging line has been removed from the source.

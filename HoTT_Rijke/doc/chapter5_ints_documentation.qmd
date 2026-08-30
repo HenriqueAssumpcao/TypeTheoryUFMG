@@ -9,7 +9,9 @@ format:
 
 # Overview
 
-This document reflects the current state of [HoTTRijke/chapter5_ints.lean](../HoTTRijke/chapter5_ints.lean).
+This document reflects the current state of [HoTTRijke/chapter5_ints.lean](../HoTTRijke/chapter5_ints.lean),
+which implements natural and integer arithmetic for the **one-based** naturals from
+`chapter3.lean` (per the file's header comment).
 
 It provides:
 - A brief summary of each function.
@@ -47,8 +49,8 @@ The Lean file is organized into:
 
 | Function | Signature | Description |
 |---|---|---|
-| right_equiv_add |`(x : myZ) → (p : a ≡ b) → myAddZ x a ≡ myAddZ x b`| Congruence of integer addition in the right argument. |
-| left_equiv_add |`(x : myZ) → (p : a ≡ b) → myAddZ a x ≡ myAddZ b x`| Congruence of integer addition in the left argument. |
+| right_equiv_add |`{a b : myZ} → (x : myZ) → (p : a ≡ b) → myAddZ x a ≡ myAddZ x b`| Congruence of integer addition in the right argument. `a`, `b` are not declared explicitly in the source; they are auto-bound implicits (Lean's `autoImplicit`), inferred as `myZ` from their use in `p : a ≡ b`. |
+| left_equiv_add |`{a b : myZ} → (x : myZ) → (p : a ≡ b) → myAddZ a x ≡ myAddZ b x`| Congruence of integer addition in the left argument. Same auto-bound-implicit note as `right_equiv_add`. |
 | succ_pred_elim |`(k : myZ) → succZ (predZ k) ≡ k`| Successor after predecessor cancels. |
 | pred_succ_elim |`(k : myZ) → predZ (succZ k) ≡ k`| Predecessor after successor cancels. |
 | pred_succ_symm |`(z : myZ) → pred_succ_elim z • myEq_symm (succ_pred_elim z)`| Composite witness relating the two cancellation lemmas. |
@@ -91,15 +93,15 @@ The Lean file is organized into:
 | mult_commutative |`(a b : myZ) → (a × b) ≡ (b × a)`| Integer multiplication commutativity theorem, partially implemented with several remaining `sorry` branches. |
 | mult_associative |`(a b c : myZ) → ((a × b) × c) ≡ a × (b × c)`| Integer multiplication associativity theorem, currently `sorry`. |
 | add_mult_right_distributive |`(a b c : myZ) → ((a + b) × c) ≡ ((a × c) + (b × c))`| Right distributivity of integer multiplication over addition, currently `sorry`. |
-| add_mult_left_distributive |`(a b c : myZ) → (a × (b + c) × c) ≡ ((a × b) + (a × c))`| Left-distributivity-shaped statement as written in the source; currently `sorry`. |
+| add_mult_left_distributive |`(a b c : myZ) → (a × (b + c)) ≡ ((a × b) + (a × c))`| Left distributivity of integer multiplication over addition, currently `sorry`. |
 
 # Possible Issues
 
-1. Remaining `sorry` placeholders are now confined to `multNaturalWithZ_comm`, several branches of `mult_commutative`, `mult_associative`, `add_mult_right_distributive`, and `add_mult_left_distributive`.
-2. The statement of `add_mult_left_distributive` still has the non-standard left-hand side `(a × (b + c) × c)`, so the documentation preserves that exact source statement rather than normalizing it.
-3. The declaration `variable (U : Unit)` appears unused.
-4. The file contains both `#check myAdd` near the top and `#print myMultZ` near the end, which look like interactive debugging aids rather than theorem content.
-5. Names `addNtoZ_commutative` and `subNfromZ_commutative` are potentially misleading: they express equivalence with `myAddZ`, not commutativity between two symmetric operands.
+1. Remaining `sorry` placeholders are confined to `multNaturalWithZ_comm`; four branches of
+   `mult_commutative` (the `Sum.inl a'`/`Sum.inr (Sum.inl _)` sub-cases under both the
+   `Sum.inl b'` and `Sum.inr (Sum.inr b')` outer cases); `mult_associative`;
+   `add_mult_right_distributive`; and `add_mult_left_distributive`.
+2. Names `addNtoZ_commutative` and `subNfromZ_commutative` are potentially misleading: they express equivalence with `myAddZ`, not commutativity between two symmetric operands.
 
 # Duplicate and Similar Functions
 
@@ -126,3 +128,9 @@ The Lean file is organized into:
 
 - This summary is aligned with the current file content in [HoTTRijke/chapter5_ints.lean](../HoTTRijke/chapter5_ints.lean), including the completed integer addition proofs and the remaining multiplication placeholders.
 - Notation in the Lean source uses + and × inside local namespaces for readability of theorem statements.
+- Since the previous revision of this document, several issues have been resolved in the source:
+  the Git merge-conflict markers that used to appear in `mult_commutative` have been removed (the
+  file now compiles cleanly with respect to this issue), the previously-unused
+  `variable (U : Unit)` declaration has been removed, the `#check myAdd`/`#print myMultZ`
+  debugging aids have been removed, and `add_mult_left_distributive`'s statement has been
+  corrected to the standard left-distributivity shape shown in the table above.

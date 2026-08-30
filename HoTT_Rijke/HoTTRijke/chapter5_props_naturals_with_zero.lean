@@ -1,3 +1,6 @@
+-- This file contains the implementation of several functions regarding
+-- zero-based natural arithmetic.
+
 import HoTTRijke.chapter3_naturals_with_zero
 import HoTTRijke.chapter5_eq
 

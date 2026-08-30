@@ -1,3 +1,11 @@
+/- The implementation of natural numbers following Chapter 3
+
+   In this file, we implemented zero-based natural numbers as
+   in Chapter 3 of Rijke.
+
+   One-based naturals are implemented in the parallel file chapter3.lean.
+-/
+
 import HoTTRijke.chapter5_eq
 
 open chapter5_myeq
@@ -104,7 +112,7 @@ def binomial (a b : myN) : myN :=
   match a with
   | myN.zero =>
     match b with
-    | myN.zero => _0
+    | myN.zero => _1
     | myN.succ _ => _0
   | myN.succ a' =>
     match b with
@@ -144,7 +152,6 @@ def dist (m n : myN) : myN :=
   | myN.succ m, myN.zero => myN.succ m
   | myN.succ m, myN.succ n => dist m n
 
-#check dist myN.zero myN.zero
 
 end chapter3_naturals_with_zero
 

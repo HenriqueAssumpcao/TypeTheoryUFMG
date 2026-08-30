@@ -1,0 +1,75 @@
+---
+title: "Chapter 7 Function Summary"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
+---
+
+# Overview
+
+This document summarizes [HoTTRijke/chapter7.lean](../HoTTRijke/chapter7.lean). It imports
+`chapter2.lean`, `chapter3_naturals_with_zero.lean`, `chapter5_eq.lean`,
+`chapter5_props_naturals_with_zero.lean`, and `chapter6.lean`, and works with
+`chapter3_naturals_with_zero.lean`'s 0-based `myN`. The chapter covers divisibility, the
+congruence relation, and the standard finite types `Fin n`.
+
+# Divisibility
+
+| Function | Signature | Description |
+|---|---|---|
+| `divides` | `(d n : myN) → Prop` | `d` divides `n`, defined as `Nonempty (Σ k : myN, (d * k) ≡ n)`. Note this is `Prop`-valued, unlike most of the project's other relations (which are `Type`-valued). |
+| `one_divides_all_n` | `∀ n : myN, divides _1 n` | 1 divides every natural. |
+| `n_divides_n` | `(n : myN) → divides n n` | Every natural divides itself. |
+| `n_divides_zero` | `∀ n : myN, divides n myN.zero` | **Incomplete (`sorry`).** Every natural divides zero. |
+| `divides_sum` | `(a n1 n2 : myN) → (p : divides a n1) → (q : divides a n2) → (divides a (n1 + n2))` | Divisibility is preserved by addition. |
+| `divides_first_summand` | `(a n1 n2 : myN) → (p : divides a n2) → (q : divides a (n1 + n2)) → divides a n1` | **Incomplete (`sorry`).** If `a` divides `n2` and `n1+n2`, it divides `n1`. |
+| `divides_second_summand` | `(a n1 n2 : myN) → (p : divides a n1) → (q : divides a (n1 + n2)) → divides a n2` | **Incomplete (`sorry`).** If `a` divides `n1` and `n1+n2`, it divides `n2`. |
+
+# The Congruence Relation on `myN`
+
+| Function | Signature | Description |
+|---|---|---|
+| `cong` | `(x y k : myN) → Prop` | `x ≡ y (mod k)`, defined as `divides k (dist x y)`. |
+| `cong_to_zero` | `(n : myN) → cong n myN.zero n` | Every `n` is congruent to 0 modulo itself. |
+| `transport_prop` | `{α : Type} → {x y : α} → (β : (x' : α) → Prop) → (x ≡ y) → (β x → β y)` | The `Prop`-valued analogue of `transport` from `chapter5_eq.lean` (which is `Type`-valued). |
+| `cong_refl` | `(x k : myN) → cong x x k` | Reflexivity of `cong`, via `n_divides_zero` and `dist_equals_0`. Depends on the incomplete `n_divides_zero`. |
+| `cong_refl_on_equals` | `(x y k : myN) → (p : x ≡ y) → cong x y k` | If `x ≡ y`, they are congruent mod any `k`. Also depends on `n_divides_zero`. |
+| `cong_symm` | `(x y k : myN) → (p : cong x y k) → cong y x k` | Symmetry of `cong`. |
+| `cong_trans` | `(x y z k : myN) → (p : cong x y k) → (q : cong y z k) → (cong x z k)` | Transitivity of `cong`; case-splits on `chapter5_props_naturals_with_zero.lean`'s `dist_one_of_three`, so it is only as complete as that (itself a `sorry`). |
+
+# The Standard Finite Types
+
+| Function | Signature | Description |
+|---|---|---|
+| `myFin` | `(n : myN) → Type` | `Fin n`-style finite type with `n` inhabitants, built from `Empty` and `Sum`. |
+| `inclusion` | `(n : myN) → (x : myFin n) → myN` | Embeds `myFin n` into `myN`. |
+| `inclusion_is_bounded` | `(k : myN) → (x : myFin k) → Less_than (inclusion k x) k` | `theorem`. The embedding always lands strictly below `k`. |
+| `inclusion_is_injective` | `(k : myN) → (x y : myFin k) → (inclusion k x ≡ inclusion k y) → (x ≡ y)` | The embedding is injective. |
+| `zero` | `(k : myN) → myFin k.succ` | The zero element of `myFin (k+1)`. |
+| `skip_zero` | `(k : myN) → (x : myFin k) → myFin k.succ` | Embeds `myFin k` into `myFin (k+1)`, skipping the zero element. |
+| `succ_fin` | `(k : myN) → (x : myFin k) → myFin k` | Successor function on `myFin k` (wraps around via `zero`). |
+| `quotient_map` | `(k n : myN) → myFin k.succ` | Reduction of `n : myN` modulo `k+1`. |
+| `inclusion_zero_eq_zero` | `(k : myN) → (inclusion k.succ (zero k)) ≡ myN.zero` | Lemma 7.4.4(i): the embedding of `zero` is `0`. |
+| `inclusion_skip_zero_eq_succ` | `(k : myN) → (x : myFin k) → (inclusion k.succ (skip_zero k x)) ≡ (myN.succ (inclusion k x))` | Lemma 7.4.4(ii): the embedding commutes with `skip_zero`/`succ`. |
+| `inclusion_succ_fin_eq_succ` | `(k : myN) → (x : myFin k) → cong (inclusion k (succ_fin k x)) (myN.succ (inclusion k x)) k` | `theorem`. Lemma 7.4.4(iii): the embedding of `succ_fin x` is congruent to `inclusion x + 1` modulo `k`. |
+
+## Possible Issues
+
+1. Three lemmas are `sorry`: `n_divides_zero`, `divides_first_summand`, `divides_second_summand`.
+   Because `cong_refl`, `cong_refl_on_equals`, and (transitively, via `dist_one_of_three` from
+   `chapter5_props_naturals_with_zero.lean`) `cong_trans` all depend on these, most of the
+   congruence-relation API in this file is only as complete as its `sorry`-marked dependencies —
+   it type-checks, but is not yet a full proof of anything.
+
+# Notes
+
+- This file completes the "0-based" line of development: `chapter3_naturals_with_zero.lean` →
+  `chapter5_props_naturals_with_zero.lean` → `chapter6.lean` → `chapter7.lean` (though note
+  `chapter6.lean` itself is built on `Inductive_Int.lean`'s separate `N`, not on
+  `chapter3_naturals_with_zero.lean`'s `myN` — `chapter7.lean` uses both: `myN` directly, and
+  `Equality_Equiv`-style reasoning from `chapter6.lean`'s `chapter6_Universes` namespace).
+- Since the previous revision of this document, `quocient_map` has been renamed to the correctly
+  spelled `quotient_map`, and the `#check Nonempty` debugging line has been removed from the
+  source.

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Chapter 5 (Equality): Function Summary</title>
+<title>Chapter 3 (Naturals With Zero): Function Summary</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,17 +26,17 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="chapter5_eq_documentation_files/libs/clipboard/clipboard.min.js"></script>
-<script src="chapter5_eq_documentation_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="chapter5_eq_documentation_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="chapter5_eq_documentation_files/libs/quarto-html/popper.min.js"></script>
-<script src="chapter5_eq_documentation_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="chapter5_eq_documentation_files/libs/quarto-html/anchor.min.js"></script>
-<link href="chapter5_eq_documentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="chapter5_eq_documentation_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="chapter5_eq_documentation_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="chapter5_eq_documentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="chapter5_eq_documentation_files/libs/bootstrap/bootstrap-2059b0d4022dda55b6094bf281f8a650.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="chapter3_naturals_with_zero_documentation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/popper.min.js"></script>
+<script src="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chapter3_naturals_with_zero_documentation_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="chapter3_naturals_with_zero_documentation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="chapter3_naturals_with_zero_documentation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="chapter3_naturals_with_zero_documentation_files/libs/bootstrap/bootstrap-2059b0d4022dda55b6094bf281f8a650.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -50,21 +50,19 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
-  <li><a href="#core-equality-type" id="toc-core-equality-type" class="nav-link" data-scroll-target="#core-equality-type"><span class="header-section-number">2</span> Core Equality Type</a>
+  <li><a href="#namespace-chapter3_naturals_with_zero" id="toc-namespace-chapter3_naturals_with_zero" class="nav-link" data-scroll-target="#namespace-chapter3_naturals_with_zero"><span class="header-section-number">2</span> Namespace <code>chapter3_naturals_with_zero</code></a>
   <ul class="collapse">
-  <li><a href="#myeq" id="toc-myeq" class="nav-link" data-scroll-target="#myeq"><span class="header-section-number">2.1</span> MyEq</a></li>
-  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">2.2</span> Notation</a></li>
+  <li><a href="#types" id="toc-types" class="nav-link" data-scroll-target="#types"><span class="header-section-number">2.1</span> Types</a></li>
+  <li><a href="#numeric-constants" id="toc-numeric-constants" class="nav-link" data-scroll-target="#numeric-constants"><span class="header-section-number">2.2</span> Numeric Constants</a></li>
+  <li><a href="#function-summary" id="toc-function-summary" class="nav-link" data-scroll-target="#function-summary"><span class="header-section-number">2.3</span> Function Summary</a></li>
+  <li><a href="#instances" id="toc-instances" class="nav-link" data-scroll-target="#instances"><span class="header-section-number">2.4</span> Instances</a></li>
+  <li><a href="#possible-issues" id="toc-possible-issues" class="nav-link" data-scroll-target="#possible-issues"><span class="header-section-number">2.5</span> Possible Issues</a></li>
   </ul></li>
-  <li><a href="#function-summary" id="toc-function-summary" class="nav-link" data-scroll-target="#function-summary"><span class="header-section-number">3</span> Function Summary</a>
+  <li><a href="#namespace-chapter3_propositions" id="toc-namespace-chapter3_propositions" class="nav-link" data-scroll-target="#namespace-chapter3_propositions"><span class="header-section-number">3</span> Namespace <code>chapter3_propositions</code></a>
   <ul class="collapse">
-  <li><a href="#equality-induction-and-basic-laws" id="toc-equality-induction-and-basic-laws" class="nav-link" data-scroll-target="#equality-induction-and-basic-laws"><span class="header-section-number">3.1</span> Equality Induction and Basic Laws</a></li>
-  <li><a href="#action-on-paths-and-composition-properties" id="toc-action-on-paths-and-composition-properties" class="nav-link" data-scroll-target="#action-on-paths-and-composition-properties"><span class="header-section-number">3.2</span> Action on Paths and Composition Properties</a></li>
-  <li><a href="#sigma-paths-and-transport" id="toc-sigma-paths-and-transport" class="nav-link" data-scroll-target="#sigma-paths-and-transport"><span class="header-section-number">3.3</span> Sigma Paths and Transport</a></li>
-  <li><a href="#higher-coherence" id="toc-higher-coherence" class="nav-link" data-scroll-target="#higher-coherence"><span class="header-section-number">3.4</span> Higher Coherence</a></li>
+  <li><a href="#function-summary-1" id="toc-function-summary-1" class="nav-link" data-scroll-target="#function-summary-1"><span class="header-section-number">3.1</span> Function Summary</a></li>
   </ul></li>
-  <li><a href="#typeclass-instance" id="toc-typeclass-instance" class="nav-link" data-scroll-target="#typeclass-instance"><span class="header-section-number">4</span> Typeclass Instance</a></li>
-  <li><a href="#possible-issues" id="toc-possible-issues" class="nav-link" data-scroll-target="#possible-issues"><span class="header-section-number">5</span> Possible Issues</a></li>
-  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes"><span class="header-section-number">6</span> Notes</a></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes"><span class="header-section-number">4</span> Notes</a></li>
   </ul>
 </nav>
 </div>
@@ -72,7 +70,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Chapter 5 (Equality): Function Summary</h1>
+<h1 class="title">Chapter 3 (Naturals With Zero): Function Summary</h1>
 </div>
 
 
@@ -91,19 +89,15 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="overview" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Overview</h1>
-<p>This document summarizes the functions defined in <a href="../HoTTRijke/chapter5_eq.lean">HoTTRijke/chapter5_eq.lean</a>, in namespace <code>chapter5_myeq</code>.</p>
-<p>The file introduces a custom identity type <code>MyEq</code>, proves basic equality properties, defines path composition operations, and develops transport and higher coherence constructions.</p>
+<p>This document summarizes <a href="../HoTTRijke/chapter3_naturals_with_zero.lean">HoTTRijke/chapter3_naturals_with_zero.lean</a>.</p>
+<p>This file is a <strong>second, parallel</strong> development of the natural numbers, alongside <code>chapter3.lean</code> (see <a href="chapter3_documentation.qmd">its documentation</a>) — but here <code>myN</code>’s base constructor is <code>zero</code> rather than <code>one</code>, giving an ordinary <strong>0-based</strong> encoding (<code>_0 = myN.zero</code>, <code>_1 = succ _0</code>, …) instead of <code>chapter3.lean</code>’s 1-based one. It re-implements essentially the same function set as <code>chapter3.lean</code>’s <code>chapter3_naturals</code> namespace, and adds an ordering relation (<code>Less_than</code>) that <code>chapter3.lean</code> does not have. It imports <code>chapter5_eq.lean</code> (for <code>≡</code>/<code>MyEq</code>), which <code>chapter3.lean</code> does not need.</p>
+<p>The file has two namespaces: <code>chapter3_naturals_with_zero</code> and <code>chapter3_propositions</code>.</p>
 </section>
-<section id="core-equality-type" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Core Equality Type</h1>
-<section id="myeq" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="myeq"><span class="header-section-number">2.1</span> MyEq</h2>
+<section id="namespace-chapter3_naturals_with_zero" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Namespace <code>chapter3_naturals_with_zero</code></h1>
+<section id="types" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="types"><span class="header-section-number">2.1</span> Types</h2>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -113,39 +107,20 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>MyEq.refl</td>
-<td><code>{α : Type} → (a : α) → MyEq a a</code></td>
-<td>Constructor witnessing reflexivity of equality.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="notation" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="notation"><span class="header-section-number">2.2</span> Notation</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Notation</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>a ≡ b</code></td>
-<td>Alias for <code>MyEq a b</code>.</td>
+<td><code>myN.zero</code></td>
+<td><code>myN</code></td>
+<td>Base constructor, representing 0.</td>
 </tr>
 <tr class="even">
-<td><code>p • q</code></td>
-<td>Path concatenation via <code>concat_eq p q</code>.</td>
+<td><code>myN.succ</code></td>
+<td><code>myN → myN</code></td>
+<td>Successor constructor for naturals.</td>
 </tr>
 </tbody>
 </table>
 </section>
-</section>
-<section id="function-summary" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Function Summary</h1>
-<section id="equality-induction-and-basic-laws" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="equality-induction-and-basic-laws"><span class="header-section-number">3.1</span> Equality Induction and Basic Laws</h2>
+<section id="numeric-constants" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="numeric-constants"><span class="header-section-number">2.2</span> Numeric Constants</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -161,65 +136,20 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>ind_eq</td>
-<td><code>{α : Type} → {a : α} → (P : (x : α) → (a ≡ x) → Type) → P a (MyEq.refl a) → ((x : α) → (p : a ≡ x) → P x p)</code></td>
-<td>Eliminator/induction principle for <code>MyEq</code>, reducing all equality proofs to reflexivity.</td>
+<td><code>_0</code></td>
+<td><code>myN</code></td>
+<td>The number 0.</td>
 </tr>
 <tr class="even">
-<td>myEq_symm</td>
-<td><code>{α : Type} → {a x : α} → (a ≡ x) → (x ≡ a)</code></td>
-<td>Symmetry of equality (path inversion).</td>
-</tr>
-<tr class="odd">
-<td>myEq_symm_refl</td>
-<td><code>{α : Type} → (a : α) → myEq_symm (MyEq.refl a) ≡ (MyEq.refl a)</code></td>
-<td>Shows symmetry preserves reflexivity.</td>
-</tr>
-<tr class="even">
-<td>myEq_refl</td>
-<td><code>{α : Type} → {a : α} → (a ≡ a)</code></td>
-<td>Reflexivity of equality.</td>
-</tr>
-<tr class="odd">
-<td>myEq_trans</td>
-<td><code>{α : Type} → {a x y : α} → (a ≡ x) → (x ≡ y) → (a ≡ y)</code></td>
-<td>Transitivity of equality.</td>
-</tr>
-<tr class="even">
-<td>concat_eq</td>
-<td><code>{α : Type} → {x y z : α} → (x ≡ y) → (y ≡ z) → (x ≡ z)</code></td>
-<td>Equality concatenation (path composition), equivalent to transitivity.</td>
-</tr>
-<tr class="odd">
-<td>concat_assoc</td>
-<td><code>{α : Type} → {a b c d : α} → (p : a ≡ b) → (q : b ≡ c) → (r : c ≡ d) → (p • (q • r)) ≡ ((p • q) • r)</code></td>
-<td>Associativity of path concatenation.</td>
-</tr>
-<tr class="even">
-<td>concat_right_unit</td>
-<td><code>{α : Type} → {a b : α} → (p : a ≡ b) → (p • (MyEq.refl b)) ≡ p</code></td>
-<td>Right identity law for concatenation.</td>
-</tr>
-<tr class="odd">
-<td>concat_left_unit</td>
-<td><code>{α : Type} → {a b : α} → (p : a ≡ b) → ((MyEq.refl a) • p) ≡ p</code></td>
-<td>Left identity law for concatenation.</td>
-</tr>
-<tr class="even">
-<td>left_unit</td>
-<td><code>{α : Type} → {a b : α} → (p : a ≡ b) → (a ≡ b)</code></td>
-<td>Repackages left-unit composition as a term of the same equality type.</td>
-</tr>
-<tr class="odd">
-<td>right_unit</td>
-<td><code>{α : Type} → {a b : α} → (p : a ≡ b) → (a ≡ b)</code></td>
-<td>Repackages right-unit composition as a term of the same equality type.</td>
+<td><code>_1</code> … <code>_10</code></td>
+<td><code>myN</code></td>
+<td>The numbers 1 through 10, each <code>succ</code> of the previous.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="action-on-paths-and-composition-properties" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="action-on-paths-and-composition-properties"><span class="header-section-number">3.2</span> Action on Paths and Composition Properties</h2>
+<section id="function-summary" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="function-summary"><span class="header-section-number">2.3</span> Function Summary</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -235,105 +165,76 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>ap</td>
-<td><code>{α : Type} → {β : Type} → (f : α → β) → (x y : α) → (p : x ≡ y) → (f x ≡ f y)</code></td>
-<td>Applies a function to both sides of an equality (functorial action on paths).</td>
+<td><code>toStringMyN</code></td>
+<td><code>myN → String</code></td>
+<td>Converts naturals to strings (<code>"0"</code> through <code>"9"</code>, and <code>"≥10"</code> for anything larger).</td>
 </tr>
 <tr class="even">
-<td>sym_coctat_distributive</td>
-<td><code>{α : Type} → {x y z : α} → (p1 : x ≡ y) → (p2 : y ≡ z) → myEq_symm (p1 • p2) ≡ (myEq_symm p2) • (myEq_symm p1)</code></td>
-<td>Inversion distributes over concatenation in reverse order. (Name preserves a typo in the source — “coctat” for “concat”.)</td>
+<td><code>myAdd</code></td>
+<td><code>(a b : myN) → myN</code></td>
+<td>Recursive addition; recurses on <code>b</code>, base case <code>myAdd a myN.zero = a</code>.</td>
 </tr>
 <tr class="odd">
-<td>inv_con</td>
-<td><code>{α : Type} → {a b c : α} → (p : a ≡ b) → (q : b ≡ c) → (r : a ≡ c) → ((p • q) ≡ r) → (q ≡ (myEq_symm p • r))</code></td>
-<td>Solves for <code>q</code> from a composed path equation by composing with the inverse of <code>p</code>.</td>
+<td><code>myMult</code></td>
+<td><code>(a b : myN) → myN</code></td>
+<td>Recursive multiplication via repeated addition; base case <code>myMult a myN.zero = _0</code>.</td>
 </tr>
 <tr class="even">
-<td>con_inv</td>
-<td><code>{α : Type} → {a b c : α} → (p : a ≡ b) → (q : b ≡ c) → (r : a ≡ c) → ((p • q) ≡ r) → (p ≡ r • (myEq_symm q))</code></td>
-<td>Solves for <code>p</code> from a composed path equation by composing with the inverse of <code>q</code>.</td>
+<td><code>myExp</code></td>
+<td><code>(a b : myN) → myN</code></td>
+<td>Exponentiation (<code>a^b</code>); base case <code>myExp a myN.zero = _1</code> (so <code>a^0 = 1</code>, as expected).</td>
 </tr>
 <tr class="odd">
-<td>ap_id</td>
-<td><code>{α : Type} → (x y : α) → (p : x ≡ y) → p ≡ (ap (fun (x : α) =&gt; x) x y p)</code></td>
-<td>Shows <code>ap</code> on the identity function returns the same path.</td>
+<td><code>myMin</code></td>
+<td><code>(a b : myN) → myN</code></td>
+<td>Minimum of two naturals.</td>
 </tr>
 <tr class="even">
-<td>ap_comp</td>
-<td><code>{α : Type} → {β : Type} → {γ : Type} → (f : α → β) → (g : β → γ) → (x y : α) → (p : x ≡ y) → ap g (f x) (f y) (ap f x y p) ≡ ap (g ∘ f) x y p</code></td>
-<td>Functoriality of <code>ap</code> with respect to composition.</td>
+<td><code>myMax</code></td>
+<td><code>(a b : myN) → myN</code></td>
+<td>Maximum of two naturals.</td>
+</tr>
+<tr class="odd">
+<td><code>triangular_number</code></td>
+<td><code>(a : myN) → myN</code></td>
+<td>Triangular number of <code>a</code>; <code>triangular_number _0 = myN.zero</code>.</td>
+</tr>
+<tr class="even">
+<td><code>factorial</code></td>
+<td><code>(a : myN) → myN</code></td>
+<td>Factorial; <code>factorial _0 = _1</code> (correct, <code>0! = 1</code>).</td>
+</tr>
+<tr class="odd">
+<td><code>binomial</code></td>
+<td><code>(a b : myN) → myN</code></td>
+<td>Binomial-coefficient-style recurrence; correctly gives <code>binomial _0 _0 = _1</code>, matching <code>binomial_v2</code> (see <em>Possible Issues</em> for a residual documentation note).</td>
+</tr>
+<tr class="even">
+<td><code>binomial_v2</code></td>
+<td><code>(a b : myN) → [DecidableEq myN] → myN</code></td>
+<td>Alternative binomial via <code>myMin</code> and a decidability check — also gives <code>binomial_v2 _0 _0 = _1</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>fibonacci</code></td>
+<td><code>(n : myN) → myN</code></td>
+<td>Fibonacci with base cases <code>F(0) = 1</code>, <code>F(1) = 1</code> (note: indices shifted by one relative to the usual <code>F(0)=0, F(1)=1</code> convention).</td>
+</tr>
+<tr class="even">
+<td><code>div2</code></td>
+<td><code>(n : myN) → myN</code></td>
+<td>Integer division by 2, rounding down; correctly gives <code>div2 _0 = _0</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>dist</code></td>
+<td><code>(m n : myN) → myN</code></td>
+<td>Absolute difference; correctly satisfies <code>dist n n = myN.zero</code> for every <code>n</code> (unlike the 1-based <code>chapter3.lean</code> version — see its documentation).</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="sigma-paths-and-transport" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="sigma-paths-and-transport"><span class="header-section-number">3.3</span> Sigma Paths and Transport</h2>
+<section id="instances" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="instances"><span class="header-section-number">2.4</span> Instances</h2>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Function</th>
-<th>Signature</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>unique_ref</td>
-<td><code>{α : Type} → (x y : α) → (p : x ≡ y) → (⟨x, MyEq.refl x⟩ : Σ (y' : α), x ≡ y') ≡ ⟨y, p⟩</code></td>
-<td>Uniqueness-style result for equality witnesses packaged in a sigma type.</td>
-</tr>
-<tr class="even">
-<td>transport</td>
-<td><code>{α : Type} → {x y : α} → (β : (x' : α) → Type) → (x ≡ y) → (β x → β y)</code></td>
-<td>Transports terms along equalities in dependent types.</td>
-</tr>
-<tr class="odd">
-<td>lift_β</td>
-<td><code>(α : Type) → (β : (a : α) → Type) → (a x : α) → (b : β a) → (p : a ≡ x) → (⟨a, b⟩ : Σ a, β a) ≡ ⟨x, transport β p b⟩</code></td>
-<td>Lifts a base equality to an equality in a dependent pair (<code>Sigma</code>) via transport.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="higher-coherence" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="higher-coherence"><span class="header-section-number">3.4</span> Higher Coherence</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Function</th>
-<th>Signature</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>maclane_pentagon</td>
-<td><code>{α : Type} → (a b c d e : α) → (p : a ≡ b) → (q : b ≡ c) → (r : c ≡ d) → (s : d ≡ e) → Type</code></td>
-<td><strong>Currently a stub — see Possible Issues.</strong> Intended to encode the Mac Lane pentagon coherence identity for associativity paths.</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="typeclass-instance" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Typeclass Instance</h1>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -343,26 +244,85 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td>Trans instance for MyEq</td>
-<td><code>instance {α : Type} : Trans (@MyEq α) (@MyEq α) (@MyEq α)</code></td>
-<td>Registers transitivity so <code>Trans.trans</code> uses <code>myEq_trans</code>.</td>
+<td><code>ToString myN</code></td>
+<td><code>instance : ToString myN</code></td>
+<td>Uses <code>toStringMyN</code>.</td>
+</tr>
+<tr class="even">
+<td><code>Add myN</code></td>
+<td><code>instance : Add myN</code></td>
+<td>Registers <code>myAdd</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>Mul myN</code></td>
+<td><code>instance : Mul myN</code></td>
+<td>Registers <code>myMult</code>.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="possible-issues" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Possible Issues</h1>
+<section id="possible-issues" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="possible-issues"><span class="header-section-number">2.5</span> Possible Issues</h2>
 <ol type="1">
-<li><strong><code>maclane_pentagon</code> discards its own result.</strong> The <code>by</code> block (<code>chapter5_eq.lean:173-207</code>) correctly builds five intermediate 2-paths <code>α₁</code>–<code>α₅</code> and then proves <code>have t : ((α₁ • α₂) • α₃) ≡ (α₄ • α₅) := by ...</code> — this <code>t</code> is exactly the pentagon coherence witness the exercise is supposed to produce. But the very last line of the block is <code>exact α</code>, which closes the goal (recall the def’s return type is itself <code>Type</code>, since <code>maclane_pentagon</code> produces a <em>type</em>, not a proof) with the ambient carrier type <code>α</code> — completely ignoring <code>t</code>. As written, <code>maclane_pentagon a b c d e p q r s</code> reduces to just <code>α</code>, the original type, not to the pentagon-coherence type <code>((α₁ • α₂) • α₃) ≡ (α₄ • α₅)</code>. This looks like an unfinished definition — the likely fix is to end the block with <code>exact ((α₁ • α₂) • α₃) ≡ (α₄ • α₅)</code> (or simply return <code>t</code>’s type/proof, depending on whether the intent was to state the coherence as a <code>Type</code> or witness it as a term).</li>
-<li><code>sym_coctat_distributive</code> preserves a spelling typo from the source. It was previously spelled <code>sym_contat_distributive</code>; the source has since been renamed, but the new name is still a typo (“coctat” instead of “concat”). Documented as-is since it is a real declaration name that must be referenced verbatim.</li>
+<li><code>binomial</code>’s zero-case was previously buggy (<code>binomial _0 _0</code> returned <code>_0</code> instead of <code>_1</code>); this has been fixed in the source — <code>binomial</code>’s <code>myN.zero</code>/<code>myN.zero</code> case now returns <code>_1</code>, matching <code>binomial_v2</code>.</li>
+<li>The comment immediately preceding <code>binomial</code> (<code>chapter3_naturals_with_zero.lean:103-109</code>) states “there is no zero among naturals, <code>binomial a b</code> for <code>a &lt; b</code> returns 1” — this reads like a note carried over from the 1-based <code>chapter3.lean</code> version and does not accurately describe the current 0-based code: here <code>binomial _0 (succ _)</code> (i.e.&nbsp;<code>a &lt; b</code> with <code>a = 0</code>) returns <code>_0</code>, not <code>_1</code>. Likewise, <code>binomial_v2</code>’s <code>myN.zero, _ =&gt; _0</code> branch (line 127) is commented <code>-- No zero in 1-based naturals</code>, which is also inapplicable to this 0-based file. Both comments look like leftovers from adapting <code>chapter3.lean</code> and may be worth revising or removing.</li>
 </ol>
 </section>
-<section id="notes" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Notes</h1>
+</section>
+<section id="namespace-chapter3_propositions" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Namespace <code>chapter3_propositions</code></h1>
+<p>Opens <code>chapter3_naturals_with_zero</code> and <code>chapter5_myeq</code> (from <code>chapter5_eq.lean</code>).</p>
+<section id="function-summary-1" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="function-summary-1"><span class="header-section-number">3.1</span> Function Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Signature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Less_than</code></td>
+<td><code>(m n : myN) → Prop</code></td>
+<td>Strict less-than as a <code>Prop</code>-valued recursive relation.</td>
+</tr>
+<tr class="even">
+<td><code>Less_than_succ</code></td>
+<td><code>(n : myN) → Less_than n n.succ</code></td>
+<td>Every natural is less than its successor.</td>
+</tr>
+<tr class="odd">
+<td><code>Less_than_trans</code></td>
+<td><code>(m n p : myN) → Less_than m n → Less_than n p → Less_than m p</code></td>
+<td>Transitivity of <code>Less_than</code>.</td>
+</tr>
+<tr class="even">
+<td><code>Less_than_irrefl</code></td>
+<td><code>(n : myN) → ¬ Less_than n n</code></td>
+<td>Irreflexivity of <code>Less_than</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>Less_than_on_equals</code></td>
+<td><code>(m n : myN) → (p : m ≡ n) → ¬ Less_than m n</code></td>
+<td>Equal naturals cannot be strictly less than one another.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="notes" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Notes</h1>
 <ul>
-<li>The namespace is <code>chapter5_myeq</code> even though the file name is <code>chapter5_eq.lean</code>.</li>
-<li>The development follows Chapter 5 style HoTT path algebra: inversion, concatenation, action on paths (<code>ap</code>), and transport.</li>
-<li>This file is imported by <code>chapter5_ints.lean</code>, <code>chapter3_naturals_with_zero.lean</code>, <code>chapter5_props_naturals_with_zero.lean</code>, <code>Inductive_Int.lean</code>, <code>chapter6.lean</code>, and <code>chapter7.lean</code> — it is the most widely depended-on file in the project.</li>
+<li>This file, together with <code>chapter5_props_naturals_with_zero.lean</code> (which proves the arithmetic laws for this <code>myN</code>) and <code>chapter7.lean</code> (which builds on both), forms the <strong>0-based</strong> line of natural-number development, parallel to the <strong>1-based</strong> line (<code>chapter3.lean</code> → <code>chapter5_ints.lean</code> <code>Naturals</code> namespace → <code>chapter4.lean</code>). See the project-level duplicate-function summary for the full picture of how these two lines overlap.</li>
+<li><code>Less_than</code> here is <code>Prop</code>-valued, unlike the arithmetic functions above (which return <code>myN</code>, a <code>Type</code>) and unlike <code>chapter6.lean</code>’s analogous <code>less_than</code>/<code>leq</code> relations on <code>Inductive_Int</code>’s <code>N</code> (which are <code>Type</code>-valued). This is a genuine, if minor, inconsistency in how “is a proposition” is encoded across the project’s different natural-number developments.</li>
+<li>Since the previous revision of this document, the <code>binomial _0 _0</code> off-by-one bug has been fixed, and the <code>#check dist myN.zero myN.zero</code> debugging line has been removed from the source.</li>
 </ul>
 </section>
 

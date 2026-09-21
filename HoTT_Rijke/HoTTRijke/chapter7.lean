@@ -7,14 +7,13 @@ import HoTTRijke.chapter5_eq
 import HoTTRijke.chapter5_props_naturals_with_zero
 import HoTTRijke.chapter6
 
-open props_naturals_with_zero
-open chapter5_myeq
 open chapter3_naturals_with_zero
-open chapter3_propositions
+open chapter5_myeq
+open props_naturals_with_zero
 open chapter6_Universes
 
 
-def divides (d n : myN) : Prop := Nonempty (Σ k : myN, (d * k) ≡ n)
+def divides (d n : myN) : Prop := Nonempty (Σ k : myN, (d × k) ≡ n)
 
 def one_divides_all_n : ∀ n : myN, divides _1 n :=
   fun n => ⟨n, mult_one_left n⟩
@@ -66,19 +65,22 @@ def cong_symm (x y k : myN) (p : cong x y k) : cong y x k := by
   -- divides k dist (x y) -> divides k dist (y x)
   exact transport_prop (fun n => divides k n) t p
 
-def cong_trans (x y z k : myN) (p : cong x y k) (q : cong y z k) : (cong x z k) := by
-  rcases (dist_one_of_three x y z) with a | b | c
-  -- divides k d(x,y) and divides k d(y,z)  => divides k d(x,y) + d(y,z) => divides k d(x,z)
-  · have t : divides k ((dist x y) + (dist y z)) := divides_sum k (dist x y) (dist y z) p q
-    exact transport_prop (fun n => divides k n) a t
-  ·
-    -- b : (dist y z + dist x z) ≡ dist x y
-    -- k div d(x,y) = d(y,z) + d(x,z) and k div d(y,z) = > k div(x,z)
-    exact divides_second_summand k (dist y z) (dist x z) q
-          (transport_prop (fun n => divides k n) (myEq_symm b) p)
-  · -- c : (dist x z + dist x y) ≡ dist y z
-    exact divides_first_summand k (dist x z) (dist x y) p
-      (transport_prop (fun n => divides k n) (myEq_symm c) q)
+def cong_trans (x y z k : myN) (p : cong x y k) (q : cong y z k) : (cong x z k) := sorry
+
+
+-- def cong_trans (x y z k : myN) (p : cong x y k) (q : cong y z k) : (cong x z k) := by
+--   rcases (dist_one_of_three x y z) with a | b | c
+--   -- divides k d(x,y) and divides k d(y,z)  => divides k d(x,y) + d(y,z) => divides k d(x,z)
+--   · have t : divides k ((dist x y) + (dist y z)) := divides_sum k (dist x y) (dist y z) p q
+--     exact transport_prop (fun n => divides k n) a t
+--   ·
+--     -- b : (dist y z + dist x z) ≡ dist x y
+--     -- k div d(x,y) = d(y,z) + d(x,z) and k div d(y,z) = > k div(x,z)
+--     exact divides_second_summand k (dist y z) (dist x z) q
+--           (transport_prop (fun n => divides k n) (myEq_symm b) p)
+--   · -- c : (dist x z + dist x y) ≡ dist y z
+--     exact divides_first_summand k (dist x z) (dist x y) p
+--       (transport_prop (fun n => divides k n) (myEq_symm c) q)
 
 def cong_succ (x y k : myN) (p : cong x y k) : cong (myN.succ x) (myN.succ y) k := by
   have t : dist (myN.succ x) (myN.succ y) ≡ dist x y := MyEq.refl _
@@ -103,17 +105,17 @@ def inclusion (n : myN) (x : myFin n) : myN :=
         | Sum.inl x' => inclusion n' x'
         | Sum.inr _ => n'
 
-theorem inclusion_is_bounded (k : myN) : (x : myFin k) → Less_than (inclusion k x) k := by
+def inclusion_is_bounded (k : myN) : (x : myFin k) → less_than (inclusion k x) k := by
   intro x
   cases k with
   | zero => exact False.elim (Empty.elim x)
   | succ n' =>
     cases x with
     | inl x' =>
-      have h : Less_than (inclusion n'.succ (Sum.inl x')) n' := by
+      have h : less_than (inclusion n'.succ (Sum.inl x')) n' := by
         exact inclusion_is_bounded n' x'
-      exact Less_than_trans (inclusion n'.succ (Sum.inl x')) n' n'.succ h (Less_than_succ n')
-    | inr _ => exact Less_than_succ n'
+      exact less_than_trans (inclusion n'.succ (Sum.inl x')) n' n'.succ h (less_than_succ n')
+    | inr _ => exact less_than_succ n'
 
 def inclusion_is_injective (k : myN) (x y : myFin k) : (inclusion k x ≡ inclusion k y) → (x ≡ y) := by
   cases k with
@@ -124,10 +126,10 @@ def inclusion_is_injective (k : myN) (x y : myFin k) : (inclusion k x ≡ inclus
     | inl x' =>
       cases y with
       | inl y' => exact ap (Sum.inl) _ _ (inclusion_is_injective k' x' y' p)
-      | inr _ => exact False.elim (Less_than_on_equals _ _ p (inclusion_is_bounded k' x'))
+      | inr _ => exact Empty.elim (less_than_on_equals _ _ p (inclusion_is_bounded k' x'))
     | inr _ =>
       cases y with
-      | inl y' => exact False.elim (Less_than_on_equals _ _ (myEq_symm p) (inclusion_is_bounded k' y'))
+      | inl y' => exact Empty.elim (less_than_on_equals _ _ (myEq_symm p) (inclusion_is_bounded k' y'))
       | inr _ => exact MyEq.refl _
 
 
@@ -231,4 +233,4 @@ def inclusion_quotient_map_cong (k x : myN) : cong (inclusion k.succ (quotient_m
 -- Proposition 7.4.6
 -- if x < d, then d|x <=> x = 0
 
-def divides_less (d x : myN) (p : Less_than x d) (q : divides d x) :  (x ≡ myN.zero) := sorry
+def divides_less (d x : myN) (p : less_than x d) (q : divides d x) :  (x ≡ myN.zero) := sorry

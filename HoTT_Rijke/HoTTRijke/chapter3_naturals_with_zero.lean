@@ -50,16 +50,18 @@ instance : ToString myN where
   toString := toStringMyN
 
 
-def myAdd (a b : myN) : myN :=
+-- Addition on `N` (structural recursion on the second arg) --
+def myAdd (a b : myN) :myN :=
   match b with
-  | myN.zero => a        -- adding 0
+  | myN.zero => a
   | myN.succ b' => myN.succ (myAdd a b')
 
-
-def myMult (a b : myN) : myN :=
+def myMult (a b : myN) :myN :=
   match b with
-  | myN.zero => _0                 -- multiplying by 1
-  | myN.succ b' => myAdd (myMult a b') a
+  | myN.zero => myN.zero
+  | myN.succ b' => myAdd a (myMult a b')
+
+notation:70 a "×" b => myMult a b
 
 instance : Add myN where
   add := myAdd
@@ -145,12 +147,12 @@ def div2 (n : myN) : myN :=
   | myN.succ (myN.succ myN.zero) => _1    -- 3 / 2 rounded to 1
   | myN.succ (myN.succ (myN.succ n')) => myAdd (div2 (myN.succ n')) _1
 
-def dist (m n : myN) : myN :=
-  match m, n with
-  | myN.zero, myN.zero => myN.zero
-  | myN.zero, myN.succ n => myN.succ n
-  | myN.succ m, myN.zero => myN.succ m
-  | myN.succ m, myN.succ n => dist m n
+-- def dist (m n : myN) : myN :=
+--   match m, n with
+--   | myN.zero, myN.zero => myN.zero
+--   | myN.zero, myN.succ n => myN.succ n
+--   | myN.succ m, myN.zero => myN.succ m
+--   | myN.succ m, myN.succ n => dist m n
 
 
 end chapter3_naturals_with_zero
@@ -195,17 +197,6 @@ def Less_than_trans (m n p : myN) (h1 : Less_than m n) (h2 : Less_than n p) : Le
         have h4 : Less_than n' p' := h2
         exact Less_than_trans m' n' p' h3 h4
 
-def Less_than_irrefl (n : myN) : ¬ Less_than n n := by
-  intro h
-  cases n with
-  | zero => exact False.elim h
-  | succ n' =>
-    have h1 : Less_than n' n' := h
-    exact Less_than_irrefl n' h1
 
-def Less_than_on_equals (m n : myN) (p : m ≡ n) : ¬ Less_than m n := by
-  intro h                       -- When Goal is A → B, intro h assumes A and adds it to the context, then tries to prove B.
-  cases p                       -- Cases for inductive types. MyEq has only one constructor refl.
-  exact Less_than_irrefl m h    -- Goal now is Less_than m m, which is exactly what Less_than_irrefl m h proves.
 
 end chapter3_propositions

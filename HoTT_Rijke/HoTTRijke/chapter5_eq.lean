@@ -208,6 +208,20 @@ def maclane_pentagon {α : Type} (a b c d e : α) (p : a ≡ b) (q : b ≡ c) (r
 
   exact ((α₁ • α₂) • α₃) ≡ (α₄ • α₅)
 
-  end MacLanePentagon
+
+/- Exercise 5.4: the pentagon coherence statement is provable.
+theorem maclane_pentagon_proof : maclane_pentagon p q r s := by
+  sorry
+  induction s
+  induction r
+  induction q
+  induction p
+  cases ((pentagon_α1 p q r s • pentagon_α2 p q r s) • pentagon_α3 p q r s)
+  cases (pentagon_α4 p q r s • pentagon_α5 p q r s)
+  exact MyEq.refl (MyEq.refl (((MyEq.refl a • MyEq.refl a) • MyEq.refl a) • MyEq.refl a))
+
+-/
+
+end MacLanePentagon
 
 end chapter5_myeq

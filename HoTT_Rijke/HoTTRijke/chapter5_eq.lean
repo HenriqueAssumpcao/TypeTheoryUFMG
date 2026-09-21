@@ -12,6 +12,7 @@ universe u v w
 
 -- We define our own identity type (e.g., for Type Theory exercises):
 
+
 inductive MyEq {α : Type} : α → α → Type where
   | refl (a : α) : MyEq a a
 
@@ -171,43 +172,42 @@ def lift_β (α : Type) (β : (a : α) → Type) (a x : α) (b : β a) (p : a �
 -- Exercise 5.4: Mac Lane's pentagon
 
 section MacLanePentagon
-variable {α : Type} {a b c d e : α} (p : a ≡ b) (q : b ≡ c) (r : c ≡ d) (s : d ≡ e)
+def maclane_pentagon {α : Type} (a b c d e : α) (p : a ≡ b) (q : b ≡ c) (r : c ≡ d) (s : d ≡ e) : Type := by
+  have α₁ : (((p • q) • r) • s) ≡ ((p • (q • r)) • s) := by
+    have h := myEq_symm (concat_assoc p q r)
+    let rs (p' : a ≡ d) : a ≡ e := concat_eq p' s
+    have h' := ap rs ((p • q) • r) (p • (q • r)) h
+    exact h'
 
-def pentagon_α1 : (((p • q) • r) • s) ≡ ((p • (q • r)) • s) := by
-  let rs (p' : a ≡ d) : a ≡ e := concat_eq p' s
-  exact ap rs ((p • q) • r) (p • (q • r)) (myEq_symm (concat_assoc p q r))
+  have α₂ : ((p • (q • r)) • s) ≡ (p • (q • r) • s) := by
+    have h := myEq_symm (concat_assoc p (q • r) s)
+    exact h
 
-def pentagon_α2 : ((p • (q • r)) • s) ≡ (p • (q • r) • s) :=
-  myEq_symm (concat_assoc p (q • r) s)
+  have α₃ : (p • ((q • r) • s)) ≡ (p • (q • (r • s))) := by
+    have h := myEq_symm (concat_assoc q r s)
+    let rs (p' : b ≡ e) : a ≡ e := concat_eq p p'
+    have h' := ap rs ((q • r) • s) (q • (r • s)) h
+    exact h'
 
-def pentagon_α3 : (p • ((q • r) • s)) ≡ (p • (q • (r • s))) := by
-  let lp (p' : b ≡ e) : a ≡ e := concat_eq p p'
-  exact ap lp ((q • r) • s) (q • (r • s)) (myEq_symm (concat_assoc q r s))
+  have α₄ : (((p • q) • r) • s) ≡ ((p • q) • (r • s)) := by
+    have h := myEq_symm (concat_assoc (p • q) r s)
+    exact h
 
-def pentagon_α4 : (((p • q) • r) • s) ≡ ((p • q) • (r • s)) :=
-  myEq_symm (concat_assoc (p • q) r s)
+  have α₅ : ((p • q) • (r • s)) ≡ (p • (q • (r • s))) := by
+    have h := myEq_symm (concat_assoc p q (r • s))
+    exact h
 
-def pentagon_α5 : ((p • q) • (r • s)) ≡ (p • (q • (r • s))) :=
-  myEq_symm (concat_assoc p q (r • s))
+  have t : ((α₁ • α₂) • α₃) ≡ (α₄ • α₅) := by
+    induction s
+    induction r
+    induction q
+    induction p
+    cases ((α₁ • α₂) • α₃)
+    cases α₄ • α₅
+    exact MyEq.refl (MyEq.refl (((MyEq.refl a • MyEq.refl a) • MyEq.refl a) • MyEq.refl a))
 
-/-- The pentagon-coherence statement: the two composite reassociations of
-    `((p • q) • r) • s` down to `p • (q • (r • s))` agree. -/
-def maclane_pentagon : Type :=
-  ((pentagon_α1 p q r s • pentagon_α2 p q r s) • pentagon_α3 p q r s)
-    ≡ (pentagon_α4 p q r s • pentagon_α5 p q r s)
+  exact ((α₁ • α₂) • α₃) ≡ (α₄ • α₅)
 
-
-/-- Exercise 5.4: the pentagon coherence statement is provable. -/
-theorem maclane_pentagon_proof : maclane_pentagon p q r s := by
-  sorry
-  induction s
-  induction r
-  induction q
-  induction p
-  cases ((pentagon_α1 p q r s • pentagon_α2 p q r s) • pentagon_α3 p q r s)
-  cases (pentagon_α4 p q r s • pentagon_α5 p q r s)
-  exact MyEq.refl (MyEq.refl (((MyEq.refl a • MyEq.refl a) • MyEq.refl a) • MyEq.refl a))
-
-end MacLanePentagon
+  end MacLanePentagon
 
 end chapter5_myeq

@@ -80,6 +80,10 @@ def cong_trans (x y z k : myN) (p : cong x y k) (q : cong y z k) : (cong x z k) 
     exact divides_first_summand k (dist x z) (dist x y) p
       (transport_prop (fun n => divides k n) (myEq_symm c) q)
 
+def cong_succ (x y k : myN) (p : cong x y k) : cong (myN.succ x) (myN.succ y) k := by
+  have t : dist (myN.succ x) (myN.succ y) ≡ dist x y := MyEq.refl _
+  exact transport_prop (fun n => divides k n) t p
+
 
 -- The Standard Finite Types
 
@@ -207,3 +211,24 @@ theorem inclusion_succ_fin_eq_succ (k : myN) (x : myFin k) : cong (inclusion k (
       have h3 : k'.succ ≡ myN.succ (inclusion k'.succ (Sum.inr ())) := MyEq.refl _
 
       exact cong_trans _ _ _ _ h2 (cong_refl_on_equals _ _ _ h3)
+
+
+-- Proposition 7.4.5
+-- i([x]_k+1) ≡ x mod (k + 1)
+
+def inclusion_quotient_map_cong (k x : myN) : cong (inclusion k.succ (quotient_map k x)) x k.succ := by
+  match x with
+  | myN.zero => exact cong_refl_on_equals _ _ _ (inclusion_zero_eq_zero k)
+  | myN.succ n' =>
+    have h : cong (inclusion k.succ (succ_fin k.succ (quotient_map k n'))) (myN.succ (inclusion k.succ (quotient_map k n'))) k.succ :=
+      inclusion_succ_fin_eq_succ k.succ (quotient_map k n')
+
+    have h2 : cong (myN.succ (inclusion k.succ (quotient_map k n'))) (myN.succ n') k.succ := by
+      exact cong_succ _ _ _ (inclusion_quotient_map_cong k n')
+    exact cong_trans _ _ _ _ h h2
+
+
+-- Proposition 7.4.6
+-- if x < d, then d|x <=> x = 0
+
+def divides_less (d x : myN) (p : Less_than x d) (q : divides d x) :  (x ≡ myN.zero) := sorry

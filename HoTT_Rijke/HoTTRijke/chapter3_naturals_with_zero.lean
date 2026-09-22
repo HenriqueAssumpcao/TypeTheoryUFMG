@@ -147,13 +147,6 @@ def div2 (n : myN) : myN :=
   | myN.succ (myN.succ myN.zero) => _1    -- 3 / 2 rounded to 1
   | myN.succ (myN.succ (myN.succ n')) => myAdd (div2 (myN.succ n')) _1
 
--- def dist (m n : myN) : myN :=
---   match m, n with
---   | myN.zero, myN.zero => myN.zero
---   | myN.zero, myN.succ n => myN.succ n
---   | myN.succ m, myN.zero => myN.succ m
---   | myN.succ m, myN.succ n => dist m n
-
 
 end chapter3_naturals_with_zero
 

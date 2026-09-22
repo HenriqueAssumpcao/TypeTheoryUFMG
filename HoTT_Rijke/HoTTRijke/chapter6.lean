@@ -130,7 +130,7 @@ def mult_succ_injective (p : (myMult m (myN.succ k)) ≡ (myMult n (myN.succ k))
     have h : (myMult k.succ m.succ) ≡ (myMult k.succ n.succ) :=
       (myMult_comm k.succ m.succ) • p • (myMult_comm n.succ k.succ)               -- (k+1)(m+1) = (m+1)(k+1) = (n+1)(k+1) = (k+1)(n+1)
     have p' : myAdd (myMult k.succ m) k.succ ≡ myAdd (myMult k.succ n) k.succ :=
-      (add_commutative _ _) • h • (add_commutative _ _)
+      (myAdd_commutative _ _) • h • (myAdd_commutative _ _)
     have h' : (myMult m k.succ) ≡ (myMult n k.succ) :=
       (myMult_comm m k.succ) • (add_nat_injective p') • (myMult_comm k.succ n)    -- m(k+1) = (k+1)m = (k+1)n = n(k+1)
 
@@ -152,7 +152,7 @@ def mult_equals_zero (p : (m × n) ≡ myN.zero) : mySum (m ≡ myN.zero) (n ≡
   match n with
   | myN.zero => mySum.inr (MyEq.refl _)
   | myN.succ n =>
-    have h : myAdd (m × n) m ≡ myN.zero := (add_commutative _ _) • p    -- (m·n)+m = m+(m·n) =  m(n+1) = 0
+    have h : myAdd (m × n) m ≡ myN.zero := (myAdd_commutative _ _) • p    -- (m·n)+m = m+(m·n) =  m(n+1) = 0
     mySum.inl (proj2 (sum_equals_zero h))
 
 def mult_by_zero (x : mySum (m ≡ myN.zero) (n ≡ myN.zero)) : (m × n) ≡ myN.zero :=
@@ -193,12 +193,12 @@ def mult_equals_one (p : (m × n) ≡ myN.zero.succ) : myProd (m ≡ myN.zero.su
 -- 𝑚 ≠ 𝑚 + (𝑛 + 1)
 def add_dont_fix (p : m ≡ myAdd m (myN.succ n)) : Empty :=
   match m with
-  | myN.zero => Empty.elim (P8 _ (p • (left_zero_add_N n.succ))) -- 0 = 0 + (n+1) = n+1
+  | myN.zero => Empty.elim (P8 _ (p • (myAdd_zero_left n.succ))) -- 0 = 0 + (n+1) = n+1
   | myN.succ m =>
     -- m+1 = (m+1) + (n+1) = (n+1) + (m+1) = ((n+1) + m) + 1 → m = (n+1) + m = m + (n+1) → ∅
-    have h : m.succ ≡ (myAdd (n.succ) m).succ := p • (add_commutative _ _)
+    have h : m.succ ≡ (myAdd (n.succ) m).succ := p • (myAdd_commutative _ _)
     have h1 : m ≡ myAdd m n.succ :=
-      (Equality_Equiv_conv (Equality_Equiv m.succ ((myAdd (n.succ) m).succ) h)) • (add_commutative _ _)
+      (Equality_Equiv_conv (Equality_Equiv m.succ ((myAdd (n.succ) m).succ) h)) • (myAdd_commutative _ _)
 
     Empty.elim (add_dont_fix h1)
 
@@ -207,7 +207,7 @@ def mult_dont_fix (p : (myN.succ m) ≡ (myN.succ m) × (myN.succ (myN.succ n)))
   match m  with
   | myN.zero =>
     -- 0+1 = (0+1)·((n+1)+1) = (0+1) + (0+1)(n+1) = (0+1)(n+1) + (0+1) = (0+1)(n+1) + 1 → 0 = (0+1)(n+1) → (0+1) = 0 ou (n+1) = 0
-    have h : myN.zero.succ ≡ (myN.zero.succ × n.succ).succ := p • (add_commutative _ _)
+    have h : myN.zero.succ ≡ (myN.zero.succ × n.succ).succ := p • (myAdd_commutative _ _)
     have h1 : myN.zero ≡ myN.zero.succ × n.succ := Equality_Equiv_conv (Equality_Equiv myN.zero.succ _ h)
     have h2 := mult_equals_zero (myEq_symm h1)
     match h2 with
@@ -333,7 +333,7 @@ def mult_succ_leq (m n k : myN) (p : leq m n) : leq (m × k) (n × k) :=
   | myN.succ k =>
     -- m ≤ n => mk ≤ nk => mk + m ≤ nk + m => m + mk ≤ nk + m => m + mk ≤ m + nk => m + mk ≤ n + nk
     have h_comm_left : leq (myAdd m (m × k)) (myAdd (m × k) m) :=
-      leq_equals _ _ (add_commutative _ _)
+      leq_equals _ _ (myAdd_commutative _ _)
 
     have h_add_leq : leq (myAdd (m × k) m) (myAdd (n × k) m) :=
       add_leq _ _ m (mult_succ_leq m n k p)
@@ -342,7 +342,7 @@ def mult_succ_leq (m n k : myN) (p : leq m n) : leq (m × k) (n × k) :=
       leq_trans _ _ _ h_comm_left h_add_leq
 
     have h_comm_right : leq (myAdd (n × k) m) (myAdd m (n × k)) :=
-      leq_equals _ _ (add_commutative _ _)
+      leq_equals _ _ (myAdd_commutative _ _)
 
     have h_middle : leq (myAdd m (m × k)) (myAdd m (n × k)) :=    -- (nk + m ≤ m + nk) and (m + mk ≤ nk + m) => (m + mk ≤ m + nk)
       leq_trans _ _ _ h_left h_comm_right
@@ -609,6 +609,117 @@ def dist_symm (n1 n2 : myN) : dist n1 n2 ≡ dist n2 n1 :=
         _ ≡ dist n2' n1' := dist_symm n1' n2'
         _ ≡ dist (myN.succ n2') (myN.succ n1') := MyEq.refl _
 
+
+def add_dist_of_leq (m n : myN) (p : leq m n) :
+    myAdd m (dist m n) ≡ n :=
+  match m, n with
+  | myN.zero, n =>
+    calc
+      myAdd myN.zero (dist myN.zero n) ≡ dist myN.zero n := myAdd_zero_left _
+      _ ≡ n := dist_commutative _ _ • (dist_from_zero n)
+
+  | myN.succ _, myN.zero =>
+      Empty.elim p
+
+  | myN.succ m, myN.succ n =>
+      calc
+        myAdd m.succ (dist m.succ n.succ)
+            ≡ myAdd (dist m n) m.succ :=
+              myAdd_commutative _ _
+        _ ≡ (myAdd (dist m n) m).succ :=
+              MyEq.refl _
+        _ ≡ n.succ :=
+              ap myN.succ _ _
+                ((myEq_symm (myAdd_commutative m (dist m n))) •
+                  add_dist_of_leq m n p)
+
+
+def dist_transitivity (x y z : myN) :
+    mySum
+      (myAdd (dist x y) (dist y z) ≡ dist x z)
+      (mySum
+        (myAdd (dist y z) (dist x z) ≡ dist x y)
+        (myAdd (dist x z) (dist x y) ≡ dist y z)) :=
+  match x, y, z with
+
+  | myN.zero, y, z =>
+      match leq_total y z with
+
+      | mySum.inl hyz =>
+        have h :=
+          calc
+            myAdd (dist myN.zero y) (dist y z) ≡ myAdd y (dist y z) := ap (fun t => myAdd t (dist y z)) _ _ (dist_commutative _ _ • (dist_from_zero y))
+            _ ≡ z := (add_dist_of_leq y z hyz)
+            _ ≡ dist myN.zero z := myEq_symm (dist_commutative _ _ • (dist_from_zero z))
+
+        mySum.inl h
+
+      | mySum.inr hzy =>
+          mySum.inr (
+            mySum.inl (
+              calc
+                myAdd (dist y z) (dist myN.zero z) ≡ myAdd (dist z y) (dist myN.zero z) := ap (fun t => myAdd t (dist myN.zero z)) _ _ (dist_symm y z)
+                _ ≡ myAdd (dist myN.zero z) (dist z y) := myAdd_commutative _ _
+                _ ≡ myAdd z (dist z y) := ap (fun t => myAdd t (dist z y)) _ _ (dist_commutative _ _ • (dist_from_zero z))
+                _ ≡ y := add_dist_of_leq z y hzy
+                _ ≡ dist myN.zero y := myEq_symm (dist_commutative _ _ • (dist_from_zero y))
+            )
+          )
+
+
+
+  | x, myN.zero, z =>
+      match leq_total x z with
+
+      | mySum.inl hxz =>
+          mySum.inr (
+            mySum.inr (
+              calc
+                myAdd (dist x z) (dist x myN.zero) ≡ myAdd (dist x myN.zero) (dist x z) := myAdd_commutative _ _
+                _ ≡ myAdd x (dist x z) := ap (fun t => myAdd t (dist x z)) _ _ (dist_from_zero x)
+                _ ≡ z := add_dist_of_leq x z hxz
+                _ ≡ dist myN.zero z := myEq_symm (dist_commutative _ _ • (dist_from_zero z))
+            )
+          )
+
+      | mySum.inr hzx =>
+          mySum.inr (
+            mySum.inl (
+              -- myAdd (dist myN.zero z) (dist x z) ≡ dist x myN.zero
+              calc
+                myAdd (dist myN.zero z) (dist x z) ≡ myAdd z (dist x z) := ap (fun t => myAdd t (dist x z)) _ _ (dist_commutative _ _ • (dist_from_zero z))
+                _ ≡ myAdd (dist x z) z := myAdd_commutative _ _
+                _ ≡ myAdd (dist z x) z := ap (fun t => myAdd t z) _ _ (dist_symm x z)
+                _ ≡ x := (myAdd_commutative _ _) • add_dist_of_leq z x hzx
+                _ ≡ dist x myN.zero := myEq_symm (dist_commutative _ _ • (dist_commutative _ _ • dist_from_zero x))
+            )
+          )
+
+  | x, y, myN.zero =>
+      match leq_total x y with
+
+      | mySum.inl hxy =>
+          mySum.inr (
+            mySum.inr (
+              calc
+                 myAdd (dist x myN.zero) (dist x y) ≡ myAdd x (dist x y) := ap (fun t => myAdd t (dist x y)) _ _ (dist_from_zero x)
+                 _ ≡ y := add_dist_of_leq x y hxy
+                 _ ≡ dist y myN.zero := myEq_symm (dist_commutative _ _ • (dist_commutative _ _ • dist_from_zero y))
+            )
+          )
+
+
+      | mySum.inr hyx =>
+          mySum.inl (
+            calc
+              myAdd (dist x y) (dist y myN.zero) ≡ myAdd (dist x y) y := ap (fun t => myAdd (dist x y) t) _ _ (dist_commutative y myN.zero • (dist_commutative _ _ • dist_from_zero y))
+              _ ≡ myAdd (dist y x) y := ap (fun t => myAdd t y) _ _ (dist_symm x y)
+              _ ≡ x := myAdd_commutative _ _ •  add_dist_of_leq y x hyx
+              _ ≡ dist x myN.zero := myEq_symm (dist_commutative _ _ • (dist_commutative _ _ • dist_from_zero x))
+          )
+
+  | myN.succ x, myN.succ y, myN.succ z =>
+      dist_transitivity x y z
 
 
 

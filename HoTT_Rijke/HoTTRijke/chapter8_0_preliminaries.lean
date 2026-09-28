@@ -291,7 +291,7 @@ def divides_trans {a b c : myN} : divides a b → divides b c → divides a c
 def divides_mul_right_self (a b : myN) : divides a (a * b) := ⟨b, MyEq.refl _⟩
 
 -- b ∣ a · b
--- def divides_mul_left_self (a b : myN) : divides b (a * b) := ⟨a, mult_commutative b a⟩
+def divides_mul_left_self (a b : myN) : divides b (a * b) := ⟨a, myMult_comm b a⟩
 
 -- d ∣ a  →  d ∣ a · b
 def divides_mul_right {d a : myN} (b : myN) : divides d a → divides d (a * b)
@@ -319,10 +319,10 @@ def leq_of_divides (d n : myN) (h : myNegType (n ≡ myN.zero)) : divides d n �
   | ⟨myN.succ k, p⟩ => transport (fun x => leq d x) p (leq_mul_succ_right d k)
 
 -- d ∣ 1  →  d = 1
--- def eq_one_of_divides_one : (d : myN) → divides d _1 → (d ≡ _1)
---   | myN.zero, p => Empty.elim (succN_neq_zero _ (eq_zero_of_zero_divides _1 p))
---   | myN.succ myN.zero, _ => MyEq.refl _
---   | myN.succ (myN.succ _), p => Empty.elim (leq_of_divides _ _1 (succN_neq_zero _) p)
+def eq_one_of_divides_one : (d : myN) → divides d _1 → (d ≡ _1)
+  | myN.zero, p => Empty.elim (succN_neq_zero _ (eq_zero_of_zero_divides _1 p))
+  | myN.succ myN.zero, _ => MyEq.refl _
+  | myN.succ (myN.succ _), p => Empty.elim (leq_of_divides _ _1 (succN_neq_zero _) p)
 
 -- Exercise 7.2: divisibility is antisymmetric.
 def divides_antisymm : (m n : myN) → divides m n → divides n m → (m ≡ n)
@@ -337,27 +337,33 @@ def divides_antisymm : (m n : myN) → divides m n → divides n m → (m ≡ n)
 /-  The factorial function (defined in chapter3_naturals_with_zero.lean)   -/
 /- ###################################################################### -/
 
--- def factorial_neq_zero : (n : myN) → myNegType (factorial n ≡ myN.zero)
---   | myN.zero => succN_neq_zero _
---   | myN.succ n => fun p => factorial_neq_zero n (proj2 (addN_eq_zero _ _ p))
+def factorial_neq_zero : (n : myN) → myNegType (factorial n ≡ myN.zero)
+  | myN.zero => succN_neq_zero _
+  | myN.succ n => by
+    intro p
+    let h := mult_equals_zero p
+    cases h with
+    | inl q => exact factorial_neq_zero n q
+    | inr q => exact succN_neq_zero n q
+
 
 -- Exercise 7.3: if 0 < k ≤ n, then k ∣ n!
--- def divides_factorial : (n k : myN) → myNegType (k ≡ myN.zero) → leq k n →
---     divides k (factorial n)
---   | myN.zero, k, hk, p => Empty.elim (hk (leq_zero k p))
---   | myN.succ n, k, hk, p =>
---       match leq_succ_cases k n p with
---       | Sum.inl q => divides_mul_right (myN.succ n) (divides_factorial n k hk q)
---       | Sum.inr q =>
---           transport (fun x => divides x (factorial (myN.succ n))) (myEq_symm q)
---             (divides_mul_left_self (factorial n) (myN.succ n))
+def divides_factorial : (n k : myN) → myNegType (k ≡ myN.zero) → leq k n →
+    divides k (factorial n)
+  | myN.zero, k, hk, p => Empty.elim (hk (leq_zero k p))
+  | myN.succ n, k, hk, p =>
+      match leq_succ_cases k n p with
+      | Sum.inl q => divides_mul_right (myN.succ n) (divides_factorial n k hk q)
+      | Sum.inr q =>
+          transport (fun x => divides x (factorial (myN.succ n))) (myEq_symm q)
+            (divides_mul_left_self (factorial n) (myN.succ n))
 
 -- n ≤ n!
--- def leq_factorial : (n : myN) → leq n (factorial n)
---   | myN.zero => ()
---   | myN.succ n =>
---       leq_of_divides _ _ (factorial_neq_zero _)
---         (divides_factorial (myN.succ n) (myN.succ n) (succN_neq_zero n) (leq_refl _))
+def leq_factorial : (n : myN) → leq n (factorial n)
+  | myN.zero => ()
+  | myN.succ n =>
+      leq_of_divides _ _ (factorial_neq_zero _)
+        (divides_factorial (myN.succ n) (myN.succ n) (succN_neq_zero n) (leq_refl _))
 
 
 /- ###################################################################### -/

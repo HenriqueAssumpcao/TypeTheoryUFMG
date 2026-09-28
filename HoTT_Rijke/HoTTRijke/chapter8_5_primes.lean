@@ -13,6 +13,7 @@ import HoTTRijke.chapter8_4_gcd
 open chapter5_myeq
 open chapter3_naturals_with_zero
 open chapter3_booleans
+open chapter6_Universes
 
 namespace chapter8
 
@@ -22,7 +23,7 @@ namespace chapter8
 
 -- (i) d is a proper divisor of n:  (d ≠ n) × (d ∣ n)
 abbrev is_proper_divisor (n d : myN) : Type :=
-  myProd (myNegType (d ≡ n)) (dividesT d n)
+  myProd (myNegType (d ≡ n)) (divides d n)
 
 -- (ii) n is prime:  Π (x : ℕ), is-proper-divisor(n, x) ↔ (x = 1)
 abbrev is_prime (n : myN) : Type :=
@@ -48,13 +49,13 @@ def is_prime_of_is_prime' (n : myN) (H : is_prime' n) : is_prime n :=
     (proj2 H x)
     -- since n ≠ 1, the number 1 is a proper divisor of n
     (fun p => transport (fun y => is_proper_divisor n y) (myEq_symm p)
-                (myProd.mk (fun q => proj1 H (myEq_symm q)) (one_dividesT n)))
+                (myProd.mk (fun q => proj1 H (myEq_symm q)) (one_divides n)))
 
 def is_prime_iff_is_prime' (n : myN) : myEquiv (is_prime n) (is_prime' n) :=
   myProd.mk (is_prime'_of_is_prime n) (is_prime_of_is_prime' n)
 
 def is_decidable_is_proper_divisor (n : myN) : is_decidable_family (is_proper_divisor n) :=
-  fun x => is_decidable_prod (is_decidable_neq x n) (is_decidable_dividesT x n)
+  fun x => is_decidable_prod (is_decidable_neq x n) (is_decidable_divides x n)
 
 def two_neq_one : myNegType (_2 ≡ _1) :=
   fun p => succN_neq_zero _0 (succN_inj p)
@@ -65,13 +66,13 @@ def is_decidable_is_prime' (n : myN) : is_decidable (is_prime' n) :=
       -- Every nonzero number, e.g. 2, is a proper divisor of 0, so 0 is not prime.
       Sum.inr (fun H =>
         two_neq_one (proj2 (transport is_prime' h H) _2
-                      (myProd.mk (succN_neq_zero _1) (dividesT_zero _2))))
+                      (myProd.mk (succN_neq_zero _1) (divides_zero _2))))
   | Sum.inr h =>
       is_decidable_prod (is_decidable_neq n _1)
         -- Corollary 8.2.5: proper divisors of n ≠ 0 are bounded by n.
         (is_decidable_pi_implication (is_proper_divisor n) (fun x => x ≡ _1)
           (is_decidable_is_proper_divisor n) (fun x => has_decidable_eq_myN x _1)
-          n (fun x hx => leqN_of_dividesT x n h (proj2 hx)))
+          n (fun x hx => leq_of_divides x n h (proj2 hx)))
 
 -- Proposition 8.5.2
 def is_decidable_is_prime (n : myN) : is_decidable (is_prime n) :=
@@ -85,15 +86,15 @@ def is_decidable_is_prime (n : myN) : is_decidable (is_prime n) :=
 
 -- F(n, a) := (n < a) × Π (x : ℕ), (x ≤ n) → ((x ∣ a) → (x = 1))
 abbrev in_sieve_of_eratosthenes (n a : myN) : Type :=
-  myProd (ltN n a) ((x : myN) → leqN x n → dividesT x a → (x ≡ _1))
+  myProd (less_than n a) ((x : myN) → leq x n → divides x a → (x ≡ _1))
 
 -- Lemma 8.5.4: F(n, a) is decidable.
 def is_decidable_in_sieve_of_eratosthenes (n : myN) :
     is_decidable_family (in_sieve_of_eratosthenes n) :=
-  fun a => is_decidable_prod (is_decidable_ltN n a)
-    (is_decidable_pi_implication (fun x => leqN x n) (fun x => dividesT x a → (x ≡ _1))
-      (fun x => is_decidable_leqN x n)
-      (fun x => is_decidable_fun (is_decidable_dividesT x a) (has_decidable_eq_myN x _1))
+  fun a => is_decidable_prod (is_decidable_less_than n a)
+    (is_decidable_pi_implication (fun x => leq x n) (fun x => divides x a → (x ≡ _1))
+      (fun x => is_decidable_leq x n)
+      (fun x => is_decidable_fun (is_decidable_divides x a) (has_decidable_eq_myN x _1))
       n (fun _ h => h))
 
 -- Lemma 8.5.5: F(n, n! + 1) holds.
@@ -101,15 +102,15 @@ def in_sieve_of_eratosthenes_factorial_succ (n : myN) :
     in_sieve_of_eratosthenes n (myN.succ (factorial n)) :=
   myProd.mk
     -- n < n! + 1, because n ≤ n!
-    (ltN_succ_of_leqN n (factorial n) (leqN_factorial n))
+    (less_than_succ_of_leq n (factorial n) (leq_factorial n))
     (fun x hx p =>
       -- x ≠ 0, because 0 does not divide n! + 1
       let hx0 : myNegType (x ≡ myN.zero) := fun q =>
-        succN_neq_zero _ (eq_zero_of_zero_dividesT _
-          (transport (fun y => dividesT y (myN.succ (factorial n))) q p))
+        succN_neq_zero _ (eq_zero_of_zero_divides _
+          (transport (fun y => divides y (myN.succ (factorial n))) q p))
       -- x ∣ n! (Exercise 7.3), hence x ∣ 1 (Proposition 7.1.5), hence x = 1
-      eq_one_of_dividesT_one x
-        (@dividesT_add_cancel_left x (factorial n) _1 (dividesT_factorial n x hx0 hx) p))
+      eq_one_of_divides_one x
+        (@divides_add_cancel_left x (factorial n) _1 (divides_factorial n x hx0 hx) p))
 
 
 /- ###################################################################### -/
@@ -118,32 +119,32 @@ def in_sieve_of_eratosthenes_factorial_succ (n : myN) :
 
 /- Let n' := n + 1 (which is nonzero), and let p be the least number with F(n', p).
    Then p is prime and n < p. -/
-def infinitude_of_primes (n : myN) : Σ p : myN, myProd (is_prime p) (ltN n p) :=
+def infinitude_of_primes (n : myN) : Σ p : myN, myProd (is_prime p) (less_than n p) :=
   let n' := myN.succ n
   match well_ordering_principle (in_sieve_of_eratosthenes n')
           (is_decidable_in_sieve_of_eratosthenes n')
           ⟨myN.succ (factorial n'), in_sieve_of_eratosthenes_factorial_succ n'⟩ with
   | ⟨p, myProd.mk (myProd.mk hlt hdiv) hmin⟩ =>
       -- p ≠ 0 and p ≠ 1, because n + 1 < p
-      let hp0 : myNegType (p ≡ myN.zero) := fun q => transport (ltN n') q hlt
-      let hp1 : myNegType (p ≡ _1) := fun q => transport (ltN n') q hlt
+      let hp0 : myNegType (p ≡ myN.zero) := fun q => transport (less_than n') q hlt
+      let hp1 : myNegType (p ≡ _1) := fun q => transport (less_than n') q hlt
       -- every proper divisor x of p is equal to 1
       let hprop : (x : myN) → is_proper_divisor p x → (x ≡ _1) :=
         fun x hx =>
           -- x < p, since x is a proper divisor of p ≠ 0
-          let hxp : ltN x p :=
-            ltN_of_leqN_neq x p (leqN_of_dividesT x p hp0 (proj2 hx)) (proj1 hx)
+          let hxp : less_than x p :=
+            less_than_of_leq_neq x p (leq_of_divides x p hp0 (proj2 hx)) (proj1 hx)
           -- by minimality of p, F(n', x) does not hold
           let hnot : myNegType (in_sieve_of_eratosthenes n' x) :=
-            fun hs => not_ltN_of_leqN x p (hmin x hs) hxp
+            fun hs => not_less_than_of_leq x p (hmin x hs) hxp
           -- every y ≤ n' dividing x divides p, hence equals 1
-          let hsieve : (y : myN) → leqN y n' → dividesT y x → (y ≡ _1) :=
-            fun y hy hyx => hdiv y hy (dividesT_trans hyx (proj2 hx))
+          let hsieve : (y : myN) → leq y n' → divides y x → (y ≡ _1) :=
+            fun y hy hyx => hdiv y hy (divides_trans hyx (proj2 hx))
           -- therefore ¬(n' < x), i.e. x ≤ n', and so x = 1
-          let hx_le : leqN x n' :=
-            leqN_of_not_ltN n' x (fun hlt' => hnot (myProd.mk hlt' hsieve))
+          let hx_le : leq x n' :=
+            leq_of_not_less_than n' x (fun hlt' => hnot (myProd.mk hlt' hsieve))
           hdiv x hx_le (proj2 hx)
       ⟨p, myProd.mk (is_prime_of_is_prime' p (myProd.mk hp1 hprop))
-                    (ltN_trans n n' p (ltN_succ n) hlt)⟩
+                    (less_than_trans n n' p (less_than_succ n) hlt)⟩
 
 end chapter8

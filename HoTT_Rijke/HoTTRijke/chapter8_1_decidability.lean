@@ -102,14 +102,14 @@ def is_decidable_leq : (m n : myN) → is_decidable (leq m n)
   | myN.succ _, myN.zero => is_decidable_empty
   | myN.succ m, myN.succ n => is_decidable_leq m n
 
-def is_decidable_less (m n : myN) : is_decidable (less_than m n) :=
+def is_decidable_less_than (m n : myN) : is_decidable (less_than m n) :=
   match m,n with
   | m', myN.zero =>
     match m' with
     | myN.zero => is_decidable_empty
     | myN.succ _ => is_decidable_empty
   | myN.zero, myN.succ _ => is_decidable_unit
-  | myN.succ m, myN.succ n => is_decidable_less m n
+  | myN.succ m, myN.succ n => is_decidable_less_than m n
 
 
 /- ###################################################################### -/

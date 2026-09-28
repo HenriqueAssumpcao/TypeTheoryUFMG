@@ -100,7 +100,7 @@ def triangular_number (a : myN) : myN :=
 def factorial (a : myN) : myN :=
   match a with
   | myN.zero => _1
-  | myN.succ a' => myMult (factorial a') a
+  | myN.succ a' => myMult (factorial a') a'.succ
 
 /- There is a problem with the implementation of some of the following functions. Since
    there is no zero among naturals, binomial a b for a < b returns 1.

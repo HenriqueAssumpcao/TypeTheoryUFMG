@@ -17,10 +17,10 @@ namespace chapter8
 /- ###################################################################### -/
 
 -- (i)  n is a lower bound for P:  Π (x : ℕ), P(x) → (n ≤ x)
-abbrev is_lower_bound (P : myN → Type) (n : myN) : Type := (x : myN) → P x → leqN n x
+abbrev is_lower_bound (P : myN → Type) (n : myN) : Type := (x : myN) → P x → leq n x
 
 -- (ii) n is an upper bound for P:  Π (x : ℕ), P(x) → (x ≤ n)
-abbrev is_upper_bound (P : myN → Type) (n : myN) : Type := (x : myN) → P x → leqN x n
+abbrev is_upper_bound (P : myN → Type) (n : myN) : Type := (x : myN) → P x → leq x n
 
 -- A minimal element of P is an element of P that is also a lower bound for P.
 abbrev minimal_element (P : myN → Type) : Type :=
@@ -63,12 +63,12 @@ def well_ordering_principle (P : myN → Type) (d : is_decidable_family P) :
 def minimal_element_unique (P : myN → Type) (m m' : myN)
     (H : myProd (P m) (is_lower_bound P m)) (H' : myProd (P m') (is_lower_bound P m')) :
     m ≡ m' :=
-  leqN_antisymm m m' (proj2 H m' (proj1 H')) (proj2 H' m (proj1 H))
+  leq_antisymm m m' (proj2 H m' (proj1 H')) (proj2 H' m (proj1 H))
 
 
 -- Example: the least number n with 3 ≤ n + n is 2.
-example : (well_ordering_principle (fun n => leqN _3 (n + n))
-            (fun n => is_decidable_leqN _3 (n + n)) ⟨_3, ()⟩).1 ≡ _2 :=
+example : (well_ordering_principle (fun n => leq _3 (n + n))
+            (fun n => is_decidable_leq _3 (n + n)) ⟨_3, ()⟩).1 ≡ _2 :=
   MyEq.refl _
 
 end chapter8

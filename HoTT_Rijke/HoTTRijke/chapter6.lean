@@ -271,6 +271,7 @@ def leq (m n : myN) : Type :=
   | myN.succ _, myN.zero => Empty
   | myN.succ m, myN.succ n => leq m n
 
+
 -- a)
 
 def leq_refl (n : myN) : leq n n :=
@@ -472,10 +473,11 @@ def leq_max_conv (k m n : myN) (p : myProd (leq m k) (leq n k)) : leq (N_max m n
 -- 6.4
 
 def less_than (m n : myN) : Type :=
-  match m, n with
-  | _, myN.zero => Empty
-  | myN.zero, myN.succ _ => Unit
-  | myN.succ m, myN.succ n => less_than m n
+  match n, m with
+  | myN.zero, _ => Empty
+  | myN.succ _, myN.zero => Unit
+  | myN.succ n, myN.succ m => less_than m n
+termination_by structural n
 
 
 -- a)

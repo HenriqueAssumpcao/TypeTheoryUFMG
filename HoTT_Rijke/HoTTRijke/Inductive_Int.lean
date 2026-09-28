@@ -59,10 +59,10 @@ notation:40 a "*" b => Zmult a b
 -- Commutativity for integer addition --
 def Zsum_commutative (a b : Z) : (a + b) ≡ (b + a) :=
   match a, b with
-  | Z.pos m, Z.pos n => ap Z.pos _ _ (add_commutative m n)
+  | Z.pos m, Z.pos n => ap Z.pos _ _ (myAdd_commutative m n)
   | Z.pos _, Z.neg _ => MyEq.refl _
   | Z.neg _, Z.pos _ => MyEq.refl _
-  | Z.neg m, Z.neg n => ap Z.neg _ _ (ap myN.succ _ _ (add_commutative m n))
+  | Z.neg m, Z.neg n => ap Z.neg _ _ (ap myN.succ _ _ (myAdd_commutative m n))
 
 
 def Z_multby_N_nat : myN → myN → myN
@@ -100,7 +100,7 @@ def Z_multby_N_nat_zero_right (n : myN) : Z_multby_N_nat n myN.zero ≡ myN.zero
       calc
         Z_multby_N_nat (myN.succ n) myN.zero ≡ myAdd (Z_multby_N_nat n myN.zero) myN.zero := MyEq.refl _
         _ ≡ myAdd myN.zero myN.zero := ap (fun x : myN => myAdd x myN.zero) _ _ (Z_multby_N_nat_zero_right n)
-        _ ≡ myN.zero := left_zero_add_N myN.zero
+        _ ≡ myN.zero := myAdd_zero_left myN.zero
 
 
 def Z_multby_N_nat_comm (n m : myN) : Z_multby_N_nat n m ≡ Z_multby_N_nat m n :=
@@ -129,7 +129,7 @@ def Zpos_neg_add_neg (p n : myN) :
         _ ≡ Z.neg n := MyEq.refl _
         _ ≡ Negative (Z.pos (myN.succ n)) := MyEq.refl _
         _ ≡ Negative (Z.pos (myAdd myN.zero (myN.succ n))) :=
-              myEq_symm (ap Negative _ _ (ap Z.pos _ _ (left_zero_add_N (myN.succ n))))
+              myEq_symm (ap Negative _ _ (ap Z.pos _ _ (myAdd_zero_left (myN.succ n))))
   | myN.succ p =>
       calc
         (Negative (Z.pos (myN.succ p)) + Z.neg n) ≡ (Z.neg p + Z.neg n) := MyEq.refl _

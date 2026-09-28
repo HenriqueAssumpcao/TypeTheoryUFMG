@@ -19,7 +19,7 @@
   stated for `myN` with the identity type `MyEq` (`≡`) of `chapter5_eq.lean`:
 
   * short names for the arithmetic laws of `chapter5_props_naturals_with_zero.lean`;
-  * the type-valued order relations `leq` (≤) and `ltN` (<) on `myN`
+  * the type-valued order relations `leq` (≤) and `less_than` (<) on `myN`
     (the `myN`-analogues of `leq` and `less_than` from `chapter6.lean`);
   * the proof-relevant divisibility relation `divides d n := Σ k, d * k ≡ n`
     (Definition 7.1.2 of the book), with a bridge to `divides` of `chapter7.lean`;
@@ -79,19 +79,11 @@ def addN_eq_zero : (m n : myN) → ((m + n) ≡ myN.zero) → myProd (m ≡ myN.
 /-  The order relations ≤ and < on myN (cf. Exercises 6.3 and 6.4)        -/
 /- ###################################################################### -/
 
--- m ≤ n
-def leq : myN → myN → Type
+def leq (m n : myN) : Type :=
+  match m, n with
   | myN.zero, _ => Unit
   | myN.succ _, myN.zero => Empty
   | myN.succ m, myN.succ n => leq m n
-
--- m < n   (we match on n first, so that `ltN m 0` reduces to `Empty` for every m)
-def ltN (m n : myN) : Type :=
-  match n, m with
-  | myN.zero, _ => Empty
-  | myN.succ _, myN.zero => Unit
-  | myN.succ n, myN.succ m => ltN m n
-termination_by structural n
 
 
 def leq_refl : (n : myN) → leq n n
@@ -149,86 +141,86 @@ def leq_mul_succ_right (x k : myN) : leq x (x * myN.succ k) :=
   | myN.zero => leq_refl x
   | myN.succ k' => leq_trans _ _ _ (leq_mul_succ_right x k') (leq_add_left x (x * k'.succ))
 
-def ltN_irrefl : (n : myN) → myNegType (ltN n n)
+def less_than_irrefl : (n : myN) → myNegType (less_than n n)
   | myN.zero, p => p
-  | myN.succ n, p => ltN_irrefl n p
+  | myN.succ n, p => less_than_irrefl n p
 
 -- n < n + 1
-def ltN_succ : (n : myN) → ltN n (myN.succ n)
+def less_than_succ : (n : myN) → less_than n (myN.succ n)
   | myN.zero => ()
-  | myN.succ n => ltN_succ n
+  | myN.succ n => less_than_succ n
 
 -- m < n  →  m + 1 ≤ n
-def leq_of_ltN : (m n : myN) → ltN m n → leq (myN.succ m) n
+def leq_of_less_than : (m n : myN) → less_than m n → leq (myN.succ m) n
   | _, myN.zero, p => Empty.elim p
   | myN.zero, myN.succ _, _ => ()
-  | myN.succ m, myN.succ n, p => leq_of_ltN m n p
+  | myN.succ m, myN.succ n, p => leq_of_less_than m n p
 
 -- m + 1 ≤ n  →  m < n
-def ltN_of_leq : (m n : myN) → leq (myN.succ m) n → ltN m n
+def less_than_of_leq : (m n : myN) → leq (myN.succ m) n → less_than m n
   | _, myN.zero, p => Empty.elim p
   | myN.zero, myN.succ _, _ => ()
-  | myN.succ m, myN.succ n, p => ltN_of_leq m n p
+  | myN.succ m, myN.succ n, p => less_than_of_leq m n p
 
 -- m ≤ n  →  m < n + 1
-def ltN_succ_of_leq : (m n : myN) → leq m n → ltN m (myN.succ n)
+def less_than_succ_of_leq : (m n : myN) → leq m n → less_than m (myN.succ n)
   | myN.zero, _, _ => ()
   | myN.succ _, myN.zero, p => Empty.elim p
-  | myN.succ m, myN.succ n, p => ltN_succ_of_leq m n p
+  | myN.succ m, myN.succ n, p => less_than_succ_of_leq m n p
 
 -- m < n + 1  →  m ≤ n
-def leq_of_ltN_succ : (m n : myN) → ltN m (myN.succ n) → leq m n
+def leq_of_less_than_succ : (m n : myN) → less_than m (myN.succ n) → leq m n
   | myN.zero, _, _ => ()
   | myN.succ _, myN.zero, p => Empty.elim p
-  | myN.succ m, myN.succ n, p => leq_of_ltN_succ m n p
+  | myN.succ m, myN.succ n, p => leq_of_less_than_succ m n p
 
-def leq_of_ltN' (m n : myN) (p : ltN m n) : leq m n :=
-  leq_trans m (myN.succ m) n (leq_succ m) (leq_of_ltN m n p)
+def leq_of_less_than' (m n : myN) (p : less_than m n) : leq m n :=
+  leq_trans m (myN.succ m) n (leq_succ m) (leq_of_less_than m n p)
 
-def ltN_leq_trans (m n k : myN) (p : ltN m n) (q : leq n k) : ltN m k :=
-  ltN_of_leq m k (leq_trans _ _ _ (leq_of_ltN m n p) q)
+def less_than_leq_trans (m n k : myN) (p : less_than m n) (q : leq n k) : less_than m k :=
+  less_than_of_leq m k (leq_trans _ _ _ (leq_of_less_than m n p) q)
 
-def leq_ltN_trans (m n k : myN) (p : leq m n) (q : ltN n k) : ltN m k :=
-  ltN_of_leq m k (leq_trans (myN.succ m) (myN.succ n) k p (leq_of_ltN n k q))
+def leq_less_than_trans (m n k : myN) (p : leq m n) (q : less_than n k) : less_than m k :=
+  less_than_of_leq m k (leq_trans (myN.succ m) (myN.succ n) k p (leq_of_less_than n k q))
 
-def ltN_trans (m n k : myN) (p : ltN m n) (q : ltN n k) : ltN m k :=
-  ltN_leq_trans m n k p (leq_of_ltN' n k q)
+def less_than_trans (m n k : myN) (p : less_than m n) (q : less_than n k) : less_than m k :=
+  less_than_leq_trans m n k p (leq_of_less_than' n k q)
 
 -- ¬(m < n)  →  n ≤ m
-def leq_of_not_ltN : (m n : myN) → myNegType (ltN m n) → leq n m
+def leq_of_not_less_than : (m n : myN) → myNegType (less_than m n) → leq n m
   | _, myN.zero, _ => ()
   | myN.zero, myN.succ _, h => Empty.elim (h ())
-  | myN.succ m, myN.succ n, h => leq_of_not_ltN m n h
+  | myN.succ m, myN.succ n, h => leq_of_not_less_than m n h
 
 -- n ≤ m  →  ¬(m < n)
-def not_ltN_of_leq (m n : myN) (p : leq n m) : myNegType (ltN m n) :=
-  fun q => ltN_irrefl m (ltN_leq_trans m n m q p)
+def not_less_than_of_leq (m n : myN) (p : leq n m) : myNegType (less_than m n) :=
+  fun q => less_than_irrefl m (less_than_leq_trans m n m q p)
 
 -- m < n  →  m ≠ n
-def neq_of_ltN (m n : myN) (p : ltN m n) : myNegType (m ≡ n) := by
+def neq_of_less_than (m n : myN) (p : less_than m n) : myNegType (m ≡ n) := by
   intro q
   cases q
-  exact ltN_irrefl m p
+  exact less_than_irrefl m p
 
 -- m ≤ n and m ≠ n  →  m < n
-def ltN_of_leq_neq : (m n : myN) → leq m n → myNegType (m ≡ n) → ltN m n
+def less_than_of_leq_neq : (m n : myN) → leq m n → myNegType (m ≡ n) → less_than m n
   | myN.zero, myN.zero, _, h => Empty.elim (h (MyEq.refl _))
   | myN.zero, myN.succ _, _, _ => ()
   | myN.succ _, myN.zero, p, _ => Empty.elim p
-  | myN.succ m, myN.succ n, p, h => ltN_of_leq_neq m n p (fun q => h (ap myN.succ m n q))
+  | myN.succ m, myN.succ n, p, h => less_than_of_leq_neq m n p (fun q => h (ap myN.succ m n q))
 
 -- n ≠ 0  →  0 < n
-def zero_ltN_of_neq_zero : (n : myN) → myNegType (n ≡ myN.zero) → ltN myN.zero n
+def zero_less_than_of_neq_zero : (n : myN) → myNegType (n ≡ myN.zero) → less_than myN.zero n
   | myN.zero, h => Empty.elim (h (MyEq.refl _))
   | myN.succ _, _ => ()
 
 -- r < d  →  (r + 1 < d) or (r + 1 = d)
-def ltN_succ_cases : (r d : myN) → ltN r d → Sum (ltN (myN.succ r) d) (myN.succ r ≡ d)
+def less_than_succ_cases : (r d : myN) → less_than r d → Sum (less_than (myN.succ r) d) (myN.succ r ≡ d)
   | _, myN.zero, p => Empty.elim p
   | myN.zero, myN.succ myN.zero, _ => Sum.inr (MyEq.refl _)
   | myN.zero, myN.succ (myN.succ _), _ => Sum.inl ()
   | myN.succ r, myN.succ d, p =>
-      match ltN_succ_cases r d p with
+      match less_than_succ_cases r d p with
       | Sum.inl q => Sum.inl q
       | Sum.inr q => Sum.inr (ap myN.succ _ _ q)
 
@@ -244,6 +236,10 @@ def dist_add_both (x y : myN) : (k : myN) → (dist (x + k) (y + k)) ≡ (dist x
   | myN.zero => MyEq.refl _
   | myN.succ k => dist_add_both x y k
 
+def dist_add_both_left (x y : myN) (k : myN) : (dist (k + x) (k + y)) ≡ (dist x y) :=
+  have h1 : (dist (k + x) (k + y)) ≡ (dist (x + k) (y + k)) := ap2 dist (myAdd_commutative k x) (myAdd_commutative k y)
+  h1 • dist_add_both x y k
+
 -- dist(a + b, a) = b
 def dist_add_self (a b : myN) : (dist (a + b) a) ≡ b :=
   calc dist (a + b) a ≡ dist (b + a) (myN.zero + a) :=
@@ -252,12 +248,12 @@ def dist_add_self (a b : myN) : (dist (a + b) a) ≡ b :=
     _ ≡ b := dist_from_zero b
 
 -- Multiplication distributes over the distance: d · dist(m, n) = dist(d·m, d·n)
--- def mulN_dist (d : myN) : (m n : myN) → (d * dist m n) ≡ (dist (d * m) (d * n))
---   | myN.zero, myN.zero => MyEq.refl _
---   | myN.zero, myN.succ n => myEq_symm (dist_zero_left (d * myN.succ n))
---   | myN.succ m, myN.zero => myEq_symm (dist_from_zero (d * myN.succ m))
---   | myN.succ m, myN.succ n =>
---       (mulN_dist d m n) • myEq_symm (dist_add_both (d * m) (d * n) d)
+def mulN_dist (d : myN) : (m n : myN) → (d * dist m n) ≡ (dist (d * m) (d * n))
+  | myN.zero, myN.zero => MyEq.refl _
+  | myN.zero, myN.succ n => myEq_symm (dist_zero_left (d * myN.succ n))
+  | myN.succ m, myN.zero => myEq_symm (dist_from_zero (d * myN.succ m))
+  | myN.succ m, myN.succ n =>
+      (mulN_dist d m n) • myEq_symm (dist_add_both_left (d * m) (d * n) d)
 
 
 /- ###################################################################### -/
@@ -287,9 +283,9 @@ def eq_zero_of_zero_divides (n : myN) : divides myN.zero n → (n ≡ myN.zero)
   | ⟨k, p⟩ => (myEq_symm p) • (myMult_zero_left k)
 
 -- a ∣ b and b ∣ c  →  a ∣ c
--- def divides_trans {a b c : myN} : divides a b → divides b c → divides a c
---   | ⟨k, p⟩, ⟨l, q⟩ =>
---       ⟨k * l, (myEq_symm (mult_associative a k l)) • ((ap (fun x => x * l) _ _ p) • q)⟩
+def divides_trans {a b c : myN} : divides a b → divides b c → divides a c
+  | ⟨k, p⟩, ⟨l, q⟩ =>
+      ⟨k * l, (myEq_symm (myMult_associative a k l)) • ((ap (fun x => x * l) _ _ p) • q)⟩
 
 -- a ∣ a · b
 def divides_mul_right_self (a b : myN) : divides a (a * b) := ⟨b, MyEq.refl _⟩
@@ -298,8 +294,8 @@ def divides_mul_right_self (a b : myN) : divides a (a * b) := ⟨b, MyEq.refl _�
 -- def divides_mul_left_self (a b : myN) : divides b (a * b) := ⟨a, mult_commutative b a⟩
 
 -- d ∣ a  →  d ∣ a · b
--- def divides_mul_right {d a : myN} (b : myN) : divides d a → divides d (a * b)
---   | ⟨k, p⟩ => ⟨k * b, (myEq_symm (mult_associative d k b)) • (ap (fun x => x * b) _ _ p)⟩
+def divides_mul_right {d a : myN} (b : myN) : divides d a → divides d (a * b)
+  | ⟨k, p⟩ => ⟨k * b, (myEq_symm (myMult_associative d k b)) • (ap (fun x => x * b) _ _ p)⟩
 
 -- Proposition 7.1.5: if d divides two of the numbers a, b, a + b, then it divides
 -- the third one.
@@ -309,8 +305,8 @@ def divides_add {d a b : myN} : divides d a → divides d b → divides d (a + b
   | ⟨k, p⟩, ⟨l, q⟩ => ⟨k + l, (mult_distributive_left d k l) • (ap2 (fun (x y : myN) => x + y) p q)⟩
 
 -- d ∣ a and d ∣ a + b  →  d ∣ b
--- def divides_add_cancel_left {d a b : myN} : divides d a → divides d (a + b) → divides d b
---   | ⟨k, p⟩, ⟨l, q⟩ => ⟨dist l k, (mulN_dist d l k) • ((ap2 dist q p) • dist_add_self a b)⟩
+def divides_add_cancel_left {d a b : myN} : divides d a → divides d (a + b) → divides d b
+  | ⟨k, p⟩, ⟨l, q⟩ => ⟨dist l k, (mulN_dist d l k) • ((ap2 dist q p) • dist_add_self a b)⟩
 
 -- d ∣ b and d ∣ a + b  →  d ∣ a
 -- def divides_add_cancel_right {d a b : myN} (p : divides d b) (q : divides d (a + b)) :
@@ -318,9 +314,9 @@ def divides_add {d a b : myN} : divides d a → divides d b → divides d (a + b
 --   divides_add_cancel_left p (transport (fun x => divides d x) (myAdd_commutative a b) q)
 
 -- If d ∣ n and n ≠ 0, then d ≤ n.
--- def leq_of_divides (d n : myN) (h : myNegType (n ≡ myN.zero)) : divides d n → leq d n
---   | ⟨myN.zero, p⟩ => Empty.elim (h (myEq_symm p))
---   | ⟨myN.succ k, p⟩ => transport (fun x => leq d x) p (leq_mul_succ_right d k)
+def leq_of_divides (d n : myN) (h : myNegType (n ≡ myN.zero)) : divides d n → leq d n
+  | ⟨myN.zero, p⟩ => Empty.elim (h (myEq_symm p))
+  | ⟨myN.succ k, p⟩ => transport (fun x => leq d x) p (leq_mul_succ_right d k)
 
 -- d ∣ 1  →  d = 1
 -- def eq_one_of_divides_one : (d : myN) → divides d _1 → (d ≡ _1)
@@ -329,12 +325,12 @@ def divides_add {d a b : myN} : divides d a → divides d b → divides d (a + b
 --   | myN.succ (myN.succ _), p => Empty.elim (leq_of_divides _ _1 (succN_neq_zero _) p)
 
 -- Exercise 7.2: divisibility is antisymmetric.
--- def divides_antisymm : (m n : myN) → divides m n → divides n m → (m ≡ n)
---   | myN.zero, n, p, _ => myEq_symm (eq_zero_of_zero_divides n p)
---   | myN.succ _, myN.zero, _, q => eq_zero_of_zero_divides _ q
---   | myN.succ m, myN.succ n, p, q =>
---       leq_antisymm _ _ (leq_of_divides _ _ (succN_neq_zero n) p)
---                         (leq_of_divides _ _ (succN_neq_zero m) q)
+def divides_antisymm : (m n : myN) → divides m n → divides n m → (m ≡ n)
+  | myN.zero, n, p, _ => myEq_symm (eq_zero_of_zero_divides n p)
+  | myN.succ _, myN.zero, _, q => eq_zero_of_zero_divides _ q
+  | myN.succ m, myN.succ n, p, q =>
+      leq_antisymm _ _ (leq_of_divides _ _ (succN_neq_zero n) p)
+                        (leq_of_divides _ _ (succN_neq_zero m) q)
 
 
 /- ###################################################################### -/
@@ -369,20 +365,23 @@ def divides_add {d a b : myN} : divides d a → divides d b → divides d (a + b
 /- ###################################################################### -/
 
 -- For d ≠ 0 and every n there are q and r < d with n = d · q + r.
--- def euclidean_division (d : myN) (hd : myNegType (d ≡ myN.zero)) :
---     (n : myN) → Σ q : myN, Σ r : myN, myProd (ltN r d) (n ≡ ((d * q) + r))
---   | myN.zero =>
---       ⟨myN.zero, myN.zero, myProd.mk (zero_ltN_of_neq_zero d hd) (MyEq.refl _)⟩
---   | myN.succ n =>
---       match euclidean_division d hd n with
---       | ⟨q, r, myProd.mk hr e⟩ =>
---           match ltN_succ_cases r d hr with
---           | Sum.inl h => ⟨q, myN.succ r, myProd.mk h (ap myN.succ _ _ e)⟩
---           | Sum.inr h =>
---               ⟨myN.succ q, myN.zero,
---                 myProd.mk (zero_ltN_of_neq_zero d hd)
---                   ((ap myN.succ _ _ e) • (ap (fun x => (d * q) + x) _ _ h))⟩
+def euclidean_division (d : myN) (hd : myNegType (d ≡ myN.zero)) :
+    (n : myN) → Σ q : myN, Σ r : myN, myProd (less_than r d) (n ≡ ((d * q) + r))
+  | myN.zero =>
+      ⟨myN.zero, myN.zero, myProd.mk (zero_less_than_of_neq_zero d hd) (MyEq.refl _)⟩
+  | myN.succ n =>
+      match euclidean_division d hd n with
+      | ⟨q, r, myProd.mk hr e⟩ =>
+          match less_than_succ_cases r d hr with
+          | Sum.inl hr' =>
+            have h1 : n.succ ≡ (d * q + r.succ) := ap (fun x : myN => x.succ) _ _ e
+            ⟨ q, r.succ, myProd.mk hr' h1⟩
+          | Sum.inr r_eq_d =>
+            have h1 : n.succ ≡ d * q + r.succ := ap (fun x : myN => x.succ) _ _ e
+            have h2 : n.succ ≡ d * q + d := h1 • ap (fun x : myN => d * q + x) _ _ r_eq_d
+            have h3 : n.succ ≡ d * q.succ := h2 • myAdd_commutative _ _
 
+            ⟨ q.succ, myN.zero, myProd.mk (zero_less_than_of_neq_zero d hd) h3⟩
 
 /- ###################################################################### -/
 /-  Conversion from Lean's `Nat`, for writing concrete examples            -/

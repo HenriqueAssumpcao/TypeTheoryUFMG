@@ -105,7 +105,6 @@ def myMult_comm (a b : myN) : (a × b) ≡ (b × a) :=
     (myAdd_commutative _ _) •
     (myEq_symm (myMult_succ_left b a))
 
-
 def mult_one_left (a : myN) : myMult _1 a ≡ a :=
     calc
       myMult _1 a ≡ myAdd (myN.zero ×  a) a := myMult_succ_left myN.zero a
@@ -142,6 +141,9 @@ def mult_distributive_left (a b c : myN) : myMult a (myAdd b c) ≡ myAdd (myMul
         _ ≡ (myN.succ a' * b) + ((a' * c) + c) := myAdd_associative _ _ _
         _ ≡ (myN.succ a' * b) + (myN.succ a' * c) :=
               ap (myAdd (myN.succ a' * b)) _ _ (myEq_symm (myMult_succ_left _ _))
+
+
+def myMult_associative (a b c : myN) :  ((a × b) × c) ≡ (a × (b × c)) := sorry
 
 
 -- Defiyng Min and Max on naturals --

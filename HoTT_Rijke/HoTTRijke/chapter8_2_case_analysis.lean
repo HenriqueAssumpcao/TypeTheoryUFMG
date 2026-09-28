@@ -140,7 +140,7 @@ def is_decidable_pi_of_bound : (m : myN) → (P : myN → Type) → is_decidable
 
 -- m + 1 ≤ m is impossible
 def not_leq_succ_self (m : myN) : myNegType (leq (myN.succ m) m) :=
-  fun h => ltN_irrefl m (ltN_of_leq m m h)
+  fun h => less_than_irrefl m (less_than_of_leq m m h)
 
 /- Corollary 8.2.5.  Let P and Q be decidable families over ℕ, and let m be an upper
    bound for P.  Then Π (x : ℕ), P(x) → Q(x) is decidable. -/

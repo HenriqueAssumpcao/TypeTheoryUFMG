@@ -21,14 +21,14 @@ namespace chapter8
 
 -- is-gcd(a, b, d) := Π (x : ℕ), (x ∣ a) × (x ∣ b) ↔ (x ∣ d)
 abbrev is_gcd (a b d : myN) : Type :=
-  (x : myN) → myEquiv (myProd (dividesT x a) (dividesT x b)) (dividesT x d)
+  (x : myN) → myEquiv (myProd (divides x a) (divides x b)) (divides x d)
 
 -- Proposition 8.4.2: a greatest common divisor is unique.
 def is_gcd_unique (a b d d' : myN) (H : is_gcd a b d) (H' : is_gcd a b d') : d ≡ d' :=
   -- d and d' both divide a and b, hence d ∣ d' and d' ∣ d (Exercise 7.2)
-  dividesT_antisymm d d'
-    (proj1 (H' d) (proj2 (H d) (dividesT_refl d)))
-    (proj1 (H d') (proj2 (H' d') (dividesT_refl d')))
+  divides_antisymm d d'
+    (proj1 (H' d) (proj2 (H d) (divides_refl d)))
+    (proj1 (H d') (proj2 (H' d') (divides_refl d')))
 
 
 /- ###################################################################### -/
@@ -40,7 +40,7 @@ def is_gcd_unique (a b d d' : myN) (H : is_gcd a b d) (H' : is_gcd a b d') : d �
 abbrev is_multiple_of_gcd (a b n : myN) : Type :=
   myNegType ((a + b) ≡ myN.zero) →
     myProd (myNegType (n ≡ myN.zero))
-           ((x : myN) → myProd (dividesT x a) (dividesT x b) → dividesT x n)
+           ((x : myN) → myProd (divides x a) (divides x b) → divides x n)
 
 -- Proposition 8.4.4: the family P(a, b) is decidable.
 def is_decidable_is_multiple_of_gcd (a b : myN) :
@@ -51,15 +51,15 @@ def is_decidable_is_multiple_of_gcd (a b : myN) :
       is_decidable_prod (is_decidable_neq n myN.zero)
         -- Corollary 8.2.5: common divisors of a and b are bounded by a + b ≠ 0.
         (is_decidable_pi_implication
-          (fun x => myProd (dividesT x a) (dividesT x b)) (fun x => dividesT x n)
-          (fun x => is_decidable_prod (is_decidable_dividesT x a) (is_decidable_dividesT x b))
-          (fun x => is_decidable_dividesT x n)
+          (fun x => myProd (divides x a) (divides x b)) (fun x => divides x n)
+          (fun x => is_decidable_prod (is_decidable_divides x a) (is_decidable_divides x b))
+          (fun x => is_decidable_divides x n)
           (a + b)
-          (fun x hx => leqN_of_dividesT x (a + b) h (dividesT_add (proj1 hx) (proj2 hx)))))
+          (fun x hx => leq_of_divides x (a + b) h (divides_add (proj1 hx) (proj2 hx)))))
 
 -- Lemma 8.4.5: P(a, b, a + b) holds.
 def is_multiple_of_gcd_add (a b : myN) : is_multiple_of_gcd a b (a + b) :=
-  fun h => myProd.mk h (fun _ hx => dividesT_add (proj1 hx) (proj2 hx))
+  fun h => myProd.mk h (fun _ hx => divides_add (proj1 hx) (proj2 hx))
 
 
 /- ###################################################################### -/
@@ -80,7 +80,7 @@ def is_lower_bound_gcdN (a b : myN) : is_lower_bound (is_multiple_of_gcd a b) (g
   proj2 (gcd_minimal_element a b).2
 
 -- gcd(a, b) ≤ a + b, by minimality and Lemma 8.4.5.
-def gcdN_leq_add (a b : myN) : leqN (gcdN a b) (a + b) :=
+def gcdN_leq_add (a b : myN) : leq (gcdN a b) (a + b) :=
   is_lower_bound_gcdN a b (a + b) (is_multiple_of_gcd_add a b)
 
 
@@ -96,7 +96,7 @@ def gcdN_eq_zero_iff (a b : myN) : myEquiv (gcdN a b ≡ myN.zero) ((a + b) ≡ 
     (fun p => chapter4_booleans._3_d_i _ (has_decidable_eq_myN (a + b) myN.zero)
                 (fun h => proj1 (is_multiple_of_gcd_gcdN a b h) p))
     -- If a + b = 0, then gcd(a, b) ≤ a + b = 0.
-    (fun q => leqN_zero _ (transport (fun y => leqN (gcdN a b) y) q (gcdN_leq_add a b)))
+    (fun q => leq_zero _ (transport (fun y => leq (gcdN a b) y) q (gcdN_leq_add a b)))
 
 /- The key step of Theorem 8.4.8.  Let g ≠ 0 be a number that is divisible by all
    common divisors of a and b, and which is a lower bound of the family P(a, b).
@@ -107,23 +107,23 @@ def gcdN_eq_zero_iff (a b : myN) : myEquiv (gcdN a b ≡ myN.zero) ((a + b) ≡ 
    common divisor of a and b divides g · q and c, so it divides r (Proposition 7.1.5).
    If r were nonzero, then r would satisfy P(a, b, r) and hence g ≤ r by minimality,
    contradicting r < g.  So r = 0 and g ∣ c. -/
-def dividesT_of_minimal_multiple_of_gcd (a b c g : myN)
+def divides_of_minimal_multiple_of_gcd (a b c g : myN)
     (hg : myNegType (g ≡ myN.zero))
-    (hdiv : (x : myN) → myProd (dividesT x a) (dividesT x b) → dividesT x g)
+    (hdiv : (x : myN) → myProd (divides x a) (divides x b) → divides x g)
     (hmin : is_lower_bound (is_multiple_of_gcd a b) g)
-    (hc : (x : myN) → myProd (dividesT x a) (dividesT x b) → dividesT x c) :
-    dividesT g c :=
+    (hc : (x : myN) → myProd (divides x a) (divides x b) → divides x c) :
+    divides g c :=
   match euclidean_division g hg c with
   | ⟨q, r, myProd.mk hr e⟩ =>
-      let hr_div : (x : myN) → myProd (dividesT x a) (dividesT x b) → dividesT x r :=
+      let hr_div : (x : myN) → myProd (divides x a) (divides x b) → divides x r :=
         fun x hx =>
-          @dividesT_add_cancel_left x (g * q) r
-            (dividesT_mul_right q (hdiv x hx))
-            (transport (fun y => dividesT x y) e (hc x hx))
+          @divides_add_cancel_left x (g * q) r
+            (divides_mul_right q (hdiv x hx))
+            (transport (fun y => divides x y) e (hc x hx))
       match has_decidable_eq_myN r myN.zero with
       | Sum.inl r0 => ⟨q, myEq_symm (e • (ap (fun y => (g * q) + y) _ _ r0))⟩
       | Sum.inr rn0 =>
-          Empty.elim (not_ltN_of_leqN r g (hmin r (fun _ => myProd.mk rn0 hr_div)) hr)
+          Empty.elim (not_less_than_of_leq r g (hmin r (fun _ => myProd.mk rn0 hr_div)) hr)
 
 -- Theorem 8.4.8: gcd(a, b) is a greatest common divisor of a and b.
 def is_gcd_gcdN (a b : myN) : is_gcd a b (gcdN a b) :=
@@ -134,10 +134,10 @@ def is_gcd_gcdN (a b : myN) : is_gcd a b (gcdN a b) :=
       let hb : b ≡ myN.zero := proj2 (addN_eq_zero a b h)
       let hg : gcdN a b ≡ myN.zero := proj2 (gcdN_eq_zero_iff a b) h
       fun x => myProd.mk
-        (fun _ => transport (fun y => dividesT x y) (myEq_symm hg) (dividesT_zero x))
+        (fun _ => transport (fun y => divides x y) (myEq_symm hg) (divides_zero x))
         (fun _ => myProd.mk
-                    (transport (fun y => dividesT x y) (myEq_symm ha) (dividesT_zero x))
-                    (transport (fun y => dividesT x y) (myEq_symm hb) (dividesT_zero x)))
+                    (transport (fun y => divides x y) (myEq_symm ha) (divides_zero x))
+                    (transport (fun y => divides x y) (myEq_symm hb) (divides_zero x)))
   | Sum.inr h =>
       -- a + b ≠ 0: then gcd(a, b) ≠ 0 by Lemma 8.4.7.
       let hg : myNegType (gcdN a b ≡ myN.zero) := fun p => h (proj1 (gcdN_eq_zero_iff a b) p)
@@ -147,17 +147,17 @@ def is_gcd_gcdN (a b : myN) : is_gcd a b (gcdN a b) :=
         (hdiv x)
         -- If x ∣ gcd(a, b), then x ∣ a and x ∣ b, since gcd(a, b) divides a and b.
         (fun p => myProd.mk
-          (dividesT_trans p (dividesT_of_minimal_multiple_of_gcd a b a (gcdN a b) hg hdiv hmin
+          (divides_trans p (divides_of_minimal_multiple_of_gcd a b a (gcdN a b) hg hdiv hmin
                                 (fun _ hx => proj1 hx)))
-          (dividesT_trans p (dividesT_of_minimal_multiple_of_gcd a b b (gcdN a b) hg hdiv hmin
+          (divides_trans p (divides_of_minimal_multiple_of_gcd a b b (gcdN a b) hg hdiv hmin
                                 (fun _ hx => proj2 hx))))
 
 -- In particular gcd(a, b) divides a and b.
-def gcdN_dividesT_left (a b : myN) : dividesT (gcdN a b) a :=
-  proj1 (proj2 (is_gcd_gcdN a b (gcdN a b)) (dividesT_refl _))
+def gcdN_divides_left (a b : myN) : divides (gcdN a b) a :=
+  proj1 (proj2 (is_gcd_gcdN a b (gcdN a b)) (divides_refl _))
 
-def gcdN_dividesT_right (a b : myN) : dividesT (gcdN a b) b :=
-  proj2 (proj2 (is_gcd_gcdN a b (gcdN a b)) (dividesT_refl _))
+def gcdN_divides_right (a b : myN) : divides (gcdN a b) b :=
+  proj2 (proj2 (is_gcd_gcdN a b (gcdN a b)) (divides_refl _))
 
 
 -- The gcd can be computed.

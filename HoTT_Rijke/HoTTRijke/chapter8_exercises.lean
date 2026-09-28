@@ -17,6 +17,7 @@ import HoTTRijke.chapter8_6_boolean_reflection
 open chapter5_myeq
 open chapter3_naturals_with_zero
 open chapter3_booleans
+open chapter6_Universes
 
 namespace chapter8
 
@@ -26,13 +27,13 @@ namespace chapter8
 
 -- (a) Goldbach's conjecture: every even number greater than 2 is a sum of two primes.
 abbrev goldbach_conjecture : Type :=
-  (n : myN) → ltN _2 n → dividesT _2 n →
+  (n : myN) → less_than _2 n → divides _2 n →
     Σ p : myN, Σ q : myN, myProd (is_prime p) (myProd (is_prime q) ((p + q) ≡ n))
 
 -- (b) The twin prime conjecture: there are arbitrarily large primes p such that
 --     p + 2 is also prime.
 abbrev twin_prime_conjecture : Type :=
-  (n : myN) → Σ p : myN, myProd (leqN n p) (myProd (is_prime p) (is_prime (p + _2)))
+  (n : myN) → Σ p : myN, myProd (leq n p) (myProd (is_prime p) (is_prime (p + _2)))
 
 -- (c) The Collatz conjecture: iterating the Collatz function on any n ≥ 1
 --     eventually reaches 1.
@@ -90,9 +91,9 @@ def exists_not_of_not_forall_Fin : (k : myN) → (P : myFin k → Type) →
 /- ###################################################################### -/
 
 -- The least prime p with m < p exists by Theorem 8.5.6 and the well-ordering principle.
-def next_prime (m : myN) : minimal_element (fun p => myProd (ltN m p) (is_prime p)) :=
-  well_ordering_principle (fun p => myProd (ltN m p) (is_prime p))
-    (fun p => is_decidable_prod (is_decidable_ltN m p) (is_decidable_is_prime p))
+def next_prime (m : myN) : minimal_element (fun p => myProd (less_than m p) (is_prime p)) :=
+  well_ordering_principle (fun p => myProd (less_than m p) (is_prime p))
+    (fun p => is_decidable_prod (is_decidable_less_than m p) (is_decidable_is_prime p))
     ⟨(infinitude_of_primes m).1,
       myProd.mk (proj2 (infinitude_of_primes m).2) (proj1 (infinitude_of_primes m).2)⟩
 
@@ -106,12 +107,12 @@ def is_prime_prime_fn : (n : myN) → is_prime (prime_fn n)
   | myN.succ n => proj2 (proj1 (next_prime (prime_fn n)).2)
 
 -- prime(n) < prime(n + 1) ...
-def prime_fn_ltN_succ (n : myN) : ltN (prime_fn n) (prime_fn (myN.succ n)) :=
+def prime_fn_less_than_succ (n : myN) : less_than (prime_fn n) (prime_fn (myN.succ n)) :=
   proj1 (proj1 (next_prime (prime_fn n)).2)
 
 -- ... and there are no primes in between.
-def prime_fn_succ_minimal (n p : myN) (h : ltN (prime_fn n) p) (hp : is_prime p) :
-    leqN (prime_fn (myN.succ n)) p :=
+def prime_fn_succ_minimal (n p : myN) (h : less_than (prime_fn n) p) (hp : is_prime p) :
+    leq (prime_fn (myN.succ n)) p :=
   proj2 (next_prime (prime_fn n)).2 p (myProd.mk h hp)
 
 example : (prime_fn _0) ≡ _2 := MyEq.refl _
@@ -135,9 +136,9 @@ example : (prime_counting _10) ≡ _4 := MyEq.refl _
 
 def not_is_prime_zero : myNegType (is_prime myN.zero) :=
   fun H => two_neq_one (proj2 (is_prime'_of_is_prime _ H) _2
-                          (myProd.mk (succN_neq_zero _1) (dividesT_zero _2)))
+                          (myProd.mk (succN_neq_zero _1) (divides_zero _2)))
 
-def two_leqN_of_neq (n : myN) : myNegType (n ≡ myN.zero) → myNegType (n ≡ _1) → leqN _2 n :=
+def two_leq_of_neq (n : myN) : myNegType (n ≡ myN.zero) → myNegType (n ≡ _1) → leq _2 n :=
   match n with
   | myN.zero => fun h0 _ => Empty.elim (h0 (MyEq.refl _))
   | myN.succ myN.zero => fun _ h1 => Empty.elim (h1 (MyEq.refl _))
@@ -146,12 +147,12 @@ def two_leqN_of_neq (n : myN) : myNegType (n ≡ myN.zero) → myNegType (n ≡ 
 -- is-prime(n) ↔ (2 ≤ n) × Π (x : ℕ), (x ∣ n) → (x = 1) + (x = n)
 def is_prime_iff_divisors (n : myN) :
     myEquiv (is_prime n)
-      (myProd (leqN _2 n) ((x : myN) → dividesT x n → Sum (x ≡ _1) (x ≡ n))) :=
+      (myProd (leq _2 n) ((x : myN) → divides x n → Sum (x ≡ _1) (x ≡ n))) :=
   myProd.mk
     (fun H =>
       let H' := is_prime'_of_is_prime n H
       let h0 : myNegType (n ≡ myN.zero) := fun e => not_is_prime_zero (transport is_prime e H)
-      myProd.mk (two_leqN_of_neq n h0 (proj1 H'))
+      myProd.mk (two_leq_of_neq n h0 (proj1 H'))
         (fun x hx =>
           match has_decidable_eq_myN x n with
           | Sum.inl e => Sum.inr e
@@ -159,7 +160,7 @@ def is_prime_iff_divisors (n : myN) :
     (fun H =>
       is_prime_of_is_prime' n
         (myProd.mk
-          (fun e => transport (fun y => leqN _2 y) e (proj1 H))
+          (fun e => transport (fun y => leq _2 y) e (proj1 H))
           (fun x hx =>
             match proj2 H x (proj2 hx) with
             | Sum.inl e => e
@@ -340,7 +341,7 @@ def maximal_element_of_upper_bound (P : myN → Type) (d : is_decidable_family P
     (m : myN) (ub : is_upper_bound P m) (x0 : Σ x : myN, P x) : maximal_element P :=
   -- "y is an upper bound of P" is decidable by Corollary 8.2.5
   let dQ : is_decidable_family (is_upper_bound P) := fun y =>
-    is_decidable_pi_implication P (fun x => leqN x y) d (fun x => is_decidable_leqN x y) m ub
+    is_decidable_pi_implication P (fun x => leq x y) d (fun x => is_decidable_leq x y) m ub
   match well_ordering_principle (is_upper_bound P) dQ ⟨m, ub⟩ with
   | ⟨y, myProd.mk uby lby⟩ =>
       match d y with
@@ -350,32 +351,32 @@ def maximal_element_of_upper_bound (P : myN → Type) (d : is_decidable_family P
           Empty.elim (
             match y, uby, lby, npy with
             | myN.zero, uby, _, npy =>
-                npy (transport P (leqN_zero x0.1 (uby x0.1 x0.2)) x0.2)
+                npy (transport P (leq_zero x0.1 (uby x0.1 x0.2)) x0.2)
             | myN.succ y, uby, lby, npy =>
-                not_leqN_succ_self y (lby y (fun x px =>
-                  match leqN_succ_cases x y (uby x px) with
+                not_leq_succ_self y (lby y (fun x px =>
+                  match leq_succ_cases x y (uby x px) with
                   | Sum.inl h => h
                   | Sum.inr e => Empty.elim (npy (transport P e px)))))
 
 -- (c) A second construction of the gcd: the largest common divisor of a and b
 --     (and 0 if a = b = 0).
 
-abbrev is_common_divisor (a b x : myN) : Type := myProd (dividesT x a) (dividesT x b)
+abbrev is_common_divisor (a b x : myN) : Type := myProd (divides x a) (divides x b)
 
 def is_decidable_is_common_divisor (a b : myN) : is_decidable_family (is_common_divisor a b) :=
-  fun x => is_decidable_prod (is_decidable_dividesT x a) (is_decidable_dividesT x b)
+  fun x => is_decidable_prod (is_decidable_divides x a) (is_decidable_divides x b)
 
 -- If a + b ≠ 0, the common divisors of a and b are bounded by a + b.
 def is_upper_bound_common_divisor (a b : myN) (h : myNegType ((a + b) ≡ myN.zero)) :
     is_upper_bound (is_common_divisor a b) (a + b) :=
-  fun x hx => leqN_of_dividesT x (a + b) h (dividesT_add (proj1 hx) (proj2 hx))
+  fun x hx => leq_of_divides x (a + b) h (divides_add (proj1 hx) (proj2 hx))
 
 -- If a + b ≠ 0, the largest common divisor exists by part (b) (1 is a common divisor).
 def max_common_divisor (a b : myN) (h : myNegType ((a + b) ≡ myN.zero)) :
     maximal_element (is_common_divisor a b) :=
   maximal_element_of_upper_bound (is_common_divisor a b) (is_decidable_is_common_divisor a b)
     (a + b) (is_upper_bound_common_divisor a b h)
-    ⟨_1, myProd.mk (one_dividesT a) (one_dividesT b)⟩
+    ⟨_1, myProd.mk (one_divides a) (one_divides b)⟩
 
 def gcd2_h (a b : myN) : is_decidable ((a + b) ≡ myN.zero) → myN
   | Sum.inl _ => myN.zero
@@ -386,10 +387,10 @@ def gcd2 (a b : myN) : myN := gcd2_h a b (has_decidable_eq_myN (a + b) myN.zero)
 -- If a = b = 0, then 0 is a gcd of a and b.
 def is_gcd_zero_of_add_eq_zero (a b : myN) (h : (a + b) ≡ myN.zero) : is_gcd a b myN.zero :=
   fun x => myProd.mk
-    (fun _ => dividesT_zero x)
+    (fun _ => divides_zero x)
     (fun _ => myProd.mk
-      (transport (fun y => dividesT x y) (myEq_symm (proj1 (addN_eq_zero a b h))) (dividesT_zero x))
-      (transport (fun y => dividesT x y) (myEq_symm (proj2 (addN_eq_zero a b h))) (dividesT_zero x)))
+      (transport (fun y => divides x y) (myEq_symm (proj1 (addN_eq_zero a b h))) (divides_zero x))
+      (transport (fun y => divides x y) (myEq_symm (proj2 (addN_eq_zero a b h))) (divides_zero x)))
 
 /- gcd2(a, b) satisfies the specification of Definition 8.4.1: it coincides with
    gcd(a, b) of Definition 8.4.6, because each of the two divides the other. -/
@@ -401,12 +402,12 @@ def is_gcd_gcd2_h (a b : myN) : (e : is_decidable ((a + b) ≡ myN.zero)) → is
       let ubM : is_upper_bound (is_common_divisor a b) M := proj2 (max_common_divisor a b h).2
       let hg : myNegType (gcdN a b ≡ myN.zero) := fun p => h (proj1 (gcdN_eq_zero_iff a b) p)
       -- gcd(a, b) is a common divisor, so gcd(a, b) ≤ M
-      let h1 : leqN (gcdN a b) M :=
-        ubM (gcdN a b) (myProd.mk (gcdN_dividesT_left a b) (gcdN_dividesT_right a b))
+      let h1 : leq (gcdN a b) M :=
+        ubM (gcdN a b) (myProd.mk (gcdN_divides_left a b) (gcdN_divides_right a b))
       -- M is a common divisor, so M ∣ gcd(a, b) and hence M ≤ gcd(a, b)
-      let h2 : leqN M (gcdN a b) :=
-        leqN_of_dividesT M (gcdN a b) hg (proj1 (is_gcd_gcdN a b M) hM)
-      transport (is_gcd a b) (leqN_antisymm _ _ h1 h2) (is_gcd_gcdN a b)
+      let h2 : leq M (gcdN a b) :=
+        leq_of_divides M (gcdN a b) hg (proj1 (is_gcd_gcdN a b M) hM)
+      transport (is_gcd a b) (leq_antisymm _ _ h1 h2) (is_gcd_gcdN a b)
 
 def is_gcd_gcd2 (a b : myN) : is_gcd a b (gcd2 a b) :=
   is_gcd_gcd2_h a b (has_decidable_eq_myN (a + b) myN.zero)
@@ -419,25 +420,25 @@ example : (gcd2 _4 _6) ≡ _2 := MyEq.refl _
 /- ###################################################################### -/
 
 -- The least d ≥ 2 dividing n is prime.
-def prime_factor (n : myN) (h : leqN _2 n) : Σ p : myN, myProd (is_prime p) (dividesT p n) :=
-  match well_ordering_principle (fun d => myProd (leqN _2 d) (dividesT d n))
-          (fun d => is_decidable_prod (is_decidable_leqN _2 d) (is_decidable_dividesT d n))
-          ⟨n, myProd.mk h (dividesT_refl n)⟩ with
+def prime_factor (n : myN) (h : leq _2 n) : Σ p : myN, myProd (is_prime p) (divides p n) :=
+  match well_ordering_principle (fun d => myProd (leq _2 d) (divides d n))
+          (fun d => is_decidable_prod (is_decidable_leq _2 d) (is_decidable_divides d n))
+          ⟨n, myProd.mk h (divides_refl n)⟩ with
   | ⟨p, myProd.mk (myProd.mk h2 hpn) hmin⟩ =>
-      let hp0 : myNegType (p ≡ myN.zero) := fun e => transport (fun y => leqN _2 y) e h2
-      let hp1 : myNegType (p ≡ _1) := fun e => transport (fun y => leqN _2 y) e h2
+      let hp0 : myNegType (p ≡ myN.zero) := fun e => transport (fun y => leq _2 y) e h2
+      let hp1 : myNegType (p ≡ _1) := fun e => transport (fun y => leq _2 y) e h2
       let hprop : (x : myN) → is_proper_divisor p x → (x ≡ _1) := fun x hx =>
         match has_decidable_eq_myN x _1 with
         | Sum.inl e => e
         | Sum.inr ne1 =>
             -- x ≠ 0, since 0 ∤ p
             let hx0 : myNegType (x ≡ myN.zero) := fun e =>
-              hp0 (eq_zero_of_zero_dividesT p (transport (fun y => dividesT y p) e (proj2 hx)))
+              hp0 (eq_zero_of_zero_divides p (transport (fun y => divides y p) e (proj2 hx)))
             -- x < p, but x ≥ 2 divides n, so p ≤ x by minimality
-            let hxp : ltN x p :=
-              ltN_of_leqN_neq x p (leqN_of_dividesT x p hp0 (proj2 hx)) (proj1 hx)
-            Empty.elim (not_ltN_of_leqN x p
-              (hmin x (myProd.mk (two_leqN_of_neq x hx0 ne1) (dividesT_trans (proj2 hx) hpn)))
+            let hxp : less_than x p :=
+              less_than_of_leq_neq x p (leq_of_divides x p hp0 (proj2 hx)) (proj1 hx)
+            Empty.elim (not_less_than_of_leq x p
+              (hmin x (myProd.mk (two_leq_of_neq x hx0 ne1) (divides_trans (proj2 hx) hpn)))
               hxp)
       ⟨p, myProd.mk (is_prime_of_is_prime' p (myProd.mk hp1 hprop)) hpn⟩
 

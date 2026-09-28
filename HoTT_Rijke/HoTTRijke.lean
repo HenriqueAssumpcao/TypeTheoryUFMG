@@ -8,3 +8,11 @@ import HoTTRijke.chapter5_ints
 import HoTTRijke.chapter5_props_naturals_with_zero
 import HoTTRijke.chapter5_eq
 import HoTTRijke.chapter7
+import HoTTRijke.chapter8_0_preliminaries
+import HoTTRijke.chapter8_1_decidability
+import HoTTRijke.chapter8_2_case_analysis
+import HoTTRijke.chapter8_3_well_ordering
+import HoTTRijke.chapter8_4_gcd
+import HoTTRijke.chapter8_5_primes
+import HoTTRijke.chapter8_6_boolean_reflection
+import HoTTRijke.chapter8_exercises

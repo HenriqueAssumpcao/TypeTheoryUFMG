@@ -35,7 +35,7 @@ def myAdd_commutative (a b : myN) : myAdd a b ≡ myAdd b a :=
 
 
 
-def myAdd_assoc (a b c : myN) : myAdd (myAdd a b) c ≡ myAdd a (myAdd b c) :=
+def myAdd_associative (a b c : myN) : myAdd (myAdd a b) c ≡ myAdd a (myAdd b c) :=
   match a with
   | myN.zero =>
       calc
@@ -45,7 +45,7 @@ def myAdd_assoc (a b c : myN) : myAdd (myAdd a b) c ≡ myAdd a (myAdd b c) :=
       calc
         myAdd (myAdd (myN.succ a) b) c ≡ myAdd (myN.succ (myAdd a b)) c := ap (fun x : myN => myAdd x c) _ _ (left_successor_law_add a b)
         _ ≡ myN.succ (myAdd (myAdd a b) c) := left_successor_law_add (myAdd a b) c
-        _ ≡ myN.succ (myAdd a (myAdd b c)) := ap myN.succ _ _ (myAdd_assoc a b c)
+        _ ≡ myN.succ (myAdd a (myAdd b c)) := ap myN.succ _ _ (myAdd_associative a b c)
         _ ≡ myAdd (myN.succ a) (myAdd b c) := myEq_symm (left_successor_law_add a (myAdd b c))
 
 
@@ -53,9 +53,9 @@ def myAdd_succ_right_comm (x n m : myN) :
     myAdd (myAdd x n) (myN.succ m) ≡ myAdd (myAdd x m) (myN.succ n) :=
   calc
     myAdd (myAdd x n) (myN.succ m) ≡ myN.succ (myAdd (myAdd x n) m) := MyEq.refl _
-    _ ≡ myN.succ (myAdd x (myAdd n m)) := ap myN.succ _ _ (myAdd_assoc x n m)
+    _ ≡ myN.succ (myAdd x (myAdd n m)) := ap myN.succ _ _ (myAdd_associative x n m)
     _ ≡ myN.succ (myAdd x (myAdd m n)) := ap (fun t : myN => myN.succ (myAdd x t)) _ _ (myAdd_commutative n m)
-    _ ≡ myN.succ (myAdd (myAdd x m) n) := ap myN.succ _ _ (myEq_symm (myAdd_assoc x m n))
+    _ ≡ myN.succ (myAdd (myAdd x m) n) := ap myN.succ _ _ (myEq_symm (myAdd_associative x m n))
     _ ≡ myAdd (myAdd x m) (myN.succ n) := MyEq.refl _
 
 
@@ -85,7 +85,7 @@ def myMult_succ_left (a b : myN) : (a.succ × b) ≡ (myAdd (a × b) b) :=
         _ ≡ myAdd (myN.succ a) (myAdd (a × b') b') :=
               ap (fun x : myN => myAdd (myN.succ a) x) _ _ (myMult_succ_left a b')
         _ ≡ myN.succ (myAdd a (myAdd (a × b') b')) := left_successor_law_add a (myAdd (a × b') b')
-        _ ≡ myN.succ (myAdd (myAdd a (a × b')) b') := myEq_symm (ap myN.succ _ _ (myAdd_assoc a (a × b') b'))
+        _ ≡ myN.succ (myAdd (myAdd a (a × b')) b') := myEq_symm (ap myN.succ _ _ (myAdd_associative a (a × b') b'))
         _ ≡ myAdd (myAdd a (a × b')) (myN.succ b') :=
               myEq_symm
                 (calc
@@ -128,18 +128,18 @@ def mult_distributive_left (a b c : myN) : myMult a (myAdd b c) ≡ myAdd (myMul
         myMult (myN.succ a') (b + c) ≡ myAdd (myMult a' (b + c)) (b + c) := myMult_succ_left _ _
         _ ≡ myAdd ((a' * b) + (a' * c)) (b + c) :=
               ap (fun x => myAdd x (b + c)) _ _ (mult_distributive_left a' b c)
-        _ ≡ myAdd (a' * b) (myAdd (a' * c) (b + c)) := myAdd_assoc _ _ _
+        _ ≡ myAdd (a' * b) (myAdd (a' * c) (b + c)) := myAdd_associative _ _ _
         _ ≡ myAdd (a' * b) (myAdd ((a' * c) + b) c) :=
-              ap (myAdd (a' * b)) _ _ (myEq_symm (myAdd_assoc _ _ _))
+              ap (myAdd (a' * b)) _ _ (myEq_symm (myAdd_associative _ _ _))
         _ ≡ myAdd (a' * b) (myAdd (b + (a' * c)) c) :=
               ap ((myAdd (a' * b)) ∘ fun x => myAdd x c) _ _ (myAdd_commutative _ _)
-        _ ≡ myAdd (myAdd (a' * b) (b + (a' * c))) c := myEq_symm (myAdd_assoc _ _ _)
+        _ ≡ myAdd (myAdd (a' * b) (b + (a' * c))) c := myEq_symm (myAdd_associative _ _ _)
         _ ≡ myAdd (myAdd ((a' * b) + b) (a' * c)) c :=
-              ap (fun x => myAdd x c) _ _ (myEq_symm (myAdd_assoc _ _ _))
+              ap (fun x => myAdd x c) _ _ (myEq_symm (myAdd_associative _ _ _))
         _ ≡ myAdd ((myN.succ a' * b) + (a' * c)) c :=
               ap (fun x => myAdd x c) _ _
                 (ap (fun x => myAdd x (a' * c)) ((a' * b) + b) (myN.succ a' * b) (myEq_symm (myMult_succ_left _ _)))
-        _ ≡ (myN.succ a' * b) + ((a' * c) + c) := myAdd_assoc _ _ _
+        _ ≡ (myN.succ a' * b) + ((a' * c) + c) := myAdd_associative _ _ _
         _ ≡ (myN.succ a' * b) + (myN.succ a' * c) :=
               ap (myAdd (myN.succ a' * b)) _ _ (myEq_symm (myMult_succ_left _ _))
 

@@ -15,11 +15,14 @@
   * A + B is Lean's `Sum A B` (as in chapter7.lean).
 -/
 
+import HoTTRijke.chapter7
 import HoTTRijke.chapter8_0_preliminaries
 
 open chapter5_myeq
 open chapter3_naturals_with_zero
 open chapter3_booleans
+open chapter6_Universes
+open props_naturals_with_zero
 
 namespace chapter8
 
@@ -44,6 +47,7 @@ def is_decidable_empty : is_decidable Empty := Sum.inr id
 
 -- Any type equipped with an element is decidable.
 def is_decidable_of_elem {A : Type} (a : A) : is_decidable A := Sum.inl a
+
 
 
 /- ###################################################################### -/
@@ -93,15 +97,19 @@ def is_decidable_EqN : (m n : myN) → is_decidable (EqN m n)
   | myN.succ _, myN.zero => is_decidable_empty
   | myN.succ m, myN.succ n => is_decidable_EqN m n
 
-def is_decidable_leqN : (m n : myN) → is_decidable (leqN m n)
+def is_decidable_leq : (m n : myN) → is_decidable (leq m n)
   | myN.zero, _ => is_decidable_unit
   | myN.succ _, myN.zero => is_decidable_empty
-  | myN.succ m, myN.succ n => is_decidable_leqN m n
+  | myN.succ m, myN.succ n => is_decidable_leq m n
 
-def is_decidable_ltN : (m n : myN) → is_decidable (ltN m n)
-  | _, myN.zero => is_decidable_empty
+def is_decidable_less (m n : myN) : is_decidable (less_than m n) :=
+  match m,n with
+  | m', myN.zero =>
+    match m' with
+    | myN.zero => is_decidable_empty
+    | myN.succ _ => is_decidable_empty
   | myN.zero, myN.succ _ => is_decidable_unit
-  | myN.succ m, myN.succ n => is_decidable_ltN m n
+  | myN.succ m, myN.succ n => is_decidable_less m n
 
 
 /- ###################################################################### -/
@@ -213,31 +221,31 @@ example (k : myN) : has_decidable_eq (myFin k) :=
 
 -- For a decidable family P over ℕ, the type Σ (k : ℕ), (k ≤ n) × P(k) is decidable.
 def is_decidable_bounded_sigma (P : myN → Type) (d : is_decidable_family P) :
-    (n : myN) → is_decidable (Σ k : myN, myProd (leqN k n) (P k))
+    (n : myN) → is_decidable (Σ k : myN, myProd (leq k n) (P k))
   | myN.zero =>
       match d myN.zero with
       | Sum.inl p => Sum.inl ⟨myN.zero, myProd.mk () p⟩
       | Sum.inr np =>
-          Sum.inr (fun ⟨k, myProd.mk h p⟩ => np (transport P (leqN_zero k h) p))
+          Sum.inr (fun ⟨k, myProd.mk h p⟩ => np (transport P (leq_zero k h) p))
   | myN.succ n =>
       match is_decidable_bounded_sigma P d n with
       | Sum.inl ⟨k, myProd.mk h p⟩ =>
-          Sum.inl ⟨k, myProd.mk (leqN_trans k n (myN.succ n) h (leqN_succ n)) p⟩
+          Sum.inl ⟨k, myProd.mk (leq_trans k n (myN.succ n) h (leq_succ n)) p⟩
       | Sum.inr f =>
           match d (myN.succ n) with
-          | Sum.inl p => Sum.inl ⟨myN.succ n, myProd.mk (leqN_refl _) p⟩
+          | Sum.inl p => Sum.inl ⟨myN.succ n, myProd.mk (leq_refl _) p⟩
           | Sum.inr np =>
               Sum.inr (fun ⟨k, myProd.mk h p⟩ =>
-                match leqN_succ_cases k n h with
+                match leq_succ_cases k n h with
                 | Sum.inl h' => f ⟨k, myProd.mk h' p⟩
                 | Sum.inr e => np (transport P e p))
 
 -- Theorem 8.1.9: for any d, n : ℕ, the type d ∣ n is decidable.
-def is_decidable_dividesT : (d n : myN) → is_decidable (dividesT d n)
+def is_decidable_divides : (d n : myN) → is_decidable (divides d n)
   | myN.zero, n =>
       -- 0 ∣ n holds if and only if n = 0
       is_decidable_of_iff
-        (myProd.mk (fun p => ⟨myN.zero, myEq_symm p⟩) (eq_zero_of_zero_dividesT n))
+        (myProd.mk (fun p => ⟨myN.zero, myEq_symm p⟩) (eq_zero_of_zero_divides n))
         (has_decidable_eq_myN n myN.zero)
   | myN.succ d, n =>
       -- (d+1) ∣ n holds if and only if (d+1) · k = n for some k ≤ n
@@ -246,17 +254,17 @@ def is_decidable_dividesT : (d n : myN) → is_decidable (dividesT d n)
           (fun ⟨k, myProd.mk _ p⟩ => ⟨k, p⟩)
           (fun ⟨k, p⟩ =>
             ⟨k, myProd.mk
-                  (transport (fun x => leqN k x) ((mulN_comm k (myN.succ d)) • p)
-                    (leqN_mul_succ_right k d))
+                  (transport (fun x => leq k x) ((myMult_comm k (myN.succ d)) • p)
+                    (leq_mul_succ_right k d))
                   p⟩))
         (is_decidable_bounded_sigma (fun k => (myN.succ d * k) ≡ n)
           (fun k => has_decidable_eq_myN (myN.succ d * k) n) n)
 
 /- Consequently, the `Prop`-valued divisibility relation `divides` of chapter7.lean
    is decidable in the sense of Lean's `Decidable` class. -/
-instance decidable_divides (d n : myN) : Decidable (divides d n) :=
-  match is_decidable_dividesT d n with
-  | Sum.inl p => isTrue (Nonempty.intro p)
-  | Sum.inr np => isFalse (fun ⟨p⟩ => Empty.elim (np p))
+-- instance decidable_divides (d n : myN) : Decidable (divides d n) :=
+--   match is_decidable_divides d n with
+--   | Sum.inl p => isTrue (Nonempty.intro p)
+--   | Sum.inr np => isFalse (fun ⟨p⟩ => Empty.elim (np p))
 
 end chapter8

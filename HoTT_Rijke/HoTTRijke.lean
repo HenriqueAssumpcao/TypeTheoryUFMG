@@ -16,3 +16,5 @@ import HoTTRijke.chapter8_4_gcd
 import HoTTRijke.chapter8_5_primes
 import HoTTRijke.chapter8_6_boolean_reflection
 import HoTTRijke.chapter8_exercises
+import HoTTRijke.chapter9
+import HoTTRijke.chapter9_exercises
